@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.scss"],"names":[],"mappings":"AAAA;EACE,aAAY;CACb;;AACD;EACE,oBAAmB;CACpB","file":"index.css","sourcesContent":[".php_list {\n  margin: 30px;\n}\n.php_list li {\n  margin-bottom: 10px;\n}\n"]}

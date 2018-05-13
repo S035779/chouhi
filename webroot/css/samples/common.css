@@ -1,0 +1,20 @@
+.header, .footer {
+  padding: 20px;
+  width: 100%;
+  background-color: #2a88bd;
+}
+.logo {
+  font-size: 20px;
+  color: #FFFFFF;
+}
+.footer {
+  text-align: center;
+}
+.footer small {
+  font-size: 14px;
+  color: #FFFFFF;
+}
+h1 {
+  margin: 20px;
+  font-size: 20px;
+}

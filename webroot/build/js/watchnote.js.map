@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.js","common.js"],"names":[],"mappings":"AAAA;AACA;ACDA;AACA","file":"watchnote.js","sourcesContent":["console.log('index');\n","console.log('common');\n"]}
