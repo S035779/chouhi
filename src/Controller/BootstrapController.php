@@ -35,7 +35,7 @@ class BootstrapController extends AppController
    */
   public function index()
   {
-    $title = 'WatchNote!!';
+    $title = 'Dashboard of AmazonMWS tools';
     $list = [
       'CakePHP'
     ];
