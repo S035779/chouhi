@@ -40,43 +40,43 @@
 
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="index.html">
+                <a class="nav-link active" href="/chouhi/bootstrap/index">
                   <span data-feather="home"></span>
                   ダッシュボード<span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="token.html">
+                <a class="nav-link" href="/chouhi/bootstrap/token">
                   <span data-feather="file"></span>
                   トークン設定
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="search.html">
+                <a class="nav-link" href="/chouhi/bootstrap/search">
                   <span data-feather="search"></span>
                   商品検索
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="market.html">
+                <a class="nav-link" href="/chouhi/bootstrap/market">
                   <span data-feather="shopping-cart"></span>
                   マーケット出品
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="user.html">
+                <a class="nav-link" href="/chouhi/bootstrap/setting">
                   <span data-feather="user"></span>
                   ユーザ管理
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="asin_regist.html">
+                <a class="nav-link" href="/chouhi/bootstrap/registration">
                   <span data-feather="bar-chart-2"></span>
                   新規ASIN登録
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="asin_prohigit.html">
+                <a class="nav-link" href="/chouhi/bootstrap/suspension">
                   <span data-feather="layers"></span>
                   禁止ASIN登録
                 </a>
@@ -92,31 +92,31 @@
 
             <ul class="nav flex-column mb-2">
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/chouhi/bootstrap/asins">
                   <span data-feather="file-text"></span>
                   ASIN管理マスタ
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/chouhi/bootstrap/users">
                   <span data-feather="file-text"></span>
                   ユーザ管理マスタ
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/chouhi/bootstrap/items">
                   <span data-feather="file-text"></span>
                   商品管理マスタ
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/chouhi/bootstrap/delivery">
                   <span data-feather="file-text"></span>
                   送料管理マスタ
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/chouhi/bootstrap/tokens">
                   <span data-feather="file-text"></span>
                   トークン管理マスタ
                 </a>
@@ -130,43 +130,5 @@
 
       </div>
     </div>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <?= $this->Html->script([
-        '//code.jquery.com/jquery-3.3.1.slim.min.js'
-      , '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'
-      , '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'
-      ]) ?>
-    <script src="/chouhi<?= $this->Elixir->version('js/watchnote.js') ?>"></script>
-    <!-- Icons -->
-    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-    <script>feather.replace()</script>
-    <!-- Graphs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-    <script>
-      var ctx = document.getElementById("myChart");
-      var myChart = new Chart(ctx, { type: 'line',
-        data: {
-          labels: [
-            '日曜日', '月曜日', '火曜日', '水曜日', '木曜日'
-          , '金曜日', '土曜日'
-          ], 
-          datasets: [{
-            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-            lineTension: 0,
-            backgroundColor: 'transparent',
-            borderColor: '#007bff',
-            borderWidth: 4,
-            pointBackgroundColor: '#007bff'
-          }]
-        },
-        options: {
-          scales: { yAxes: [{ ticks: { beginAtZero: false } }]},
-          legend: { display: false }
-        }
-      });
-    </script>
-    <!-- bootstrap-datepicker -->
-    <script>$('.datepicker').datepicker({ language: 'ja' })</script>
   </body>
 </html>

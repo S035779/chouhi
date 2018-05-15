@@ -149,3 +149,42 @@
         </div>
       </div>
     </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <?= $this->Html->script([
+        '//code.jquery.com/jquery-3.3.1.slim.min.js'
+      , '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'
+      , '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'
+      , '//unpkg.com/feather-icons/dist/feather.min.js'
+      , '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js'
+      ]) ?>
+    <script src="/chouhi<?= $this->Elixir->version('js/watchnote.js') ?>"></script>
+    <!-- Icons -->
+    <script>feather.replace()</script>
+    <!-- Graphs -->
+    <script>
+      var ctx = document.getElementById("myChart");
+      var myChart = new Chart(ctx, { type: 'line',
+        data: {
+          labels: [
+            '日曜日', '月曜日', '火曜日', '水曜日', '木曜日'
+          , '金曜日', '土曜日'
+          ], 
+          datasets: [{
+            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+            lineTension: 0,
+            backgroundColor: 'transparent',
+            borderColor: '#007bff',
+            borderWidth: 4,
+            pointBackgroundColor: '#007bff'
+          }]
+        },
+        options: {
+          scales: { yAxes: [{ ticks: { beginAtZero: false } }]},
+          legend: { display: false }
+        }
+      });
+    </script>
+    <!-- bootstrap-datepicker -->
+    <script>$('.datepicker').datepicker({ language: 'ja' })</script>

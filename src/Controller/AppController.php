@@ -35,13 +35,17 @@ class AppController extends Controller
         $this->loadComponent('Flash');
         $this->loadComponent('Auth', [
           'authorize'       => ['Controller']
-        , 'authenticate'    => ['Form' => ['fields' => ['username' => 'email']]]
-        , 'loginRedirect'   => ['controller' => 'Pages', 'action' => 'index']
-        , 'logoutRedirect'  => ['controller' => 'Users', 'action' => 'login']
-        , 'loginAction'     => ['controller' => 'Users', 'action' => 'login']
-        , 'authError'       => 'Login required'
+        , 'authenticate'    => ['Form' =>
+            ['fields' => ['username' => 'email']]
+          ]
+        , 'loginRedirect'   => 
+            ['controller' => 'Pages', 'action' => 'index']
+        , 'logoutRedirect'  => 
+            ['controller' => 'Users', 'action' => 'signin']
+        , 'loginAction'     => 
+            ['controller' => 'Users', 'action' => 'signin']
+        , 'authError'       => 'Sign-in required'
         ]);
-
     }
 
     public function isAuthorized($user)

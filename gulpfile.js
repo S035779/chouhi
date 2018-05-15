@@ -30,23 +30,23 @@ elixir(mix => {
   //mix.del(["webroot/build", "webroot/css", "webroot/js"])
   //.sass('default.scss').version('css/default.css')
   //.webpack('default.js').version('js/default.js');
-  mix.sass('index.scss', 'resources/assets/build/css')
-    .sass('common.scss', 'resources/assets/build/css')
+  mix
     .sass('dashboard.scss', 'resources/assets/build/css')
     .sass('bootstrap-datepicker3.scss', 'resources/assets/build/css')
+    .sass('signin.scss', 'resources/assets/build/css')
     .styles([
-      '../build/css/index.css'
-    , '../build/css/common.css'
-    , '../build/css/dashboard.css'
+      '../build/css/dashboard.css'
     , '../build/css/bootstrap-datepicker3.css'
     ], 'webroot/css/watchnote.css')
+    .styles([
+      '../build/css/signin.css'
+    ], 'webroot/css/signin.css')
     .scripts([
-      'index.js'
-    , 'common.js'
-    , 'bootstrap-datepicker.min.js'
+      'bootstrap-datepicker.min.js'
     , 'bootstrap-datepicker.ja.min.js'
+    , 'holder.min.js'
     ], 'webroot/js/watchnote.js')
-    .version(['css/watchnote.css', 'js/watchnote.js'])
+    .version(['css/watchnote.css', 'css/signin.css', 'js/watchnote.js'])
     //.browserSync({ proxy: 'localhost' })
   ;
 });

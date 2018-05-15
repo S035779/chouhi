@@ -38,7 +38,7 @@ class UsersTable extends Table
 
         $this->addBehavior('Timestamp', [
           'events' => [
-            'Users.login' => [
+            'Users.signin' => [
               'last_login_at' => 'always'
             ]
           ]
