@@ -22,16 +22,17 @@
   </head>
 
   <body>
+    <?= $this->Flash->render(); ?>
     <nav class
       ="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/chouhi/bootstrap">
         <?= env('APP_NAME') ?>
       </a>
       <input class="form-control form-control-dark w-100" type="text"
         placeholder="Search" aria-label="Search">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="sign-in.html">Sign out</a>
+          <a class="nav-link" href="/chouhi/users/signout">Sign out</a>
         </li>
       </ul>
     </nav>
@@ -73,45 +74,44 @@
               <div class="col-md-4 order-md-2 mb-4">
               </div>
               <div class="col-md-8 order-md-1">
-                <h4 class="mb-3">ユーザ詳細</h4>
 
-<div class="users view large-9 medium-8 columns content">
-    <h3><?= h($user->name) ?></h3>
-    <table class="vertical-table">
-        <tr>
-            <th scope="row"><?= __('Name') ?></th>
-            <td><?= h($user->name) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Email') ?></th>
-            <td><?= h($user->email) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Password') ?></th>
-            <td><?= h($user->password) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Id') ?></th>
-            <td><?= $this->Number->format($user->id) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Role') ?></th>
-            <td><?= $this->Number->format($user->role) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Last Login At') ?></th>
-            <td><?= h($user->last_login_at) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Created') ?></th>
-            <td><?= h($user->created) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Modified') ?></th>
-            <td><?= h($user->modified) ?></td>
-        </tr>
-    </table>
-</div>
+                <div class="users view large-9 medium-8 columns content">
+                  <h3><?= h($user->name) ?></h3>
+                  <table class="table table-hover">
+                    <tr>
+                      <th scope="row"><?= __('Name') ?></th>
+                      <td><?= h($user->name) ?></td>
+                    </tr>
+                    <tr>
+                      <th scope="row"><?= __('Email') ?></th>
+                      <td><?= h($user->email) ?></td>
+                    </tr>
+                    <tr>
+                      <th scope="row"><?= __('Password') ?></th>
+                      <td><?= h($user->password) ?></td>
+                    </tr>
+                    <tr>
+                      <th scope="row"><?= __('Id') ?></th>
+                      <td><?= $this->Number->format($user->id) ?></td>
+                    </tr>
+                    <tr>
+                      <th scope="row"><?= __('Role') ?></th>
+                      <td><?= $this->Number->format($user->role) ?></td>
+                    </tr>
+                    <tr>
+                      <th scope="row"><?= __('Last Login At') ?></th>
+                      <td><?= h($user->last_login_at) ?></td>
+                    </tr>
+                    <tr>
+                      <th scope="row"><?= __('Created') ?></th>
+                      <td><?= h($user->created) ?></td>
+                    </tr>
+                    <tr>
+                      <th scope="row"><?= __('Modified') ?></th>
+                      <td><?= h($user->modified) ?></td>
+                    </tr>
+                  </table>
+                </div>
 
               </div>
             </div>

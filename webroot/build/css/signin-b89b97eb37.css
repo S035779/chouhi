@@ -48,4 +48,17 @@ body {
 
 /*# sourceMappingURL=signin.css.map */
 
+/** Notice and Errors **/
+.alert {
+  position: fixed;
+  width: 100%;
+  top: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+/*# sourceMappingURL=common.css.map */
+
 /*# sourceMappingURL=signin.css.map */

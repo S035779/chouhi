@@ -17,16 +17,17 @@
   </head>
 
   <body>
+    <?= $this->Flash->render() ?>
     <nav class
       ="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/chouhi/bootstrap">
         <?= env('APP_NAME') ?>
       </a>
       <input class="form-control form-control-dark w-100" type="text"
         placeholder="Search" aria-label="Search">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="sign-in.html">Sign out</a>
+          <a class="nav-link" href="/chouhi/users/signout">Sign out</a>
         </li>
       </ul>
     </nav>
@@ -40,9 +41,9 @@
 
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="/chouhi/bootstrap/index">
+                <a class="nav-link" href="/chouhi/bootstrap/index">
                   <span data-feather="home"></span>
-                  ダッシュボード<span class="sr-only">(current)</span>
+                  ダッシュボード</span>
                 </a>
               </li>
               <li class="nav-item">
@@ -92,31 +93,31 @@
 
             <ul class="nav flex-column mb-2">
               <li class="nav-item">
-                <a class="nav-link" href="/chouhi/bootstrap/asins">
+                <a class="nav-link" href="/chouhi/Asins">
                   <span data-feather="file-text"></span>
                   ASIN管理マスタ
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/chouhi/bootstrap/users">
+                <a class="nav-link" href="/chouhi/Users">
                   <span data-feather="file-text"></span>
                   ユーザ管理マスタ
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/chouhi/bootstrap/items">
+                <a class="nav-link" href="/chouhi/Items">
                   <span data-feather="file-text"></span>
                   商品管理マスタ
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/chouhi/bootstrap/delivery">
+                <a class="nav-link" href="/chouhi/Delivery">
                   <span data-feather="file-text"></span>
                   送料管理マスタ
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/chouhi/bootstrap/tokens">
+                <a class="nav-link" href="/chouhi/Tokens">
                   <span data-feather="file-text"></span>
                   トークン管理マスタ
                 </a>

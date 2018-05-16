@@ -38,13 +38,14 @@ class AppController extends Controller
         , 'authenticate'    => ['Form' =>
             ['fields' => ['username' => 'email']]
           ]
-        , 'loginRedirect'   => 
-            ['controller' => 'Pages', 'action' => 'index']
-        , 'logoutRedirect'  => 
-            ['controller' => 'Users', 'action' => 'signin']
-        , 'loginAction'     => 
-            ['controller' => 'Users', 'action' => 'signin']
+        , 'loginRedirect'   => ['controller' => 'Bootstrap', 'action' => 'index']
+        , 'logoutRedirect'  => ['controller' => 'Users', 'action' => 'signin']
+        , 'loginAction'     => ['controller' => 'Users', 'action' => 'signin']
         , 'authError'       => 'Sign-in required'
+        , 'flash'           => [
+          'params'  => [ 'class' => 'alert alert-danger', 'role' => 'alert' ] 
+        , 'element' => 'flash'
+          ]
         ]);
     }
 

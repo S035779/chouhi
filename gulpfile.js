@@ -31,21 +31,21 @@ elixir(mix => {
   //.sass('default.scss').version('css/default.css')
   //.webpack('default.js').version('js/default.js');
   mix
-    .sass('dashboard.scss', 'resources/assets/build/css')
-    .sass('bootstrap-datepicker3.scss', 'resources/assets/build/css')
-    .sass('signin.scss', 'resources/assets/build/css')
+    .sass('common.scss',                  'resources/assets/build/css')
+    .sass('dashboard.scss',               'resources/assets/build/css')
+    .sass('bootstrap-datepicker3.scss',   'resources/assets/build/css')
+    .sass('signin.scss',                  'resources/assets/build/css')
     .styles([
-      '../build/css/dashboard.css'
-    , '../build/css/bootstrap-datepicker3.css'
-    ], 'webroot/css/watchnote.css')
+      '../build/css/bootstrap-datepicker3.css'
+    , '../build/css/dashboard.css'
+    , '../build/css/common.css'],         'webroot/css/watchnote.css' )
     .styles([
       '../build/css/signin.css'
-    ], 'webroot/css/signin.css')
+    , '../build/css/common.css'],         'webroot/css/signin.css'    )
     .scripts([
       'bootstrap-datepicker.min.js'
     , 'bootstrap-datepicker.ja.min.js'
-    , 'holder.min.js'
-    ], 'webroot/js/watchnote.js')
+    , 'holder.min.js'],                   'webroot/js/watchnote.js'   )
     .version(['css/watchnote.css', 'css/signin.css', 'js/watchnote.js'])
     //.browserSync({ proxy: 'localhost' })
   ;

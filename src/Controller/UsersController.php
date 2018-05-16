@@ -43,8 +43,8 @@ class UsersController extends AppController
         $this->Users->save($user_entity);
         return $this->redirect($this->Auth->redirectUrl());
       }
-      $this->Flash->error(
-        __('Invalid email address or password, try again')
+      $this->Flash->flash(__('Invalid email address or password, try again')
+      , [ 'params' => [ 'class' => 'alert alert-error', 'role' => 'alert' ] ]
       );
     }
     $this->set(compact('title'));
@@ -52,7 +52,9 @@ class UsersController extends AppController
 
   public function signout()
   {
-    $this->Flash->success(__('The user has been signout.'));
+    $this->Flash->flash(__('The user has been signout.')
+    , [ 'params' => [ 'class' => 'alert alert-success', 'role' => 'alert' ] ]
+    );
     return $this->redirect($this->Auth->logout());
   }
 
@@ -63,8 +65,9 @@ class UsersController extends AppController
    */
   public function index()
   {
+    $title = 'List users';
     $users = $this->paginate($this->Users);
-    $this->set(compact('users'));
+    $this->set(compact('users', 'title'));
   }
 
   /**
@@ -76,11 +79,11 @@ class UsersController extends AppController
    */
   public function view($id = null)
   {
+    $title = 'View user';
     $user = $this->Users->get($id, [
       'contain' => []
     ]);
-
-    $this->set('user', $user);
+    $this->set(compact('user', 'title'));
   }
 
   /**
@@ -90,17 +93,22 @@ class UsersController extends AppController
    */
   public function add()
   {
+    $title = 'Add user';
     $user = $this->Users->newEntity();
     if ($this->request->is('post')) {
       $user = $this->Users->patchEntity($user, $this->request->getData());
       if ($this->Users->save($user)) {
-        $this->Flash->success(__('The user has been saved.'));
+        $this->Flash->flash(__('The user has been saved.')
+        , [ 'params' => [ 'class' => 'alert alert-success', 'role' => 'alert' ] ]
+        );
 
         return $this->redirect(['action' => 'index']);
       }
-      $this->Flash->error(__('The user could not be saved. Please, try again.'));
+      $this->Flash->flash(__('The user could not be saved. Please, try again.')
+      , [ 'params' => [ 'class' => 'alert alert-error', 'role' => 'alert' ] ]
+      );
     }
-    $this->set(compact('user'));
+    $this->set(compact('user', 'title'));
   }
 
   /**
@@ -112,19 +120,24 @@ class UsersController extends AppController
    */
   public function edit($id = null)
   {
+    $title = 'Edit user';
     $user = $this->Users->get($id, [
       'contain' => []
     ]);
     if ($this->request->is(['patch', 'post', 'put'])) {
       $user = $this->Users->patchEntity($user, $this->request->getData());
       if ($this->Users->save($user)) {
-        $this->Flash->success(__('The user has been saved.'));
+        $this->Flash->flash(__('The user has been saved.')
+        , [ 'params' => [ 'class' => 'alert alert-success', 'role' => 'alert' ] ]
+        );
 
         return $this->redirect(['action' => 'index']);
       }
-      $this->Flash->error(__('The user could not be saved. Please, try again.'));
+      $this->Flash->flash(__('The user could not be saved. Please, try again.')
+      , [ 'params' => [ 'class' => 'alert alert-error', 'role' => 'alert' ] ]
+      );
     }
-    $this->set(compact('user'));
+    $this->set(compact('user', 'title'));
   }
 
   /**
@@ -139,9 +152,13 @@ class UsersController extends AppController
     $this->request->allowMethod(['post', 'delete']);
     $user = $this->Users->get($id);
     if ($this->Users->delete($user)) {
-      $this->Flash->success(__('The user has been deleted.'));
+      $this->Flash->flash(__('The user has been deleted.')
+      , [ 'params' => [ 'class' => 'alert alert-success', 'role' => 'alert' ] ]
+      );
     } else {
-      $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+      $this->Flash->flash(__('The user could not be deleted. Please, try again.')
+      , [ 'params' => [ 'class' => 'alert alert-error', 'role' => 'alert' ] ]
+      );
     }
 
     return $this->redirect(['action' => 'index']);

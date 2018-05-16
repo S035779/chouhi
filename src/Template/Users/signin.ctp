@@ -16,6 +16,7 @@
   </head>
 
   <body class="text-center">
+  <?= $this->Flash->render() ?>
     <div class="form-signin">
     <?= $this->Form->create() ?>
       <img class="mb-4" src="/chouhi/img/bootstrap-solid.svg"

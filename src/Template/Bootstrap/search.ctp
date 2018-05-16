@@ -45,16 +45,34 @@
                   </div>
 
                   <hr class="mb-4">
-                  <button type="submit"
-                    class="btn btn-primary btn-lg btn-block">
+                  <button type="button"
+                    class="btn btn-primary btn-lg btn-block"
+                    data-toggle="modal" data-target="#myModal">
                     検索
                   </button>
 
                 </form>
               </div>
             </div>
+          </div>
+        </main>
 
-            <h4 class="md-3">検索結果</h4>
+      </div>
+    </div>
+
+    <!-- The Modal1 -->
+    <div class="modal fade" id="myModal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">検索結果</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
             <div class="card">
               <div class="card-header">商品名</div>
               <div class="card-body p-2">
@@ -77,11 +95,23 @@
                         class="btn btn-primary w-100">
                         AM
                       </button>
-                      <button type="button"
-                        class="btn btn-primary w-100"
-                        data-toggle="modal" data-target="#myModal">
+                      <button type="button" class="btn btn-primary w-100"
+                        title="商品詳細"
+                        data-toggle="popover"
+                        data-placement="top"
+                        data-content-id="popover_content">
                         詳
                       </button>
+                      <div class="card hidden" id="popover_content">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">出品者数（新品／中古）</li>
+                          <li class="list-group-item">更新日</li>
+                          <li class="list-group-item">レビュー数</li>
+                          <li class="list-group-item">平均レビュー</li>
+                          <li class="list-group-item">平均ランキング</li>
+                          <li class="list-group-item">カテゴリー</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                   </div>
@@ -106,35 +136,131 @@
                 </div>
               </div>
             </div>
-          </div>
-
-
-        </main>
-      </div>
-    </div>
-
-    <!-- The Modal -->
-    <div class="modal fade" id="myModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">商品詳細</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-
-          <!-- Modal body -->
-          <div class="modal-body">
             <div class="card">
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">出品者数（新品／中古）</li>
-                <li class="list-group-item">更新日</li>
-                <li class="list-group-item">レビュー数</li>
-                <li class="list-group-item">平均レビュー</li>
-                <li class="list-group-item">平均ランキング</li>
-                <li class="list-group-item">カテゴリー</li>
-              </ul>
+              <div class="card-header">商品名</div>
+              <div class="card-body p-2">
+                <div class="card-group">
+                <div class="col-sm-4">
+                  <div class="card">
+                  <img class="card-img-top" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22219%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20219%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211ce%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A11pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211ce%22%3E%3Crect%20width%3D%22219%22%20height%3D%22200%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2260.92499923706055%22%20y%3D%22104.95%22%3E%E3%82%AB%E3%83%BC%E3%83%891%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
+                  <div class="card-body p-2">
+                    <div class="btn-group d-flex" role="group"
+                      aria-label="button-group">
+                      <button type="button"
+                        class="btn btn-primary w-100">
+                        MO
+                      </button>
+                      <button type="button"
+                        class="btn btn-primary w-100">
+                        FB
+                      </button>
+                      <button type="button"
+                        class="btn btn-primary w-100">
+                        AM
+                      </button>
+                      <button type="button" class="btn btn-primary w-100"
+                        title="商品詳細"
+                        data-toggle="popover"
+                        data-placement="top"
+                        data-content-id="popover_content">
+                        詳
+                      </button>
+                      <div class="card hidden" id="popover_content">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">出品者数（新品／中古）</li>
+                          <li class="list-group-item">更新日</li>
+                          <li class="list-group-item">レビュー数</li>
+                          <li class="list-group-item">平均レビュー</li>
+                          <li class="list-group-item">平均ランキング</li>
+                          <li class="list-group-item">カテゴリー</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">ランキング</li>
+                    <li class="list-group-item">ASIN</li>
+                    <li class="list-group-item">価格</li>
+                    <li class="list-group-item">平均価格</li>
+                    <li class="list-group-item">価格差</li>
+                    <li class="list-group-item">発売日</li>
+                  </ul>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card">
+                  <img class="card-img" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22226%22%20height%3D%22260%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20226%20260%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211dc%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A13pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211dc%22%3E%3Crect%20width%3D%22226%22%20height%3D%22260%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2255.68333435058594%22%20y%3D%22135.85%22%3E%E3%82%AB%E3%83%BC%E3%83%896%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">商品名</div>
+              <div class="card-body p-2">
+                <div class="card-group">
+                <div class="col-sm-4">
+                  <div class="card">
+                  <img class="card-img-top" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22219%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20219%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211ce%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A11pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211ce%22%3E%3Crect%20width%3D%22219%22%20height%3D%22200%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2260.92499923706055%22%20y%3D%22104.95%22%3E%E3%82%AB%E3%83%BC%E3%83%891%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
+                  <div class="card-body p-2">
+                    <div class="btn-group d-flex" role="group"
+                      aria-label="button-group">
+                      <button type="button"
+                        class="btn btn-primary w-100">
+                        MO
+                      </button>
+                      <button type="button"
+                        class="btn btn-primary w-100">
+                        FB
+                      </button>
+                      <button type="button"
+                        class="btn btn-primary w-100">
+                        AM
+                      </button>
+                      <button type="button" class="btn btn-primary w-100"
+                        title="商品詳細"
+                        data-toggle="popover"
+                        data-placement="top"
+                        data-content-id="popover_content">
+                        詳
+                      </button>
+                      <div class="card hidden" id="popover_content">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">出品者数（新品／中古）</li>
+                          <li class="list-group-item">更新日</li>
+                          <li class="list-group-item">レビュー数</li>
+                          <li class="list-group-item">平均レビュー</li>
+                          <li class="list-group-item">平均ランキング</li>
+                          <li class="list-group-item">カテゴリー</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">ランキング</li>
+                    <li class="list-group-item">ASIN</li>
+                    <li class="list-group-item">価格</li>
+                    <li class="list-group-item">平均価格</li>
+                    <li class="list-group-item">価格差</li>
+                    <li class="list-group-item">発売日</li>
+                  </ul>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card">
+                  <img class="card-img" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22226%22%20height%3D%22260%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20226%20260%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211dc%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A13pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211dc%22%3E%3Crect%20width%3D%22226%22%20height%3D%22260%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2255.68333435058594%22%20y%3D%22135.85%22%3E%E3%82%AB%E3%83%BC%E3%83%896%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
+                  </div>
+                </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -176,4 +302,17 @@
         });
       }, false);
     })();
+    </script>
+    <!-- Popvers -->
+    <script>
+    $(function () {
+      $('[data-toggle="popover"]').popover({
+        html: true
+      , container: 'body'
+      , content: function() {
+          var content = '#' + $(this).data('content-id');
+          return $(content).html();
+        }
+      })
+    })
     </script>

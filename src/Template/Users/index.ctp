@@ -22,16 +22,17 @@
   </head>
 
   <body>
+    <?= $this->Flash->render() ?>
     <nav class
       ="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/chouhi/bootstrap">
         <?= env('APP_NAME') ?>
       </a>
       <input class="form-control form-control-dark w-100" type="text"
         placeholder="Search" aria-label="Search">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="sign-in.html">Sign out</a>
+          <a class="nav-link" href="/chouhi/users/signout">Sign out</a>
         </li>
       </ul>
     </nav>
@@ -72,10 +73,8 @@
             <div class="row">
               <div class="col-md-4 order-md-2 mb-4">
               </div>
-              <div class="col-md-8 order-md-1">
 
-<!-- Main contents -->
-<div class="users index large-9 medium-8 columns content">
+  <div class="users index large-9 medium-8 columns content">
     <h3>ユーザ一覧</h3>
     <table class="table table-striped">
         <thead>
@@ -111,29 +110,57 @@
             <?php endforeach; ?>
         </tbody>
     </table>
+    <?php
+      $this->Paginator->setTemplates([
+        'number'        =>
+          '<li class="page-item">
+            <a class="page-link" href="{{url}}">{{text}}</a>
+          </li>'
+      , 'first'         =>
+          '<li class="page-item">
+            <a class="page-link" href="{{url}}">{{text}}</a>
+          </li>'
+      , 'prevActive'    =>
+          '<li class="page-item">
+            <a class="page-link" href="{{url}}">{{text}}</a>
+          </li>'
+      , 'prevDisabled'   =>
+          '<li class="page-item disabled">
+            <a class="page-link" href="{{url}}" tabindex="-1">{{text}}</a>
+          </li>'
+      , 'nextActive'    =>
+          '<li class="page-item">
+            <a class="page-link" href="{{url}}">{{text}}</a>
+          </li>'
+      , 'nextDisabled'  =>
+          '<li class="page-item disabled">
+            <a class="page-link" href="{{url}}" tabindex="-1">{{text}}</a>
+          </li>'
+      , 'last'          =>
+          '<li class="page-item">
+            <a class="page-link" href="{{url}}">{{text}}</a>
+          </li>'
+      , 'current'  =>
+          '<li class="page-item active">
+            <a class="page-link" href="{{url}}">{{text}}
+             <span class="sr-only">(current)</span></a>
+          </li>'
+      ]);
+    ?>
     <nav aria-label="Page navigation">
       <ul class="pagination">
-        <li class="pagination">
-          <?= $this->Paginator->first(' << '.__('first')) ?>
-        </li>
-        <li class="pagination">
-          <?= $this->Paginator->prev(' < '.__('previous')) ?>
-        </li>
-        <li class="pagination">
-          <?= $this->Paginator->numbers() ?>
-        </li>
-        <li class="pagination">
-          <?= $this->Paginator->next(__('next').' > ') ?>
-        </li>
-        <li class="pagination">
-          <?= $this->Paginator->last(__('last').' >> ') ?>
-        </li>
+        <?= $this->Paginator->first(__('First'))    ?>
+        <?= $this->Paginator->prev(__('Previous'))  ?>
+        <?= $this->Paginator->numbers()             ?>
+        <?= $this->Paginator->next(__('Next'))      ?>
+        <?= $this->Paginator->last(__('Last'))      ?>
       </ul>
-    <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
-  </nav>
-</div>
+      <p>
+    <?= $this->Paginator->counter(['format'  =>  __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?>
+      </p>
+    </nav>
+  </div>
 
-              </div>
             </div>
           </div>
 
