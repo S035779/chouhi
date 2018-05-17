@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use App\Form\UploadFilesForm;
 use Cake\Event\Event;
 
 /**
@@ -91,17 +92,60 @@ class BootstrapController extends AppController
   public function registration()
   {
     $title = 'ASIN registration';
-    $this->set(compact('title'));
+    $fileform = new UploadFilesForm();
+    if($this->request->is('post')) {
+      if($fileform->validate($this->request->data)) {
+        define('SITE_ROOT', realpath(dirname(__FILE__)));
+        move_uploaded_file(
+          $this->request->data['upload_file']['tmp_name']
+          , sprintf(SITE_ROOT.'\..\..\storage\%s', $this->request->data['upload_file']['name'])
+        );
+        $this->Flash->flash(__('The csv file has been uploaded.'), [
+          'params' => [
+            'class' => 'alert alert-success'
+          , 'role'  => 'alert'
+          ]
+        ]);
+      }
+    }
+    $this->set(compact('title', 'fileform'));
   }
 
   /**
-   * Suspension ASIN registration method
+   * Suspened ASIN registration method
    *
    * @return \Cake\Http\Response|void
    */
   public function suspension()
   {
-    $title = 'Suspention ASIN registration';
+    $title = 'Suspened ASIN registration';
+    $fileform = new UploadFilesForm();
+    if($this->request->is('post')) {
+      if($fileform->validate($this->request->data)) {
+        define('SITE_ROOT', realpath(dirname(__FILE__)));
+        move_uploaded_file(
+          $this->request->data['upload_file']['tmp_name']
+          , sprintf(SITE_ROOT.'\..\..\storage\%s', $this->request->data['upload_file']['name'])
+        );
+        $this->Flash->flash(__('The csv file has been uploaded.'), [
+          'params' => [
+            'class' => 'alert alert-success'
+          , 'role'  => 'alert'
+          ]
+        ]);
+      }
+    }
+    $this->set(compact('title', 'fileform'));
+  }
+
+  /**
+   * Calculation method
+   *
+   * @return \Cake\Http\Response|void
+   */
+  public function calculation()
+  {
+    $title = 'Price calculation';
     $this->set(compact('title'));
   }
 }

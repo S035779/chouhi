@@ -23,8 +23,7 @@
 
   <body>
     <?= $this->Flash->render(); ?>
-    <nav class
-      ="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/chouhi/bootstrap">
         <?= env('APP_NAME') ?>
       </a>
@@ -46,7 +45,7 @@
 
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" href="/chouhi/users/index">
+                <a class="nav-link active" href="/chouhi/users/index">
                   <span data-feather="home"></span>
                   ユーザ一覧<span class="sr-only">(current)</span>
                 </a>

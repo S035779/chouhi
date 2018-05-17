@@ -18,8 +18,7 @@
 
   <body>
     <?= $this->Flash->render() ?>
-    <nav class
-      ="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/chouhi/bootstrap">
         <?= env('APP_NAME') ?>
       </a>
@@ -42,7 +41,7 @@
             <ul class="nav flex-column">
               <li class="nav-item">
                 <a class="nav-link" href="/chouhi/bootstrap/index">
-                  <span data-feather="home"></span>
+                  <span data-feather="pie-chart"></span>
                   ダッシュボード</span>
                 </a>
               </li>
@@ -80,6 +79,12 @@
                 <a class="nav-link" href="/chouhi/bootstrap/suspension">
                   <span data-feather="layers"></span>
                   禁止ASIN登録
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/chouhi/bootstrap/calculation">
+                  <span data-feather="percent"></span>
+                  販売価格設定
                 </a>
               </li>
             </ul>

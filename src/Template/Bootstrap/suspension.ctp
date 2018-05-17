@@ -10,25 +10,30 @@
               </div>
               <div class="col-md-8 order-md-1">
                 <h4 class="mb-3">ファイルアップロード</h4>
-                <form class="needs-validation" novalidate>
+                <?= $this->Form->create($fileform, [
+                  'type'        => 'file'
+                , 'url'         => [ 'controler' => 'Bootstrap', 'action' => 'suspension' ]
+                , 'class'       => 'needs-validation'
+                , 'novalidate'  => true
+                ]) ?>
 
                   <div class="mb-3 form-group">
-                    <label for="file">CSVファイル</label>
-                    <input type="file"
-                      class="form-control-file"
-                      id="file" required>
+                    <?= $this->Form->control('upload_file', [
+                      'type'      => 'file'
+                    , 'label'     => 'CSVファイル'
+                    , 'required'  => true
+                    , 'class'     => 'form-control-file'
+                    ]) ?>
                     <div class="invalid-feedback">
                       Please select a valid CSV file.
                     </div>
                   </div>
 
                   <hr class="mb-4">
-                  <button type="submit"
-                    class="btn btn-primary btn-lg btn-block">
-                    登録する
-                  </button>
-
-                </form>
+                  <?= $this->Form->button('登録する', [
+                    'class' => 'btn btn-primary btn-lg btn-block'
+                  ]) ?>
+                <?= $this->Form->end() ?>
               </div>
             </div>
           </div>
