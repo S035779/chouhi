@@ -95,10 +95,9 @@ class BootstrapController extends AppController
     $fileform = new UploadFilesForm();
     if($this->request->is('post')) {
       if($fileform->validate($this->request->data)) {
-        define('SITE_ROOT', realpath(dirname(__FILE__)));
         move_uploaded_file(
           $this->request->data['upload_file']['tmp_name']
-          , sprintf(SITE_ROOT.'\..\..\storage\%s', $this->request->data['upload_file']['name'])
+          , sprintf(ROOT.'\storage\%s', $this->request->data['upload_file']['name'])
         );
         $this->Flash->flash(__('The csv file has been uploaded.'), [
           'params' => [
@@ -122,10 +121,9 @@ class BootstrapController extends AppController
     $fileform = new UploadFilesForm();
     if($this->request->is('post')) {
       if($fileform->validate($this->request->data)) {
-        define('SITE_ROOT', realpath(dirname(__FILE__)));
         move_uploaded_file(
           $this->request->data['upload_file']['tmp_name']
-          , sprintf(SITE_ROOT.'\..\..\storage\%s', $this->request->data['upload_file']['name'])
+          , sprintf(ROOT.'\storage\%s', $this->request->data['upload_file']['name'])
         );
         $this->Flash->flash(__('The csv file has been uploaded.'), [
           'params' => [

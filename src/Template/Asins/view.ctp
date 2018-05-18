@@ -4,41 +4,71 @@
  * @var \App\Model\Entity\Asin $asin
  */
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('Edit Asin'), ['action' => 'edit', $asin->id]) ?> </li>
-        <li><?= $this->Form->postLink(__('Delete Asin'), ['action' => 'delete', $asin->id], ['confirm' => __('Are you sure you want to delete # {0}?', $asin->id)]) ?> </li>
-        <li><?= $this->Html->link(__('List Asins'), ['action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Asin'), ['action' => 'add']) ?> </li>
+<!-- Main menu -->
+<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+  <div class="sidebar-sticky">
+
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <?= $this->Html->link(
+          $this->Html->tag('span', '', ['data-feather' => 'home'])
+          . ' ASIN一覧 ' .
+          $this->Html->tag('span', '(current)', ['class' => 'sr-only'])
+        , ['controller' => 'Asins', 'action' => 'index']
+        , ['escape' => false, 'class' => 'nav-link active']
+        ) ?>
+      </li>
+      <li class="nav-item">
+        <?= $this->Html->link(
+          $this->Html->tag('span', '', ['data-feather' => 'file'])
+          . ' ASIN追加 '
+        , ['controller' => 'Asins', 'action' => 'add']
+        , ['escape' => false, 'class' => 'nav-link']
+        ) ?>
+      </li>
     </ul>
+
+  </div>
 </nav>
-<div class="asins view large-9 medium-8 columns content">
-    <h3><?= h($asin->id) ?></h3>
-    <table class="vertical-table">
-        <tr>
+
+<!-- Main contens -->
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">ASIN管理マスタ</h1>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 order-md-1">
+        <h3><?= h($user->name) ?></h3>
+
+        <table class="vertical-table">
+          <tr>
             <th scope="row"><?= __('Asin') ?></th>
             <td><?= h($asin->asin) ?></td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Marketplace') ?></th>
             <td><?= h($asin->marketplace) ?></td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Id') ?></th>
             <td><?= $this->Number->format($asin->id) ?></td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Created') ?></th>
             <td><?= h($asin->created) ?></td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Modified') ?></th>
             <td><?= h($asin->modified) ?></td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Suspended') ?></th>
             <td><?= $asin->suspended ? __('Yes') : __('No'); ?></td>
-        </tr>
-    </table>
-</div>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</main>

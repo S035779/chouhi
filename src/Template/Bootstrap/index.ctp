@@ -158,8 +158,8 @@
       , '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'
       , '//unpkg.com/feather-icons/dist/feather.min.js'
       , '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js'
+      , $this->Elixir->version('js/watchnote.js')
       ]) ?>
-    <script src="/chouhi<?= $this->Elixir->version('js/watchnote.js') ?>"></script>
     <!-- Icons -->
     <script>feather.replace()</script>
     <!-- Graphs -->

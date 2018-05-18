@@ -10,31 +10,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="desctiption" content="bootstrap-4.1.1">
     <meta name="author" content="Mamoru Hashimoto">
-    <link rel="icon" href="favicon.ico">
-
+    <?= $this->Html->meta('icon') ?>
     <title><?= h($title) ?></title>
-
     <!-- Bootstrap CSS -->
     <?= $this->Html->css([
-        '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'
-      ]) ?>
-    <link rel="stylesheet" href="/chouhi<?= $this->Elixir->version('css/watchnote.css') ?>">
+      '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'
+    , $this->Elixir->version('css/watchnote.css')
+    ]) ?>
   </head>
 
   <body>
-    <?= $this->Flash->render(); ?>
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/chouhi/bootstrap">
-        <?= env('APP_NAME') ?>
-      </a>
+      <?= $this->Html->link(
+        env('APP_NAME')
+      , ['controller' => 'Bootstrap', 'action' => 'index']
+      , ['class' => 'navbar-brand col-sm-3 col-md-2 mr-0']
+      ) ?>
       <input class="form-control form-control-dark w-100" type="text"
         placeholder="Search" aria-label="Search">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="/chouhi/users/signout">Sign out</a>
+          <?= $this->Html->link(
+            ' Sign out '
+          , ['controller' => 'Users', 'action' => 'signout']
+          , ['class' => 'nav-link']
+          ) ?>
         </li>
       </ul>
     </nav>
+    <?= $this->Flash->render(); ?>
 
     <!-- Main menu -->
     <div class="container-fluid">
@@ -45,16 +49,21 @@
 
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" href="/chouhi/users/index">
-                  <span data-feather="home"></span>
-                  ユーザ一覧
-                </a>
+                <?= $this->Html->link(
+                  $this->Html->tag('span', '', ['data-feather' => 'home'])
+                  . ' ユーザ一覧 '
+                , ['controller' => 'Users', 'action' => 'index']
+                , ['escape' => false, 'class' => 'nav-link']
+                ) ?>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="/chouhi/users/add">
-                  <span data-feather="file"></span>
-                  ユーザ追加<span class="sr-only">(current)</span>
-                </a>
+                <?= $this->Html->link(
+                  $this->Html->tag('span', '', ['data-feather' => 'file'])
+                  . ' ユーザ追加 ' .
+                  $this->Html->tag('span', '(current)', ['class' => 'sr-only'])
+                , ['controller' => 'Users', 'action' => 'add']
+                , ['escape' => false, 'class' => 'nav-link active']
+                ) ?>
               </li>
             </ul>
 
@@ -64,18 +73,16 @@
         <!-- Main contens -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">ユーザ管理マスタ</h1>
+            <h1 class="h2"><?= __('ユーザ管理マスタ') ?></h1>
           </div>
 
           <div class="container">
             <div class="row">
-              <div class="col-md-4 order-md-2 mb-4">
-              </div>
 
               <div class="col-md-8 order-md-1">
                 <?= $this->Form->create($user) ?>
                 <fieldset>
-                  <legend>ユーザ登録</legend>
+                  <legend><?= __('ユーザ登録') ?></legend>
                   <?php
                     echo $this->Form->control('name');
                     echo $this->Form->control('email');
@@ -87,11 +94,11 @@
                 <?= $this->Form->button(__('Submit')) ?>
                 <?= $this->Form->end() ?>
               </div>
+
             </div>
           </div>
-
-
         </main>
+
       </div>
     </div>
 
@@ -127,8 +134,8 @@
       , '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'
       , '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'
       , '//unpkg.com/feather-icons/dist/feather.min.js'
+      , $this->Elixir->version('js/watchnote.js')
       ]) ?>
-    <script src="/chouhi<?= $this->Elixir->version('js/watchnote.js') ?>"></script>
     <!-- Icons -->
     <script>feather.replace()</script>
     <!-- Validation check -->

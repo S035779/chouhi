@@ -16,7 +16,7 @@ class AsinsController extends AppController
   public function initialize()
   {
     parent::initialize();
-    //$this->viewBuilder()->setLayout('dashboard');
+    $this->viewBuilder()->setLayout('dataview');
   }
 
   public function beforeFilter(Event $event)
