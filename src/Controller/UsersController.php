@@ -12,6 +12,7 @@ use Cake\Event\Event;
  */
 class UsersController extends AppController
 {
+  public $helpers = ['Paginator' => ['templates' => 'paginator-templates']];
 
   public function initialize()
   {
@@ -43,18 +44,14 @@ class UsersController extends AppController
         $this->Users->save($user_entity);
         return $this->redirect($this->Auth->redirectUrl());
       }
-      $this->Flash->flash(__('Invalid email address or password, try again')
-      , [ 'params' => [ 'class' => 'alert alert-error', 'role' => 'alert' ] ]
-      );
+      $this->Flash->error(__('Invalid email address or password, try again'));
     }
     $this->set(compact('title'));
   }
 
   public function signout()
   {
-    $this->Flash->flash(__('The user has been signout.')
-    , [ 'params' => [ 'class' => 'alert alert-success', 'role' => 'alert' ] ]
-    );
+    $this->Flash->success(__('The user has been signout.'));
     return $this->redirect($this->Auth->logout());
   }
 
@@ -98,15 +95,11 @@ class UsersController extends AppController
     if ($this->request->is('post')) {
       $user = $this->Users->patchEntity($user, $this->request->getData());
       if ($this->Users->save($user)) {
-        $this->Flash->flash(__('The user has been saved.')
-        , [ 'params' => [ 'class' => 'alert alert-success', 'role' => 'alert' ] ]
-        );
+        $this->Flash->success(__('The user has been saved.'));
 
         return $this->redirect(['action' => 'index']);
       }
-      $this->Flash->flash(__('The user could not be saved. Please, try again.')
-      , [ 'params' => [ 'class' => 'alert alert-error', 'role' => 'alert' ] ]
-      );
+      $this->Flash->error(__('The user could not be saved. Please, try again.'));
     }
     $this->set(compact('user', 'title'));
   }
@@ -127,15 +120,11 @@ class UsersController extends AppController
     if ($this->request->is(['patch', 'post', 'put'])) {
       $user = $this->Users->patchEntity($user, $this->request->getData());
       if ($this->Users->save($user)) {
-        $this->Flash->flash(__('The user has been saved.')
-        , [ 'params' => [ 'class' => 'alert alert-success', 'role' => 'alert' ] ]
-        );
+        $this->Flash->success(__('The user has been saved.'));
 
         return $this->redirect(['action' => 'index']);
       }
-      $this->Flash->flash(__('The user could not be saved. Please, try again.')
-      , [ 'params' => [ 'class' => 'alert alert-error', 'role' => 'alert' ] ]
-      );
+      $this->Flash->error(__('The user could not be saved. Please, try again.'));
     }
     $this->set(compact('user', 'title'));
   }
@@ -152,13 +141,9 @@ class UsersController extends AppController
     $this->request->allowMethod(['post', 'delete']);
     $user = $this->Users->get($id);
     if ($this->Users->delete($user)) {
-      $this->Flash->flash(__('The user has been deleted.')
-      , [ 'params' => [ 'class' => 'alert alert-success', 'role' => 'alert' ] ]
-      );
+      $this->Flash->success(__('The user has been deleted.'));
     } else {
-      $this->Flash->flash(__('The user could not be deleted. Please, try again.')
-      , [ 'params' => [ 'class' => 'alert alert-error', 'role' => 'alert' ] ]
-      );
+      $this->Flash->error(__('The user could not be deleted. Please, try again.'));
     }
 
     return $this->redirect(['action' => 'index']);

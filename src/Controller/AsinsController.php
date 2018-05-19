@@ -13,6 +13,8 @@ use Cake\Event\Event;
  */
 class AsinsController extends AppController
 {
+  public $helpers = ['Paginator' => ['templates' => 'paginator-templates']];
+
   public function initialize()
   {
     parent::initialize();

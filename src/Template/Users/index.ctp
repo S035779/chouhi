@@ -113,43 +113,6 @@
                   <?php endforeach; ?>
                 </tbody>
               </table>
-              <?php
-                $this->Paginator->setTemplates([
-                  'number'        =>
-                    '<li class="page-item">
-                      <a class="page-link" href="{{url}}">{{text}}</a>
-                    </li>'
-                , 'first'         =>
-                    '<li class="page-item">
-                      <a class="page-link" href="{{url}}">{{text}}</a>
-                    </li>'
-                , 'prevActive'    =>
-                    '<li class="page-item">
-                      <a class="page-link" href="{{url}}">{{text}}</a>
-                    </li>'
-                , 'prevDisabled'   =>
-                    '<li class="page-item disabled">
-                      <a class="page-link" href="{{url}}" tabindex="-1">{{text}}</a>
-                    </li>'
-                , 'nextActive'    =>
-                    '<li class="page-item">
-                      <a class="page-link" href="{{url}}">{{text}}</a>
-                    </li>'
-                , 'nextDisabled'  =>
-                    '<li class="page-item disabled">
-                      <a class="page-link" href="{{url}}" tabindex="-1">{{text}}</a>
-                    </li>'
-                , 'last'          =>
-                    '<li class="page-item">
-                      <a class="page-link" href="{{url}}">{{text}}</a>
-                    </li>'
-                , 'current'  =>
-                    '<li class="page-item active">
-                      <a class="page-link" href="{{url}}">{{text}}
-                       <span class="sr-only">(current)</span></a>
-                    </li>'
-                ]);
-              ?>
               <nav aria-label="Page navigation">
                 <ul class="pagination">
                   <?= $this->Paginator->first(__('First'))    ?>
@@ -165,31 +128,6 @@
           </div>
         </main>
 
-      </div>
-    </div>
-
-    <!-- The Modal -->
-    <div class="modal fade" id="myModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">送信完了</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-
-          <!-- Modal body -->
-          <div class="modal-body">
-            処理を受け付ました。
-          </div>
-
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          </div>
-
-        </div>
       </div>
     </div>
 

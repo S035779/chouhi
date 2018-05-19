@@ -4,11 +4,12 @@ namespace App\Shell;
 use Cake\Console\Shell;
 
 /**
- * AsinImport shell command.
+ * FetchItems shell command.
  */
-class AsinImportShell extends Shell
+class FetchItemsShell extends Shell
 {
-  public $tasks = ['AsinImport'];
+  public $tasks = ['FetchItems'];
+
   /**
    * Manage the available sub-commands along with their arguments and help
    *
@@ -30,6 +31,6 @@ class AsinImportShell extends Shell
    */
   public function main()
   {
-    $this->AsinImport->main();
+    $this->FetchItems->main();
   }
 }

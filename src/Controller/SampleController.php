@@ -28,7 +28,7 @@ class SampleController extends AppController
   public function initialize()
   {
     parent::initialize();
-    $this->viewBuilder()->setLayout('watchnote');
+    $this->viewBuilder()->setLayout('default');
     $this->loadComponent('Common', ['className' => 'MyHoge']);
     $this->access_key       = env('AMZ_PA_ACCESSKEY_JP2', '');
     $this->secret_key       = env('AMZ_PA_SECRETKEY_JP2', '');

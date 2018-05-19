@@ -41,7 +41,7 @@ class AsinImportTask extends Shell
     , 'modified' => true
     , 'suspended' => true
     );
-    $datas = $this->readFile('test.csv', $header);
+    $datas = $this->fetchAsin('test.csv', $header);
     //print_r($datas);
 
     $asins = TableRegistry::get('Asins');
@@ -54,7 +54,7 @@ class AsinImportTask extends Shell
     return true;
   }
 
-  private function readFile($import_file, $header)
+  private function fetchAsin($import_file, $header)
   {
     $datas = array();
     $datetime = date('Y-m-d H:i:s');
