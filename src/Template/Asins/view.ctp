@@ -12,7 +12,7 @@
       <li class="nav-item">
         <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'home'])
-          . ' ASIN一覧 ' .
+          . __(' ASIN一覧 ') .
           $this->Html->tag('span', '(current)', ['class' => 'sr-only'])
         , ['controller' => 'Asins', 'action' => 'index']
         , ['escape' => false, 'class' => 'nav-link active']
@@ -21,7 +21,7 @@
       <li class="nav-item">
         <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'file'])
-          . ' ASIN追加 '
+          . __(' ASIN追加 ')
         , ['controller' => 'Asins', 'action' => 'add']
         , ['escape' => false, 'class' => 'nav-link']
         ) ?>
@@ -31,17 +31,17 @@
   </div>
 </nav>
 
-<!-- Main contens -->
+<!-- Main contents -->
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">ASIN管理マスタ</h1>
+    <h1 class="h2"><?= __('ASIN管理マスタ') ?></h1>
   </div>
   <div class="container">
     <div class="row">
-      <div class="col-md-8 order-md-1">
-        <h3><?= h($user->name) ?></h3>
 
-        <table class="vertical-table">
+      <div class="col-md-8 order-md-1">
+        <h3><?= h($asin->asin) ?></h3>
+        <table class="table table-hover">
           <tr>
             <th scope="row"><?= __('Asin') ?></th>
             <td><?= h($asin->asin) ?></td>
@@ -67,8 +67,8 @@
             <td><?= $asin->suspended ? __('Yes') : __('No'); ?></td>
           </tr>
         </table>
-
       </div>
+
     </div>
   </div>
 </main>

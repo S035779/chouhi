@@ -12,7 +12,7 @@
       <li class="nav-item">
         <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'home'])
-          . ' ASIN一覧 ' .
+          . __(' ASIN一覧 ') .
           $this->Html->tag('span', '(current)', ['class' => 'sr-only'])
         , ['controller' => 'Asins', 'action' => 'index']
         , ['escape' => false, 'class' => 'nav-link active']
@@ -21,7 +21,7 @@
       <li class="nav-item">
         <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'file'])
-          . ' ASIN追加 '
+          . __(' ASIN追加 ')
         , ['controller' => 'Asins', 'action' => 'add']
         , ['escape' => false, 'class' => 'nav-link']
         ) ?>

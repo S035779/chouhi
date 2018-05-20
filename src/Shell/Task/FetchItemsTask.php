@@ -51,14 +51,17 @@ class FetchItemsTask extends Shell
   private function execItemLookup() {
     $asins = TableRegistry::get('Asins');
     $datas = $asins->find();
+    $request = array();
     foreach($datas as $data) {
-      $response = $this->insertItem($data->asin, $data->marketplace);
-      sleep(3);
+      array_push($request, ['asin' => $data->asin, 'marketplace' => $data->marketplace]);
+    }
+    if(!$this->upsertItem($request)) {
+      return false;
     }
     return true;
   }
 
-  private function insertItem($asin)
+  private function insertItem($request)
   {
     $header = array(
         'asin'                                => true
@@ -90,22 +93,29 @@ class FetchItemsTask extends Shell
       , 'release_date_at'                     => true
       , 'publication_date_at'                 => true
       , 'original_release_date_at'            => true
-      , 'condition'                           => true
-      , 'total_reviews'                       => true
-      , 'average_rating'                      => true
-      , 'total_votes'                         => true
+      , 'condition_status'                    => true
+      , 'total_reviews'                       => false
+      , 'average_rating'                      => false
+      , 'total_votes'                         => false
       , 'product_group'                       => true
-      , 'quantity'                            => true
-      //, 'quantity_allocated'                  => false
-      //, 'status'                              => false
-      , 'marketplace'                         => true
+      , 'quantity'                            => false
+      , 'quantity_allocated'                  => false
+      , 'status'                              => false
       , 'detail_page_url'                     => true
       , 'small_image_url'                     => true
       , 'medium_image_url'                    => true
       , 'large_image_url'                     => true
+      , 'total_new'                           => true
+      , 'total_used'                          => true
+      , 'total_collectible'                   => true
+      , 'total_refurbished'                   => true
+      , 'customer_reviews_url'                => true
+      , 'marketplace'                         => true
+      , 'created'                             => true
+      , 'modified'                            => true
     );
     $items = TableRegistry::get('Items');
-    $datas = $this->setItems($this->lookup($asin), $header, $marketolace);
+    $datas = $this->setItems($header, $request);
     $query = $items->query();
     $query->insert(array_keys($header));
     foreach($datas as $data) {
@@ -118,7 +128,7 @@ class FetchItemsTask extends Shell
     return true;
   }
 
-  private function upsertItem($asin)
+  private function upsertItem($request)
   {
     $header = array(
         'asin'                                => true
@@ -150,33 +160,40 @@ class FetchItemsTask extends Shell
       , 'release_date_at'                     => true
       , 'publication_date_at'                 => true
       , 'original_release_date_at'            => true
-      , 'condition'                           => true
-      , 'total_reviews'                       => true
-      , 'average_rating'                      => true
-      , 'total_votes'                         => true
+      , 'condition_status'                    => true
+      , 'total_reviews'                       => false
+      , 'average_rating'                      => false
+      , 'total_votes'                         => false
       , 'product_group'                       => true
-      , 'quantity'                            => true
-      //, 'quantity_allocated'                  => false
-      //, 'status'                              => false
-      , 'marketplace'                         => true
+      , 'quantity'                            => false
+      , 'quantity_allocated'                  => false
+      , 'status'                              => false
       , 'detail_page_url'                     => true
       , 'small_image_url'                     => true
       , 'medium_image_url'                    => true
       , 'large_image_url'                     => true
+      , 'total_new'                           => true
+      , 'total_used'                          => true
+      , 'total_collectible'                   => true
+      , 'total_refurbished'                   => true
+      , 'customer_reviews_url'                => true
+      , 'marketplace'                         => true
+      , 'created'                             => true
+      , 'modified'                            => true
     );
     $items = TableRegistry::get('Items');
-    $datas = $this->setItems($this->lookup($asin), $header, $marketplace);
+    $datas = $this->setItems($header, $request);
     foreach($datas as $data) {
       $entity = $items->newEntity($data);
       $item = $items->find()
-        ->where(['asin' => $entity->asin])
+        ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
         ->first();
       if($item) {
         unset($data['created']);
         $entity = $items->patchEntity($item, $data);
       }
       if(!$items->save($entity)) {
-        $this->logError($items->errors());
+        $this->logError($entity->errors());
         return false;
       }
     }
@@ -188,67 +205,164 @@ class FetchItemsTask extends Shell
     $this->log(print_r($message, true), LOG_DEBUG);
   }
 
-  private function setItems($items, $header, $marketplace)
-  {
+  private function setItems($header, $request)
+  { 
     $datas = array();
     $datetime = date('Y-m-d H:i:s');
-    foreach($items as $item) {
-      $data['asin'                                ] = $item['Items']['Item']['ASIN'];
-      $data['title'                               ] = $item['Items']['Item']['ItemAttributes']['Title'];
-      $data['is_eligible_prime'                   ] = $item['Items']['Item']['Offers']['Offer']['OfferListing']['IsEligibleForPrime'];
-      $data['is_eligible_for_supersaver_shipping' ] = $item['Items']['Item']['Offers']['Offer']['OfferListing']['IsEligibleForSuperSaverShipping'];
-      $data['item_height'                         ] = $item['Items']['Item']['ItemAttributes']['ItemDimensions']['Height'];
-      $data['item_length'                         ] = $item['Items']['Item']['ItemAttributes']['ItemDimensions']['Length'];
-      $data['item_weight'                         ] = $item['Items']['Item']['ItemAttributes']['ItemDimensions']['Weight'];
-      $data['item_width'                          ] = $item['Items']['Item']['ItemAttributes']['ItemDimensions']['Width'];
-      $data['package_height'                      ] = $item['Items']['Item']['ItemAttributes']['PackageDimensions']['Height'];
-      $data['package_length'                      ] = $item['Items']['Item']['ItemAttributes']['PackageDimensions']['Length'];
-      $data['package_weight'                      ] = $item['Items']['Item']['ItemAttributes']['PackageDimensions']['Weight'];
-      $data['package_width'                       ] = $item['Items']['Item']['ItemAttributes']['PackageDimensions']['Width'];
-      $data['list_price'                          ] = $item['Items']['Item']['ItemAttributes']['ListPrice']['Amount'];
-      $data['list_price_currency'                 ] = $item['Items']['Item']['ItemAttributes']['ListPrice']['CurrencyCode'];
-      $data['lowest_price'                        ] = $item['Items']['Item']['OfferSummary']['LowestNewPrice']['Amount'];
-      $data['lowest_price_currency'               ] = $item['Items']['Item']['OfferSummary']['LowestNewPrice']['CurrencyCode'];
-      $data['lowest_used_price'                   ] = $item['Items']['Item']['OfferSummary']['LowestUsedPrice']['Amount'];
-      $data['lowest_used_price_currency'          ] = $item['Items']['Item']['OfferSummary']['LowestUsedPrice']['CurrencyCode'];
-      $data['lowest_collectible_price'            ] = $item['Items']['Item']['OfferSummary']['LowestCollectiblePrice']['Amount'];
-      $data['lowest_collectible_price_currency'   ] = $item['Items']['Item']['OfferSummary']['LowestCollectiblePrice']['CurrencyCode'];
-      $data['offer_listing_price'                 ] = $item['Items']['Item']['Offers']['Offer']['OfferListing']['Price']['Amount'];
-      $data['offer_listing_price_currency'        ] = $item['Items']['Item']['Offers']['Offer']['OfferListing']['Price']['CurrencyCode'];
-      $data['offer_listing_saved_price'           ] = $item['Items']['Item']['Offers']['Offer']['OfferListing']['AmountSaved']['Amount'];
-      $data['offer_listing_saved_price_currency'  ] = $item['Items']['Item']['Offers']['Offer']['OfferListing']['AmountSaved']['CurrencyCode'];
-      $date['sales_ranking'                       ] = $item['Items']['Item']['SalesRank'];
-      $date['ean'                                 ] = $item['Items']['Item']['ItemAttributes']['EAN'];
-      $date['release_date_at'                     ] = $item['Items']['Item']['ItemAttributes']['ReleaseDate'];
-      $date['publication_date_at'                 ] = $item['Items']['Item']['ItemAttributes']['PublicationDate'];
-      $date['original_release_date_at'            ] = $item['Items']['Item']['ItemAttributes']['OriginalReleaseDate'];
-      $date['condition'                           ] = $item['Items']['Item']['Offers']['Offer']['OfferAttributes']['Condition'];
-      $date['total_reviews'                       ] = $item['Items']['Item']['CustomerReviews']['TotalReviews'];
-      $date['average_rating'                      ] = $item['Items']['Item']['CustomerReviews']['AverageRating'];
-      $date['total_votes'                         ] = $item['Items']['Item']['CustomerReviews']['TotalVotes'];
-      $date['product_group'                       ] = $item['Items']['Item']['ItemAttributes']['ProductGroup'];
-      $data['quantity'                            ] = $item['Items']['Item']['Cart']['Quantity'];
-      //$data['status'                              ] = $item['Items']['Item']['Status'];
-      //$data['quantity_allocated'                  ] = $item['Items']['Item']['QuantityAllocated'];
-      $data['detail_page_url'                     ] = $item['Items']['Item']['DetailPageURL'];
-      $data['small_image_url'                     ] = $item['Items']['Item']['SmallImage']['URL'];
-      $data['medium_image_url'                    ] = $item['Items']['Item']['MediumImage']['URL'];
-      $data['large_image_url'                     ] = $item['Items']['Item']['LargeImage']['URL'];
-      $data['marketplace'                         ] = $marketplace;
-      $data['created'                             ] = $datetime;
-      $data['modified'                            ] = $datetime;    
-      array_push($datas, $data);
+    $deftime  = date('Y-m-d H:i:s', 0);
+    $keys     = array_keys($header);
+    $vals     = array_values($header);
+
+    $response = $this->fetchItems($request);
+
+    foreach($response as $_response) {
+      $operation    = $_response['fetchItem']['OperationRequest'];
+      $parameter    = $_response['fetchItem']['Items']['Request'];
+      $items        = $_response['fetchItem']['Items']['Item'];
+      $marketplace  = $_response['marketplace'];
+      foreach($items as $item) {
+        if($item) {
+          //print_r($item);
+          if($vals[ 0]) $data[$keys[ 0]] = $item['ASIN'] ?? 'N/A';
+          if($vals[ 1]) $data[$keys[ 1]] = $item['ItemAttributes']['Title'] ?? 'N/A';
+          if($vals[ 2]) $data[$keys[ 2]] = $item['Offers']['Offer']['OfferListing']
+            ['IsEligibleForPrime'] ?? 0;
+          if($vals[ 3]) $data[$keys[ 3]] = $item['Offers']['Offer']['OfferListing']
+            ['IsEligibleForSuperSaverShipping'] ?? 0;
+          if($vals[ 4]) $data[$keys[ 4]]
+            = $item['ItemAttributes']['ItemDimensions']['Height'] ?? 0;
+          if($vals[ 5]) $data[$keys[ 5]]
+            = $item['ItemAttributes']['ItemDimensions']['Length'] ?? 0;
+          if($vals[ 6]) $data[$keys[ 6]]
+            = $item['ItemAttributes']['ItemDimensions']['Weight'] ?? 0;
+          if($vals[ 7]) $data[$keys[ 7]]
+            = $item['ItemAttributes']['ItemDimensions']['Width'] ?? 0;
+          if($vals[ 8]) $data[$keys[ 8]]
+            = $item['ItemAttributes']['PackageDimensions']['Height'] ?? 0;
+          if($vals[ 9]) $data[$keys[ 9]]
+            = $item['ItemAttributes']['PackageDimensions']['Length'] ?? 0;
+          if($vals[10]) $data[$keys[10]]
+            = $item['ItemAttributes']['PackageDimensions']['Weight'] ?? 0;
+          if($vals[11]) $data[$keys[11]]
+            = $item['ItemAttributes']['PackageDimensions']['Width'] ?? 0;
+          if($vals[12]) $data[$keys[12]] = $item['ItemAttributes']['ListPrice']['Amount'] ?? 0;
+          if($vals[13]) $data[$keys[13]]
+            = $item['ItemAttributes']['ListPrice']['CurrencyCode'] ?? 'N/A';
+          if($vals[14]) $data[$keys[14]]
+            = $item['OfferSummary']['LowestNewPrice']['Amount'] ?? 0;
+          if($vals[15]) $data[$keys[15]]
+            = $item['OfferSummary']['LowestNewPrice']['CurrencyCode'] ?? 'N/A';
+          if($vals[16]) $data[$keys[16]]
+            = $item['OfferSummary']['LowestUsedPrice']['Amount'] ?? 0;
+          if($vals[17]) $data[$keys[17]]
+            = $item['OfferSummary']['LowestUsedPrice']['CurrencyCode'] ?? 'N/A';
+          if($vals[18]) $data[$keys[18]]
+            = $item['OfferSummary']['LowestCollectiblePrice']['Amount'] ?? 0;
+          if($vals[19]) $data[$keys[19]]
+            = $item['OfferSummary']['LowestCollectiblePrice']['CurrencyCode'] ?? 'N/A';
+          if($vals[20]) $data[$keys[20]]
+            = $item['Offers']['Offer']['OfferListing']['Price']['Amount'] ?? 0;
+          if($vals[21]) $data[$keys[21]]
+            = $item['Offers']['Offer']['OfferListing']['Price']['CurrencyCode'] ?? 'N/A';
+          if($vals[22]) $data[$keys[22]]
+            = $item['Offers']['Offer']['OfferListing']['AmountSaved']['Amount'] ?? 0;
+          if($vals[23]) $data[$keys[23]]
+            = $item['Offers']['Offer']['OfferListing']['AmountSaved']['CurrencyCode'] ?? 'N/A';
+          if($vals[24]) $data[$keys[24]] = $item['SalesRank'] ?? 0;
+          if($vals[25]) $data[$keys[25]] = $item['ItemAttributes']['EAN'] ?? 'N/A';
+          if($vals[26]) $data[$keys[26]] = isset($item['ItemAttributes']['ReleaseDate'])
+            ? $this->getTimeStamp($item['ItemAttributes']['ReleaseDate'])         : $deftime;
+          if($vals[27]) $data[$keys[27]] = isset($item['ItemAttributes']['PublicationDate'])
+            ? $this->getTimeStamp($item['ItemAttributes']['PublicationDate'])     : $deftime;
+          if($vals[28]) $data[$keys[28]] = isset($item['ItemAttributes']['OriginalReleaseDate'])
+            ? $this->getTimeStamp($item['ItemAttributes']['OriginalReleaseDate']) : $deftime;
+          if($vals[29]) $data[$keys[29]]
+            = $item['Offers']['Offer']['OfferAttributes']['Condition'] ?? 'N/A';
+          if($vals[30]) $data[$keys[30]] = $item['CustomerReviews']['TotalReviews'] ?? 0;
+          if($vals[31]) $data[$keys[31]] = $item['CustomerReviews']['AverageRating'] ?? 0;
+          if($vals[32]) $data[$keys[32]] = $item['CustomerReviews']['TotalVotes'] ?? 0;
+          if($vals[33]) $data[$keys[33]] = $item['ItemAttributes']['ProductGroup'] ?? 'N/A';
+          if($vals[34]) $data[$keys[34]] = $item['Cart']['Quantity'] ?? 0;
+          if($vals[35]) $data[$keys[35]] = $item['Status'] ?? 0;
+          if($vals[36]) $data[$keys[36]] = $item['QuantityAllocated'] ?? 0;
+          if($vals[37]) $data[$keys[37]] = $item['DetailPageURL'] ?? 'N/A';
+          if($vals[38]) $data[$keys[38]] = $item['SmallImage']['URL'] ?? 'N/A';
+          if($vals[39]) $data[$keys[39]] = $item['MediumImage']['URL'] ?? 'N/A';
+          if($vals[40]) $data[$keys[40]] = $item['LargeImage']['URL'] ?? 'N/A';
+          if($vals[41]) $data[$keys[41]] = $item['OfferSummary']['TotalNew'] ?? 0;        
+          if($vals[42]) $data[$keys[42]] = $item['OfferSummary']['TotalUsed'] ?? 0;       
+          if($vals[43]) $data[$keys[43]] = $item['OfferSummary']['TotalCollectible'] ?? 0;
+          if($vals[44]) $data[$keys[44]] = $item['OfferSummary']['TotalRefurbished'] ?? 0;
+          if($vals[45]) $data[$keys[45]] = $item['CustomerReviews']['IFrameURL'] ?? 'N/A';
+          if($vals[46]) $data[$keys[46]] = $marketplace;
+          if($vals[47]) $data[$keys[47]] = $datetime;
+          if($vals[48]) $data[$keys[48]] = $datetime;    
+          array_push($datas, $data);
+        }
+      }
     }
     return $datas;
   }
 
-  private function lookup($asin) {
+  private function getTimeStamp($str)
+  {
+    return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
+  }
+
+  private function fetchItems($request)
+  {
+    $response = array();
+    $asins_jp = array();
+    $asins_au = array();
+    $asins_us = array();
+    $eol = count($request);
+    $idx = 0;
+    foreach($request as $_request) {
+      switch($_request['marketplace']) {
+      case 'JP':
+        array_push($asins_jp, $_request['asin']);
+        if(count($asins_jp) > 10 || $idx === $eol - 1) {
+          array_push($response, ['fetchItem' => $this->fetchItem(implode(',', $asins_jp), 'JP')
+            , 'marketplace' => 'JP']);
+          $asins_jp = array();
+        }
+        break;
+      case 'AU':
+        array_push($asins_au, $_request['asin']);
+        if(count($asins_au) > 10 || $idx === $eol - 1 ) {
+          array_push($response, ['fetchItem' => $this->fetchItem(implode(',', $asins_au), 'AU')
+            , 'marketplace' => 'AU']);
+          $asins_au = array();
+        }
+        break;
+      case 'US':
+        array_push($asins_us, $_request['asin']);
+        if(count($asins_us) > 10 || $idx === $eol - 1) {
+          array_push($response, ['fetchItem' => $this->fetchItem(implode(',', $asins_us), 'US')
+            , 'marketplace' => 'US']);
+          $asins_us = array();
+        }
+        break;
+      }
+      $idx += 1;
+    }
+    return $response;
+  }
+
+  private function fetchItem($asin, $marketplace) {
     $conf = new GenericConfiguration();
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
+    switch($marketplace) {
+      case 'JP':  $country = Country::JAPAN;          break;
+      case 'US':  $country = Country::INTERNATIONAL;  break;
+      case 'AU':  $country = Country::AUSTRALIA;      break;
+      default:    $country = Country::JAPAN;          break;
+    }
+    sleep(5);
     try {
       $conf
-        ->setCountry(Country::JAPAN)
+        ->setCountry($country)
         ->setAccessKey($this->access_key)
         ->setSecretKey($this->secret_key)
         ->setAssociateTag($this->associ_tag)
@@ -261,7 +375,9 @@ class FetchItemsTask extends Shell
     $apaiIo = new ApaiIO($conf);
     $lookup = new Lookup();
     $lookup->setItemId($asin);
-    $lookup->setResponseGroup(array('Large'));
+    $lookup->setResponseGroup(array(
+      'Images', 'ItemAttributes', 'OfferListings', 'OfferSummary', 'SalesRank', 'Reviews'
+    ));
     return $apaiIo->runOperation($lookup);
   }
 

@@ -5,16 +5,16 @@ use App\Controller\AppController;
 use Cake\Event\Event;
 
 /**
- * Asins Controller
+ * Items Controller
  *
- * @property \App\Model\Table\AsinsTable $Asins
+ * @property \App\Model\Table\ItemsTable $Items
  *
- * @method \App\Model\Entity\Asin[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @method \App\Model\Entity\Item[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class AsinsController extends AppController
+class ItemsController extends AppController
 {
-  public $helpers = ['Paginator' => ['templates' => 'paginator-templates']];
-
+  public $helpers =['Paginator' => ['templates' => 'paginator-templates']];
+  
   public function initialize()
   {
     parent::initialize();
@@ -37,25 +37,25 @@ class AsinsController extends AppController
    */
   public function index()
   {
-    $asins = $this->paginate($this->Asins);
+    $items = $this->paginate($this->Items);
 
-    $this->set(compact('asins'));
+    $this->set(compact('items'));
   }
 
   /**
    * View method
    *
-   * @param string|null $id Asin id.
+   * @param string|null $id Item id.
    * @return \Cake\Http\Response|void
    * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
    */
   public function view($id = null)
   {
-    $asin = $this->Asins->get($id, [
+    $item = $this->Items->get($id, [
       'contain' => []
     ]);
 
-    $this->set('asin', $asin);
+    $this->set('item', $item);
   }
 
   /**
@@ -65,58 +65,58 @@ class AsinsController extends AppController
    */
   public function add()
   {
-    $asin = $this->Asins->newEntity();
+    $item = $this->Items->newEntity();
     if ($this->request->is('post')) {
-      $asin = $this->Asins->patchEntity($asin, $this->request->getData());
-      if ($this->Asins->save($asin)) {
-        $this->Flash->success(__('The asin has been saved.'));
+      $item = $this->Items->patchEntity($item, $this->request->getData());
+      if ($this->Items->save($item)) {
+        $this->Flash->success(__('The item has been saved.'));
 
         return $this->redirect(['action' => 'index']);
       }
-      $this->Flash->error(__('The asin could not be saved. Please, try again.'));
+      $this->Flash->error(__('The item could not be saved. Please, try again.'));
     }
-    $this->set(compact('asin'));
+    $this->set(compact('item'));
   }
 
   /**
    * Edit method
    *
-   * @param string|null $id Asin id.
+   * @param string|null $id Item id.
    * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
    * @throws \Cake\Network\Exception\NotFoundException When record not found.
    */
   public function edit($id = null)
   {
-    $asin = $this->Asins->get($id, [
+    $item = $this->Items->get($id, [
       'contain' => []
     ]);
     if ($this->request->is(['patch', 'post', 'put'])) {
-      $asin = $this->Asins->patchEntity($asin, $this->request->getData());
-      if ($this->Asins->save($asin)) {
-        $this->Flash->success(__('The asin has been saved.'));
+      $item = $this->Items->patchEntity($item, $this->request->getData());
+      if ($this->Items->save($item)) {
+        $this->Flash->success(__('The item has been saved.'));
 
         return $this->redirect(['action' => 'index']);
       }
-      $this->Flash->error(__('The asin could not be saved. Please, try again.'));
+      $this->Flash->error(__('The item could not be saved. Please, try again.'));
     }
-    $this->set(compact('asin'));
+    $this->set(compact('item'));
   }
 
   /**
    * Delete method
    *
-   * @param string|null $id Asin id.
+   * @param string|null $id Item id.
    * @return \Cake\Http\Response|null Redirects to index.
    * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
    */
   public function delete($id = null)
   {
     $this->request->allowMethod(['post', 'delete']);
-    $asin = $this->Asins->get($id);
-    if ($this->Asins->delete($asin)) {
-      $this->Flash->success(__('The asin has been deleted.'));
+    $item = $this->Items->get($id);
+    if ($this->Items->delete($item)) {
+      $this->Flash->success(__('The item has been deleted.'));
     } else {
-      $this->Flash->error(__('The asin could not be deleted. Please, try again.'));
+      $this->Flash->error(__('The item could not be deleted. Please, try again.'));
     }
 
     return $this->redirect(['action' => 'index']);
