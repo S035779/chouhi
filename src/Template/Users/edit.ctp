@@ -49,6 +49,15 @@
 
             <ul class="nav flex-column">
               <li class="nav-item">
+              <li class="nav-item">
+                <?= $this->Form->postLink(
+                  $this->Html->tag('span', '', ['data-feather' => 'file'])
+                  . ' ユーザ削除 '
+                , ['controller' => 'Users', 'action' => 'delete', $user->id]
+                , ['confirm' => __('Are you sure you want to delete #{0}?', $user->id)
+                  , 'escape' => false, 'class' => 'nav-link']
+                ) ?>
+              </li>
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'home'])
                   . ' ユーザ一覧 ' .

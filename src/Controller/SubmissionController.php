@@ -18,14 +18,14 @@ use Cake\Event\Event;
  */
 class SubmissionController extends AppController
 {
-    public $helpers =[
-      'Form' => [
-        'templates' => 'Templates/form-templates'
-      , 'widgets' => [
-          'datepicker' => ['DatePicker']
-        ]
-      ]
-    ];
+    //public $helpers =[
+    //  'Form' => [
+    //    'templates' => 'Templates/form-templates'
+    //  , 'widgets' => [
+    //      'datepicker' => ['DatePicker']
+    //    ]
+    //  ]
+    //];
 
     public function beforeFilter(Event $event)
     {

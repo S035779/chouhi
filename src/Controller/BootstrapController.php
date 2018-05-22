@@ -20,6 +20,7 @@ class BootstrapController extends AppController
   {
     parent::initialize();
     $this->viewBuilder()->setLayout('dashboard');
+    $this->loadComponent('Common');
   }
 
   public function beforeFilter(Event $event)
@@ -28,6 +29,7 @@ class BootstrapController extends AppController
   }
 
   public function isAuthorized($user) {
+    $this->user = $user;
     return true;
   }
 
@@ -50,7 +52,42 @@ class BootstrapController extends AppController
   public function token()
   {
     $title = 'Token registration for AmazonMWS tools';
-    $this->set(compact('title'));
+    $tokens = TableRegistry::get('Tokens'); 
+    $token = $tokens->find()->contain(['Sellers'])
+      ->where(['Sellers.email' => $this->user['email']])
+      ->first();
+
+    if ($this->request->is(['patch', 'post', 'put'])) {
+      $data = $this->request->getData();
+      if ($token) {
+        $entity = $tokens->patchEntity($token, $data);
+      } else {
+        $data['suspended'] = 0;
+        $data['seller']['email'] = $this->user['email'];
+        $entity = $tokens->newEntity($data);
+      }
+      if ($tokens->save($entity)) {
+        $this->Flash->success(__('The token has been saved.'));
+        return $this->redirect(['action' => 'index']);
+      }
+      $this->Common->debug($entity->errors());
+      $this->Flash->error(__('The token cound not be saved. Please, try again.'));
+    }
+
+    $this->set(compact('title', 'token'));
+  }
+
+  public function confirmation() 
+  {
+    $this->request->allowMethod(['patch', 'post', 'put']);
+    if($this->Common->confirmation($this->request->getData())) 
+    {
+      $this->Flash->success(__('The token has been confirmed.'));
+    } else {
+      $this->Flash->error(__('The token cound not be confirmed. Please, try again.'));
+    }
+
+    return $this->redirect(['action' => 'token']);
   }
 
   /**

@@ -11,6 +11,23 @@
     <ul class="nav flex-column">
       <li class="nav-item">
         <?= $this->Html->link(
+          $this->Html->tag('span', '', ['data-feather' => 'file'])
+          . __(' 商品編集 ')
+        , ['controller' => 'Items', 'action' => 'edit', $item->id]
+        , ['escape' => false, 'class' => 'nav-link']
+        ) ?> 
+      </li>
+      <li class="nav-item">
+        <?= $this->Form->postLink(
+          $this->Html->tag('span', '', ['data-feather' => 'file'])
+          . __(' 商品削除 ')
+        , ['controller' => 'Items', 'action' => 'delete', $item->id]
+        , ['confirm' => __('Are you sure you want to delete # {0}?', $item->id)
+          , 'escape' => false, 'class' => 'nav-link']
+        ) ?> 
+      </li>
+      <li class="nav-item">
+        <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'home'])
           . __(' 商品一覧 ') .
           $this->Html->tag('span', '(current)', ['class' => 'sr-only'])

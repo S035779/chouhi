@@ -26,29 +26,19 @@ class CommonComponent extends Component
    * @var array
    */
   protected $_defaultConfig = [];
-  //public $components = ['OtherOne', 'OtherTwo', 'OtherTree'];
 
-  public function index()
+  public function debug($message)
   {
-    //$ret = $this->OtherOne->hoge();
+    $this->log(print_r($message, true), LOG_DEBUG);
   }
 
-  public function abcd($number)
+  public function error($message)
   {
-    if($number > 10) {
-      return true;
-    } else {
-      return false;
-    }
+    $this->log(print_r($message, true), LOG_ERROR);
   }
 
-  public function efgh()
-  {
-    $controller = $this->_registry->getController();
-
-    //$param = $controller->hoge;
-    $result = $controller->getUser();
-    return $result;
+  public function confirmation() {
+    return true;
   }
 
   public function getFeedType($jobType)

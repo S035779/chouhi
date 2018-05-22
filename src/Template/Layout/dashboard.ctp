@@ -27,7 +27,7 @@
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
           <?= $this->Html->link(
-            ' Sign out '
+            __(' Sign out ')
           , ['controller' => 'Users', 'action' => 'signout']
           , ['class' => 'nav-link']
           ) ?>
@@ -47,7 +47,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'pie-chart'])
-                  . ' ダッシュボード '
+                  . __(' ダッシュボード ')
                 , ['controller' => 'Bootstrap', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -55,7 +55,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file'])
-                  . ' トークン設定 '
+                  . __(' トークン設定 ')
                 , ['controller' => 'Bootstrap', 'action' => 'token']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -63,7 +63,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'search'])
-                  . ' 商品検索 '
+                  . __(' 商品検索 ')
                 , ['controller' => 'Bootstrap', 'action' => 'search']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -71,7 +71,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'shopping-cart'])
-                  . ' マーケット出品 '
+                  . __(' マーケット出品 ')
                 , ['controller' => 'Bootstrap', 'action' => 'market']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -79,7 +79,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'user'])
-                  . ' ユーザ管理 '
+                  . __(' ユーザ管理 ')
                 , ['controller' => 'Bootstrap', 'action' => 'setting']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -87,7 +87,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'bar-chart-2'])
-                  . ' 新規ASIN登録 '
+                  . __(' 新規ASIN登録 ')
                 , ['controller' => 'Bootstrap', 'action' => 'registration']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -95,7 +95,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'layers'])
-                  . ' 禁止ASIN登録 '
+                  . __(' 禁止ASIN登録 ')
                 , ['controller' => 'Bootstrap', 'action' => 'suspension']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -103,7 +103,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'percent'])
-                  . ' 販売価格設定 '
+                  . __(' 販売価格設定 ')
                 , ['controller' => 'Bootstrap', 'action' => 'calculation']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -121,7 +121,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . ' ASIN管理マスタ '
+                  . __(' ASIN管理マスタ ')
                 , ['controller' => 'Asins', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -129,7 +129,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . ' ユーザ管理マスタ '
+                  . __(' ユーザ管理マスタ ')
                 , ['controller' => 'Users', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -137,7 +137,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . ' 商品管理マスタ '
+                  . __(' 商品管理マスタ ')
                 , ['controller' => 'Items', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -145,7 +145,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . ' 送料管理マスタ '
+                  . __(' 送料管理マスタ ')
                 , ['controller' => 'Delivery', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -153,7 +153,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . ' トークン管理マスタ '
+                  . __(' トークン管理マスタ ')
                 , ['controller' => 'Tokens', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>

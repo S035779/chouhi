@@ -6,18 +6,21 @@
 
           <div class="container">
             <div class="row">
-              <div class="col-md-4 order-md-2 mb-4">
-              </div>
               <div class="col-md-8 order-md-1">
                 <h4 class="mb-3">APIアクセスキー登録</h4>
-                <form class="needs-validation" novalidate>
+                <?= $this->Form->create($token, [
+                  'url' => ['controller' => 'Bootstrap', 'action' => 'token']
+                , 'class' => 'needs-validation'
+                , 'novalidate' => true
+                ]) ?>
 
                   <div class="mb-3">
                     <label for="access_key">アクセスキー</label>
-                    <input type="text"
-                      class="form-control"
-                      id="access_key"
-                      placeholder="Your Access Key Id" required>
+                    <?= $this->Form->text('access_key', [
+                      'required'    => true
+                    , 'class'       => 'form-control'
+                    , 'placeholder' => 'Your Access Key Id'
+                    ])?>
                     <div class="invalid-feedback">
                       Please enter a valid AWSAccessKeyId.
                     </div>
@@ -25,73 +28,98 @@
 
                   <div class="mb-3">
                     <label for="secret_key">シークレットキー</label>
-                    <input type="text"
-                      class="form-control"
-                      id="secret_key"
-                      placeholder="Your Secret Key" required>
+                    <?= $this->Form->text('secret_key', [
+                      'required'    => true
+                    , 'class'       => 'form-control'
+                    , 'placeholder' => 'Your Secret Key'
+                    ])?>
                     <div class="invalid-feedback">
                       Please enter a valid AWSSecretKeyId.
                     </div>
                   </div>
 
                   <div class="mb-3">
-                    <label for="sellerid">セラーＩＤ</label>
-                    <input type="text"
-                      class="form-control"
-                      id="sellerid"
-                      placeholder="Your Seller Id" required>
+                    <label for="seller.seller">セラーＩＤ</label>
+                    <?= $this->Form->text('seller.seller', [
+                      'required'    => true
+                    , 'class'       => 'form-control'
+                    , 'placeholder' => 'Your Seller Id'
+                    ])?>
                     <div class="invalid-feedback">
                       Please enter a valid Seller Id.
                     </div>
                   </div>
 
                   <div class="mb-3">
+                    <label for="seller.marketplace">マーケットプレイス</label>
+                    <?= $this->Form->select('seller.marketplace', [
+                      'JP' =>  'Japan', 'AU' =>  'Austraria', 'US' => 'United stats'
+                    ], [
+                      'required'    => true
+                    , 'class'       => 'form-control'
+                    , 'empty'       => 'Your Marketplace'
+                    ])?>
+                    <div class="invalid-feedback">
+                      Please enter a valid Marketplace country.
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="pa_access_key">PAアクセスキー</label>
+                    <?= $this->Form->text('pa_access_key', [
+                      'required'    => true
+                    , 'class'       => 'form-control'
+                    , 'placeholder' => 'Your PA Access Key Id'
+                    ])?>
+                    <div class="invalid-feedback">
+                      Please enter a valid PA-API AccessKeyId.
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="pa_secret_key">PAシークレットキー</label>
+                    <?= $this->Form->text('pa_secret_key', [
+                      'required'    => true
+                    , 'class'       => 'form-control'
+                    , 'placeholder' => 'Your PA Secret Key'
+                    ])?>
+                    <div class="invalid-feedback">
+                      Please enter a valid PA-API SecretKeyId.
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="pa_associate_tag">アソシエイトタグ</label>
+                    <?= $this->Form->text('pa_associate_tag', [
+                      'required'    => true
+                    , 'class'       => 'form-control'
+                    , 'placeholder' => 'Your Associate Tag'
+                    ])?>
+                    <div class="invalid-feedback">
+                      Please enter a valid Associate Tag.
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
                     <label for="sellerid">接続確認</label>
-                    <button type="button"
-                      class="btn btn-outline-dark btn-block"
-                      data-toggle="modal" data-target="#myModal">
-                      確認する
-                    </button>
+                    <?= $this->Form->postLink('確認する'
+                    , ['controller' => 'Bootstrap', 'action' => 'confirmation']
+                    , ['class' => 'btn btn-outline-dark btn-block', 'role' => 'button'
+                      , 'block' => true
+                    ]) ?>
                   </div>
 
                   <hr class="mb-4">
-                  <button type="submit"
-                    class="btn btn-primary btn-lg btn-block">
-                    登録する
-                  </button>
-
-                </form>
+                  <?= $this->Form->button(__('登録する'), [
+                    'class' => 'btn btn-primary btn-lg btn-block'
+                  ]) ?>
+                <?= $this->Form->end() ?>
+                <?= $this->fetch('postLink') ?>
               </div>
             </div>
           </div>
 
-
         </main>
-      </div>
-    </div>
-
-    <!-- The Modal -->
-    <div class="modal fade" id="myModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">送信完了</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-
-          <!-- Modal body -->
-          <div class="modal-body">
-            処理を受け付ました。
-          </div>
-
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          </div>
-
-        </div>
       </div>
     </div>
 

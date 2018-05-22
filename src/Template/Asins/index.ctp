@@ -31,7 +31,7 @@
   </div>
 </nav>
 
-<!-- Main contens -->
+<!-- Main contents -->
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2"><?= __('ASIN管理マスタ') ?></h1>
@@ -62,9 +62,9 @@
             <td><?= h($asin->modified) ?></td>
             <td><?= h($asin->suspended) ?></td>
             <td class="actions">
-                <?= $this->Html->link(__('View'), ['action' => 'view', $asin->id]) ?>
-                <?= $this->Html->link(__('Edit'), ['action' => 'edit', $asin->id]) ?>
-                <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $asin->id], ['confirm' => __('Are you sure you want to delete # {0}?', $asin->id)]) ?>
+              <?= $this->Html->link(__('View'), ['action' => 'view', $asin->id]) ?>
+              <?= $this->Html->link(__('Edit'), ['action' => 'edit', $asin->id]) ?>
+              <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $asin->id], ['confirm' => __('Are you sure you want to delete # {0}?', $asin->id)]) ?>
             </td>
           </tr>
           <?php endforeach; ?>

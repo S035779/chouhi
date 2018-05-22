@@ -6,7 +6,7 @@
 
           <div class="container">
             <div class="row mb-4">
-              <div class="col-md-8 order-md-1">
+              <div class="col-md-12 order-md-1">
                 <form class="needs-validation" novalidate>
 
                   <h4 class="mb-3">販売商品</h4>
