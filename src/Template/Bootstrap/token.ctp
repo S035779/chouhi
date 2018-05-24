@@ -1,13 +1,13 @@
         <!-- Main contens -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">トークン設定</h1>
+            <h1 class="h2"><?= __('トークン設定') ?></h1>
           </div>
 
           <div class="container">
             <div class="row">
               <div class="col-md-8 order-md-1">
-                <h4 class="mb-3">APIアクセスキー登録</h4>
+                <h4 class="mb-3"><?= __('APIアクセスキー登録') ?></h4>
                 <?= $this->Form->create($token, [
                   'url' => ['controller' => 'Bootstrap', 'action' => 'token']
                 , 'class' => 'needs-validation'
@@ -15,7 +15,7 @@
                 ]) ?>
 
                   <div class="mb-3">
-                    <label for="access_key">アクセスキー</label>
+                    <label for="access_key"><?= __('アクセスキー') ?></label>
                     <?= $this->Form->text('access_key', [
                       'required'    => true
                     , 'class'       => 'form-control'
@@ -27,7 +27,7 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="secret_key">シークレットキー</label>
+                    <label for="secret_key"><?= __('シークレットキー') ?></label>
                     <?= $this->Form->text('secret_key', [
                       'required'    => true
                     , 'class'       => 'form-control'
@@ -39,7 +39,7 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="seller.seller">セラーＩＤ</label>
+                    <label for="seller.seller"><?= __('セラーＩＤ') ?></label>
                     <?= $this->Form->text('seller.seller', [
                       'required'    => true
                     , 'class'       => 'form-control'
@@ -51,7 +51,7 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="seller.marketplace">マーケットプレイス</label>
+                    <label for="seller.marketplace"><?= __('マーケットプレイス') ?></label>
                     <?= $this->Form->select('seller.marketplace', [
                       'JP' =>  'Japan', 'AU' =>  'Austraria', 'US' => 'United stats'
                     ], [
@@ -65,7 +65,7 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="pa_access_key">PAアクセスキー</label>
+                    <label for="pa_access_key"><?= __('PAアクセスキー') ?></label>
                     <?= $this->Form->text('pa_access_key', [
                       'required'    => true
                     , 'class'       => 'form-control'
@@ -77,7 +77,7 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="pa_secret_key">PAシークレットキー</label>
+                    <label for="pa_secret_key"><?= __('PAシークレットキー') ?></label>
                     <?= $this->Form->text('pa_secret_key', [
                       'required'    => true
                     , 'class'       => 'form-control'
@@ -89,7 +89,7 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="pa_associate_tag">アソシエイトタグ</label>
+                    <label for="pa_associate_tag"><?= __('アソシエイトタグ') ?></label>
                     <?= $this->Form->text('pa_associate_tag', [
                       'required'    => true
                     , 'class'       => 'form-control'
@@ -101,20 +101,19 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="sellerid">接続確認</label>
-                    <?= $this->Form->postLink('確認する'
-                    , ['controller' => 'Bootstrap', 'action' => 'confirmation']
-                    , ['class' => 'btn btn-outline-dark btn-block', 'role' => 'button'
-                      , 'block' => true
+                  <label><?= __('接続確認') ?></label>
+                    <?= $this->Form->button(__('確認する'), [
+                      'class' => 'btn btn-outline-dark btn-block'
+                    , 'name'  => 'confirmation'
                     ]) ?>
                   </div>
 
                   <hr class="mb-4">
                   <?= $this->Form->button(__('登録する'), [
                     'class' => 'btn btn-primary btn-lg btn-block'
+                  , 'name'  => 'registration'
                   ]) ?>
                 <?= $this->Form->end() ?>
-                <?= $this->fetch('postLink') ?>
               </div>
             </div>
           </div>

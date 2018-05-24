@@ -6,6 +6,7 @@ use Cake\Controller\ComponentRegistry;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\TransferException;
 use MarketplaceWebServiceProducts\Component\GetMatchingProductForIdComponent;
+use MarketplaceWebServiceSellers\Component\ListMarketplaceParticipations;
 
 /**
  * Common component
@@ -27,6 +28,24 @@ class CommonComponent extends Component
    */
   protected $_defaultConfig = [];
 
+  /**
+   * Amazon MWS ListMarketplaceParticipations/GetServiceStatus
+   * 
+   * Slotling = 15 counts. recovery rate = 1 count/min.
+   * response: NestToken, ListParticipations, ListMarketplaces.
+   */
+  public function listMarketplaceParticipations($params)
+  {
+    $amazon = new ListMarketplaceParticipations();
+    return $amazon->fetch($params);
+  }
+
+  public function fetchMatchingProductForId($params, $baseurl, $secret_key)
+  {
+    $amazon =  new GetMatchingProductForIdComponent();
+    return $amazon->fetch($params, $baseurl, $secret_key);
+  }
+
   public function debug($message)
   {
     $this->log(print_r($message, true), LOG_DEBUG);
@@ -35,10 +54,6 @@ class CommonComponent extends Component
   public function error($message)
   {
     $this->log(print_r($message, true), LOG_ERROR);
-  }
-
-  public function confirmation() {
-    return true;
   }
 
   public function getFeedType($jobType)
@@ -74,12 +89,6 @@ class CommonComponent extends Component
       case 3:
         return 'false';
     }
-  }
-
-  public function fetchMatchingProductForId($params, $baseurl, $secret_key)
-  {
-    $amazon =  new GetMatchingProductForIdComponent();
-    return $amazon->fetch($params, $baseurl, $secret_key);
   }
 
   public function upload($params, $baseurl, $secret_key, $jobType=0)

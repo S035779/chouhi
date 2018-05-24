@@ -58,36 +58,59 @@ class BootstrapController extends AppController
       ->first();
 
     if ($this->request->is(['patch', 'post', 'put'])) {
-      $data = $this->request->getData();
-      if ($token) {
-        $entity = $tokens->patchEntity($token, $data);
-      } else {
-        $data['suspended'] = 0;
-        $data['seller']['email'] = $this->user['email'];
-        $entity = $tokens->newEntity($data);
+      $request = $this->request->getData();
+      if (isset($this->request->data['registration'])) {
+        if ($token) {
+          $entity = $tokens->patchEntity($token, $request);
+        } else {
+          $request['suspended'] = 0;
+          $request['seller']['email'] = $this->user['email'];
+          $entity = $tokens->newEntity($request);
+        }
+        if ($tokens->save($entity)) {
+          $this->Flash->success(__('The token has been saved.'));
+          return $this->redirect(['action' => 'index']);
+        }
+        $this->Common->debug($entity->errors());
+        $this->Flash->error(__('The token cound not be saved. Please, try again.'));
+      } elseif (isset($this->request->data['confirmation'])) {
+        switch($request['seller']['marketplace']) {
+          case 'JP':
+            $mws_base_url = $this->Common::MWS_BASEURL_JP;
+            $mws_marketId = $this->Common::MWS_MARKETPLACE_JP;
+            break;
+          case 'AU':
+            $mws_base_url = $this->Common::MWS_BASEURL_AU;
+            $mws_marketId = $this->Common::MWS_MARKETPLACE_AU;
+            break;
+          case 'US':
+            $mws_base_url = $this->Common::MWS_BASEURL_US;
+            $mws_marketId = $this->Common::MWS_MARKETPLACE_US;
+            break;
+        }
+        //$jobType = 1;
+        $params=array();
+        $params['AWSAccessKeyId']   = $request['access_key'];
+        $params['AWSSecretKey']     = $request['secret_key'];
+        $params['SellerId']         = $request['seller']['seller'];
+        $params['BaseURL']          = $mws_base_url;
+        $response = $this->Common->listMarketplaceParticipations($params);
+        $suspended = '';
+        foreach($response['Result']['Participations'] as $participations) {
+          if($participations['MarketplaceId'] === $mws_marketId
+            && $participations['SellerId'] === $request['seller']['seller']) {
+            $suspended = $participations['Suspended'];
+          } 
+        }
+        if($suspended === 'No') {
+          $this->Flash->success(__('The token has been confirmed.'));
+        } else {
+          $this->Common->debug($entity->errors());
+          $this->Flash->error(__('The token cound not be confirmed. Please, try again.'));
+        }
       }
-      if ($tokens->save($entity)) {
-        $this->Flash->success(__('The token has been saved.'));
-        return $this->redirect(['action' => 'index']);
-      }
-      $this->Common->debug($entity->errors());
-      $this->Flash->error(__('The token cound not be saved. Please, try again.'));
     }
-
     $this->set(compact('title', 'token'));
-  }
-
-  public function confirmation() 
-  {
-    $this->request->allowMethod(['patch', 'post', 'put']);
-    if($this->Common->confirmation($this->request->getData())) 
-    {
-      $this->Flash->success(__('The token has been confirmed.'));
-    } else {
-      $this->Flash->error(__('The token cound not be confirmed. Please, try again.'));
-    }
-
-    return $this->redirect(['action' => 'token']);
   }
 
   /**
@@ -98,7 +121,11 @@ class BootstrapController extends AppController
   public function search()
   {
     $title = 'Search Amazon items';
-    $this->set(compact('title'));
+    $request = $this->request->getData();
+    $_items = TableRegistry::get('Items'); 
+    $items = $_items->find()->all();
+
+    $this->set(compact('title', 'items'));
   }
 
   /**
@@ -120,7 +147,24 @@ class BootstrapController extends AppController
   public function setting()
   {
     $title = 'User setting';
-    $this->set(compact('title'));
+    $users = TableRegistry::get('Users'); 
+    $user = $users->find()
+      ->where(['email' => $this->user['email']])
+      ->first();
+
+    if ($this->request->is(['patch', 'post', 'put'])) {
+      $request = $this->request->getData();
+      if($user && $request['password'] === $request['confirm_password']) {
+        $entity = $users->patchEntity($user, $request);
+        if ($users->save($entity)) {
+          $this->Flash->success(__('The password has been changed.'));
+          return $this->redirect(['action' => 'index']);
+        }
+      }
+      $this->Common->debug($entity->errors());
+      $this->Flash->error(__('The password cound not be changed. Please, try again.'));
+    }
+    $this->set(compact('title', 'user'));
   }
 
   /**
