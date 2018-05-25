@@ -111,6 +111,9 @@
               <th scope="col"><?= __('Secret Key') ?></th>
               <th scope="col"><?= __('Seller Id') ?></th>
               <th scope="col"><?= __('Suspended') ?></th>
+              <th scope="col"><?= __('Pa Access Key') ?></th>
+              <th scope="col"><?= __('Pa Secret Key') ?></th>
+              <th scope="col"><?= __('Pa Associate Tag') ?></th>
               <th scope="col"><?= __('Created') ?></th>
               <th scope="col"><?= __('Modified') ?></th>
               <th scope="col" class="actions"><?= __('Actions') ?></th>
@@ -122,6 +125,9 @@
               <td><?= h($tokens->secret_key) ?></td>
               <td><?= h($tokens->seller_id) ?></td>
               <td><?= h($tokens->suspended) ?></td>
+              <td><?= h($tokens->pa_access_key) ?></td>
+              <td><?= h($tokens->pa_secret_key) ?></td>
+              <td><?= h($tokens->pa_associate_tag) ?></td>
               <td><?= h($tokens->created) ?></td>
               <td><?= h($tokens->modified) ?></td>
               <td class="actions">

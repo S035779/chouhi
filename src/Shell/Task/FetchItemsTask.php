@@ -50,7 +50,7 @@ class FetchItemsTask extends Shell
 
   private function execItemLookup() {
     $asins = TableRegistry::get('Asins');
-    $datas = $asins->find();
+    $datas = $asins->find()->where(['asin' => false]);
     $request = array();
     foreach($datas as $data) {
       array_push($request, ['asin' => $data->asin, 'marketplace' => $data->marketplace]);
@@ -200,11 +200,6 @@ class FetchItemsTask extends Shell
     return true;
   }
 
-  private function logError($message)
-  {
-    $this->log(print_r($message, true), LOG_DEBUG);
-  }
-
   private function setItems($header, $request)
   { 
     $datas = array();
@@ -304,11 +299,6 @@ class FetchItemsTask extends Shell
     return $datas;
   }
 
-  private function getTimeStamp($str)
-  {
-    return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
-  }
-
   private function fetchItems($request)
   {
     $response = array();
@@ -379,6 +369,21 @@ class FetchItemsTask extends Shell
       'Images', 'ItemAttributes', 'OfferListings', 'OfferSummary', 'SalesRank', 'Reviews'
     ));
     return $apaiIo->runOperation($lookup);
+  }
+
+  private function getTimeStamp($str)
+  {
+    return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
+  }
+
+  private function logError($message)
+  {
+    $this->log(print_r($message, true), LOG_ERROR);
+  }
+
+  private function logDebug($message)
+  {
+    $this->log(print_r($message, true), LOG_DEBUG);
   }
 
 }

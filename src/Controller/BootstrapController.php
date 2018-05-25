@@ -121,11 +121,28 @@ class BootstrapController extends AppController
   public function search()
   {
     $title = 'Search Amazon items';
-    $request = $this->request->getData();
-    $_items = TableRegistry::get('Items'); 
-    $items = $_items->find()->all();
+    $_offers = TableRegistry::get('Offers'); 
 
-    $this->set(compact('title', 'items'));
+    if($this->request->is('get')) {
+      $request = $this->request->getData();
+      $conditions = array();
+      if(!empty($request['period'])) {
+        $conditions['modified'] = '> ' . $request['period'];
+      }
+
+      if(!empty($request['riserate'])) {
+        $conditions['price'] = '> ' . $request['riserate'];
+      }
+
+      if(!empty($request['profitrange'])) {
+        $conditions['price'] = '> ' . $request['profitrange'];
+      }
+
+      $offers = $_offers->find()->contain(['Items'])
+        ->where($conditions);
+    }
+
+    $this->set(compact('title', 'offers'));
   }
 
   /**

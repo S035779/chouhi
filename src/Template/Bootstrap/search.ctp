@@ -8,7 +8,7 @@
             <div class="row">
               <div class="col-md-12 order-md-1">
               <h4 class="mb-3"><?= __('検索条件') ?></h4>
-                <?= $this->Form->create($items, [
+                <?= $this->Form->create($offers, [
                   'url' => ['controller' => 'Bootstrap', 'action' => 'search']
                 , 'class' => 'needs-validation'
                 , 'novalidate' => true

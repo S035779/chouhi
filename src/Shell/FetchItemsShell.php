@@ -8,7 +8,7 @@ use Cake\Console\Shell;
  */
 class FetchItemsShell extends Shell
 {
-  public $tasks = ['FetchItems'];
+  public $tasks = ['FetchItems', 'FetchOfferItems'];
 
   /**
    * Manage the available sub-commands along with their arguments and help
@@ -32,5 +32,6 @@ class FetchItemsShell extends Shell
   public function main()
   {
     $this->FetchItems->main();
+    $this->FetchOfferItems->main();
   }
 }

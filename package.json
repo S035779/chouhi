@@ -5,6 +5,9 @@
   "author": "Mamoru Hashimoto",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "cron": "interval.sh"
+  },
   "devDependencies": {
     "bootstrap-sass": "^3.3.7",
     "cakephp3-elixir": "^1.0.5",

@@ -37,6 +37,10 @@ class ItemsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('Offers', [
+          'foreignKey' => 'item_id'
+        ]);
     }
 
     /**
