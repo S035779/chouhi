@@ -53,6 +53,9 @@ class Offer extends Entity
         'total_feedback' => true,
         'seller_identifier' => true,
         'item_id' => true,
+        'sales_ranking' => true,
+        'lowest_price' => true,
+        'lowest_price_currency' => true,
         'created' => true,
         'modified' => true
     ];

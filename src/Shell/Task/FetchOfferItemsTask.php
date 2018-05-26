@@ -19,9 +19,21 @@ class FetchOfferItemsTask extends Shell
 {
   public function initialize()
   {
-    $this->access_key = env('AMZ_PA_ACCESSKEY_JP', '');
-    $this->secret_key = env('AMZ_PA_SECRETKEY_JP', '');
-    $this->associ_tag = env('AMZ_PA_ASSOCITAG_JP', '');
+    $this->access_keys_jp = array(
+      'access_key' => env('AMZ_PA_ACCESSKEY_JP', '')
+    , 'secret_key' => env('AMZ_PA_SECRETKEY_JP', '')
+    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_JP', '')
+    );
+    $this->access_keys_au = array(
+      'access_key' => env('AMZ_PA_ACCESSKEY_AU', '')
+    , 'secret_key' => env('AMZ_PA_SECRETKEY_AU', '')
+    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_AU', '')
+    );
+    $this->access_keys_us = array(
+      'access_key' => env('AMZ_PA_ACCESSKEY_US', '')
+    , 'secret_key' => env('AMZ_PA_SECRETKEY_US', '')
+    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_US', '')
+    );
   }
 
   /**
@@ -78,23 +90,38 @@ class FetchOfferItemsTask extends Shell
     , 'seller_identifier'                   => true // varchar(255)
     , 'sub_condition_status'                => true // varchar(255)
     , 'total_feedback'                      => true // integer
+    , 'sales_ranking'                       => true // integer
+    , 'lowest_price'                        => true // integer
+    , 'lowest_price_currency'               => true // varchar(255)
     , 'created'                             => true // date
     , 'modified'                            => true // date
     );
+
     $offers = TableRegistry::get('Offers');
-    $items = TableRegistry::get('Items');
-    $datas  = $this->setOffers($header, $request);
-    foreach($datas as $data) {
+    $items  = TableRegistry::get('Items');
+
+    $results  = $this->setOffers($header, $request);
+
+    foreach($results as $result) {
+      //print_r($result);
       $item = $items->find()
-        ->where(['asin' => $data['asin'], 'marketplace' => $data['marketplace']])
+        ->where([
+          'asin'        => $result['Headers']['asin']
+        , 'marketplace' => $result['Headers']['marketplace']])
         ->first();
-      $data['item_id'] = $item->id;
-      $entity = $offers->newEntity($data);
+      if($item) {
+        $result['Results']['item']['asin']        = $result['Headers']['asin'];
+        $result['Results']['item']['marketplace'] = $result['Headers']['marketplace'];
+        $result['Results']['item_id']             = $item->id;
+        $entity = $offers->newEntity($result['Results']);
+      }
+      //print_r($entity);
       if(!$offers->save($entity)) {
-        $this->logError($query->errors());
+        $this->logError($entity->errors());
         return false;
       }
     }
+
     return true;
   }
 
@@ -116,32 +143,46 @@ class FetchOfferItemsTask extends Shell
     , 'seller_identifier'                   => true // varchar(255)
     , 'sub_condition_status'                => true // varchar(255)
     , 'total_feedback'                      => true // integer
+    , 'sales_ranking'                       => true // integer
+    , 'lowest_price'                        => true // integer
+    , 'lowest_price_currency'               => true // varchar(255)
     , 'created'                             => true // date
     , 'modified'                            => true // date
     );
+
     $offers = TableRegistry::get('Offers');
-    $datas  = $this->setOffers($header, $request);
-    foreach($datas as $data) {
-      $entity = $offers->newEntity($data);
-      $offer = $offers->find()->contain(['Items'])
+    $items  = TableRegistry::get('Items');
+
+    $results  = $this->setOffers($header, $request);
+
+    foreach($results as $result) {
+      $item = $items->find()
         ->where([
-          'offer_listing_identifier' => $entity->offer_listing_identifier
-        , 'Items.asin' => $entity->asin
-        ])
+          'asin'        => $result['Headers']['asin']
+        , 'marketplace' => $result['Headers']['marketplace']])
         ->first();
-      if($offer) {
-        unset($data['created']);
-        $entity = $offers->patchEntity($offer,$data);
-      } else {
-        $data['item']['asin'] = $data['asin'];
-        $data['item']['marketplace'] = $data['marketplace'];
-        $entity = $offers->newEntity($data);
+      if($item) {
+        $offer = $offers->find()->contain(['Items'])
+          ->where([
+            'Items.asin'        => $result['Headers']['asin']
+          , 'Items.marketplace' => $result['Headers']['marketplace']])
+          ->first();
+        if($offer) {
+          unset($result['Results']['created']);
+          $entity = $offers->patchEntity($offer, $result['Results']);
+        } else {
+          $result['Results']['item']['asin']        = $result['Headers']['asin'];
+          $result['Results']['item']['marketplace'] = $result['Headers']['marketplace'];
+          $result['Results']['item_id']             = $item->id;
+          $entity = $offers->newEntity($result['Results']);
+        }
       }
       if(!$offers->save($entity)) {
         $this->logError($entity->errors());
         return false;
       }
     }
+
     return true;
   } 
 
@@ -153,16 +194,14 @@ class FetchOfferItemsTask extends Shell
     $keys     = array_keys($header);
     $vals     = array_values($header);
 
-    $response = $this->fetchOffers($request);
+    $responses = $this->fetchOffers($request);
 
     //print_r($response);
-    foreach($response as $_response) {
-      $operation = $_response['fetchOffer']['OperationRequest'];
-      $parameter = $_response['fetchOffer']['Items']['Request'];
-      $items     = array_values($_response['fetchOffer']['Items']['Item'])
-        === $_response['fetchOffer']['Items']['Item']
-          ? $_response['fetchOffer']['Items']['Item']
-          : [$_response['fetchOffer']['Items']['Item']];
+    foreach($responses as $response) {
+      $operation = $response['fetchOffer']['OperationRequest'];
+      $parameter = $response['fetchOffer']['Items']['Request'];
+      $_items    = $response['fetchOffer']['Items']['Item'];
+      $items     = array_values($_items) === $_items ? $_items : [$_items];
       foreach($items as $item) {
         //print_r($item);
         if($item) {
@@ -171,11 +210,28 @@ class FetchOfferItemsTask extends Shell
           $used         = $item['OfferSummary']['TotalUsed'];
           $collectible  = $item['OfferSummary']['TotalCollectible'];
           $refurbished  = $item['OfferSummary']['TotalRefurbished'];
+          $salesRanking = $item['SalesRank'];
+          $lowestPrice  = $item['OfferSummary']['LowestNewPrice']['Amount'];
+          $lowestPriceCurrency = $item['OfferSummary']['LowestNewPrice']['CurrencyCode'];
           $total        = $item['Offers']['TotalOffers'];
           $offers       = array_values($item['Offers']['Offer']) === $item['Offers']['Offer']
             ? $item['Offers']['Offer'] : [$item['Offers']['Offer']];
           foreach($offers as $offer) {
             //print_r($offer);
+            $metadata = array(
+              'operation'   => $operation
+            , 'parameter'   => $parameter
+            , 'asin'        => $asin
+            , 'marketplace' => $response['marketplace']
+            , 'totalNew'    => $new
+            , 'totalUsed'   => $used
+            , 'totalCollectible' => $collectible
+            , 'totalRefurbished' => $refurbished
+            , 'totalOffers' => $total
+            , 'salesRanking' => $salesRanking
+            , 'lowestPrice' => $lowestPrice
+            , 'lowestPriceCurrency' => $lowestPriceCurrency
+            );
             if($vals[ 0]) $data[$keys[ 0]] = $asin ?? 'N/A';
             if($vals[ 1]) $data[$keys[ 1]] = $offer['OfferListing']['Availability']
               ?? 'N/A';
@@ -206,13 +262,17 @@ class FetchOfferItemsTask extends Shell
               ?? 'N/A';
             if($vals[14]) $data[$keys[14]] = $offer['Seller']['TotalFeedback']
               ?? 0;
-            if($vals[15]) $data[$keys[15]] = $datetime;
-            if($vals[16]) $data[$keys[16]] = $datetime;
-            array_push($datas, $data);
+            if($vals[15]) $data[$keys[15]] = $salesRanking ?? 0;
+            if($vals[16]) $data[$keys[16]] = $lowestPrice ?? 0;
+            if($vals[17]) $data[$keys[17]] = $lowestPriceCurrency ?? 'N/A';
+            if($vals[18]) $data[$keys[18]] = $datetime;
+            if($vals[19]) $data[$keys[19]] = $datetime;
+            array_push($datas, array('Headers' => $metadata, 'Results' => $data));
           }
         }
       }
     }
+    //print_r($datas);
     return $datas;
   }
 
@@ -229,7 +289,8 @@ class FetchOfferItemsTask extends Shell
       case 'JP':
         array_push($asins_jp, $_request['asin']);
         if(count($asins_jp) > 10 || $idx === $eol - 1) {
-          array_push($response, ['fetchOffer' => $this->fetchOffer(implode(',', $asins_jp), 'JP')
+          array_push($response
+            , ['fetchOffer' => $this->fetchOffer(implode(',', $asins_jp), 'JP')
             , 'marketplace' => 'JP']);
           $asins_jp = array();
         }
@@ -237,7 +298,8 @@ class FetchOfferItemsTask extends Shell
       case 'AU':
         array_push($asins_au, $_request['asin']);
         if(count($asins_au) > 10 || $idx === $eol - 1 ) {
-          array_push($response, ['fetchOffer' => $this->fetchOffer(implode(',', $asins_au), 'AU')
+          array_push($response
+            , ['fetchOffer' => $this->fetchOffer(implode(',', $asins_au), 'AU')
             , 'marketplace' => 'AU']);
           $asins_au = array();
         }
@@ -245,7 +307,8 @@ class FetchOfferItemsTask extends Shell
       case 'US':
         array_push($asins_us, $_request['asin']);
         if(count($asins_us) > 10 || $idx === $eol - 1) {
-          array_push($response, ['fetchOffer' => $this->fetchOffer(implode(',', $asins_us), 'US')
+          array_push($response
+            , ['fetchOffer' => $this->fetchOffer(implode(',', $asins_us), 'US')
             , 'marketplace' => 'US']);
           $asins_us = array();
         }
@@ -261,18 +324,38 @@ class FetchOfferItemsTask extends Shell
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
     switch($marketplace) {
-      case 'JP':  $country = Country::JAPAN;          break;
-      case 'US':  $country = Country::INTERNATIONAL;  break;
-      case 'AU':  $country = Country::AUSTRALIA;      break;
-      default:    $country = Country::JAPAN;          break;
+    case 'JP':
+      $country = Country::JAPAN;
+      $access_key = $this->access_keys_jp['access_key'];
+      $secret_key = $this->access_keys_jp['secret_key'];
+      $associ_tag = $this->access_keys_jp['associ_tag'];
+      break;
+    case 'AU':
+      $country = Country::AUSTRALIA;
+      $access_key = $this->access_keys_au['access_key'];
+      $secret_key = $this->access_keys_au['secret_key'];
+      $associ_tag = $this->access_keys_au['associ_tag'];
+      break;
+    case 'US':
+      $country = Country::INTERNATIONAL;
+      $access_key = $this->access_keys_us['access_key'];
+      $secret_key = $this->access_keys_us['secret_key'];
+      $associ_tag = $this->access_keys_us['associ_tag'];
+      break;
+    default:
+      $country = Country::JAPAN;
+      $access_key = $this->access_keys_jp['access_key'];
+      $secret_key = $this->access_keys_jp['secret_key'];
+      $associ_tag = $this->access_keys_jp['associ_tag'];
+      break;
     }
     sleep(5);
     try {
       $conf
         ->setCountry($country)
-        ->setAccessKey($this->access_key)
-        ->setSecretKey($this->secret_key)
-        ->setAssociateTag($this->associ_tag)
+        ->setAccessKey($access_key)
+        ->setSecretKey($secret_key)
+        ->setAssociateTag($associ_tag)
         ->setRequest($request)
         ->setResponseTransformer(new XmlToArray())
       ;
@@ -282,22 +365,13 @@ class FetchOfferItemsTask extends Shell
     $apaiIo = new ApaiIO($conf);
     $lookup = new Lookup();
     $lookup->setItemId($asin);
-    $lookup->setResponseGroup(array('OfferFull'));
-    $lookup->setCondition('All');
+    $lookup->setResponseGroup(array('OfferFull', 'SalesRank'));
+    $lookup->setCondition('New');
+    $lookup->setMerchantId('All');
     return $apaiIo->runOperation($lookup);
   }
 
-  private function getTimeStamp($str)
-  {
-    return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
-  }
-
   private function logError($message)
-  {
-    $this->log(print_r($message, true), LOG_ERROR);
-  }
-
-  private function logDebug($message)
   {
     $this->log(print_r($message, true), LOG_DEBUG);
   }

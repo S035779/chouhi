@@ -142,6 +142,22 @@ class OffersTable extends Table
             ->requirePresence('seller_identifier', 'create')
             ->notEmpty('seller_identifier');
 
+        $validator
+            ->integer('sales_ranking')
+            ->requirePresence('sales_ranking', 'create')
+            ->notEmpty('sales_ranking');
+
+        $validator
+            ->integer('lowest_price')
+            ->requirePresence('lowest_price', 'create')
+            ->notEmpty('lowest_price');
+
+        $validator
+            ->scalar('lowest_price_currency')
+            ->maxLength('lowest_price_currency', 255)
+            ->requirePresence('lowest_price_currency', 'create')
+            ->notEmpty('lowest_price_currency');
+
         return $validator;
     }
 

@@ -60,192 +60,126 @@
                 </form>
                 <?= $this->Form->end() ?>
 
-                  <h4 class="mb-3">検索結果</h4>
-                  <div class="card mb-3">
-                    <div class="card-header">商品名</div>
-                    <div class="card-body p-2">
-                      <div class="card-group">
-                      <div class="col-sm-4">
-                        <div class="card">
-                          <img class="card-img-top" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22219%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20219%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211ce%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A11pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211ce%22%3E%3Crect%20width%3D%22219%22%20height%3D%22200%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2260.92499923706055%22%20y%3D%22104.95%22%3E%E3%82%AB%E3%83%BC%E3%83%891%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
-                          <div class="card-body p-2">
-                            <div class="btn-group d-flex" role="group"
-                              aria-label="button-group">
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                MO
-                              </button>
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                FB
-                              </button>
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                AM
-                              </button>
-                              <button type="button" class="btn btn-primary w-100"
-                                data-toggle="popover"
-                                data-content-id="#myPopover1">
-                                詳
-                              </button>
-                            </div>
-                          </div>
-                          <div class="card hidden" id="myPopover1">
-                            <ul class="list-group list-group-flush">
-                              <li class="list-group-item">出品者数（新品／中古）</li>
-                              <li class="list-group-item">更新日</li>
-                              <li class="list-group-item">レビュー数</li>
-                              <li class="list-group-item">平均レビュー</li>
-                              <li class="list-group-item">平均ランキング</li>
-                              <li class="list-group-item">カテゴリー</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="card">
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item">ランキング</li>
-                          <li class="list-group-item">ASIN</li>
-                          <li class="list-group-item">価格</li>
-                          <li class="list-group-item">平均価格</li>
-                          <li class="list-group-item">価格差</li>
-                          <li class="list-group-item">発売日</li>
-                        </ul>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="card">
-                        <img class="card-img" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22226%22%20height%3D%22260%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20226%20260%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211dc%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A13pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211dc%22%3E%3Crect%20width%3D%22226%22%20height%3D%22260%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2255.68333435058594%22%20y%3D%22135.85%22%3E%E3%82%AB%E3%83%BC%E3%83%896%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
-                        </div>
-                      </div>
-                      </div>
-                    </div>
-                  </div>
+                <h4 class="mb-3">検索結果</h4>
 
-                  <div class="card mb-3">
-                    <div class="card-header">商品名</div>
-                    <div class="card-body p-2">
-                      <div class="card-group">
-                      <div class="col-sm-4">
-                        <div class="card">
-                          <img class="card-img-top" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22219%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20219%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211ce%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A11pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211ce%22%3E%3Crect%20width%3D%22219%22%20height%3D%22200%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2260.92499923706055%22%20y%3D%22104.95%22%3E%E3%82%AB%E3%83%BC%E3%83%891%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
-                          <div class="card-body p-2">
-                            <div class="btn-group d-flex" role="group"
-                              aria-label="button-group">
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                MO
-                              </button>
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                FB
-                              </button>
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                AM
-                              </button>
-                              <button type="button" class="btn btn-primary w-100"
-                                data-toggle="popover"
-                                data-content-id="#myPopover2">
-                                詳
-                              </button>
-                            </div>
-                          </div>
-                          <div class="card hidden" id="myPopover2">
-                            <ul class="list-group list-group-flush">
-                              <li class="list-group-item">出品者数（新品／中古）</li>
-                              <li class="list-group-item">更新日</li>
-                              <li class="list-group-item">レビュー数</li>
-                              <li class="list-group-item">平均レビュー</li>
-                              <li class="list-group-item">平均ランキング</li>
-                              <li class="list-group-item">カテゴリー</li>
-                            </ul>
+                <?php foreach ($offers as $offer): ?>
+                <div class="card mb-3">
+                  <div class="card-header"><?= h($offer->title) ?></div>
+                  <div class="card-body p-2">
+                    <div class="card-group">
+                    <div class="col-sm-4">
+                      <div class="card">
+                      <img class="card-img-top" src="//dyn.keepa.com/pricehistory.png?cAmazon=0f5702&cNew=77ce43&cUsed=f26e3c&cFont=31393d&cBackground=ffffff&amazon=1&new=1&used=1&range=90&salesrank=1&domain=co.jp&width=512&height=480&asin=<?= h($offer->asin) ?>"
+                        alt="<?= h($offer->title) ?>">
+                        <div class="card-body p-2">
+                          <div class="btn-group d-flex" role="group"
+                            aria-label="button-group">
+                            <a role="button" class="btn btn-primary w-100"
+                              href="//www.mnrate.com/item/aid/<?= h($offer->asin) ?>" 
+                              target="_blank">
+                              <?= __('MO') ?>
+                            </a>
+                            <a role="button" class="btn btn-primary w-100" 
+                              href="//sellercentral.amazon.co.jp/hz/fba/profitabilitycalculator/index?lang=ja_JP" 
+                              target="_blank">
+                              <?= __('FB') ?>
+                            </a>
+                            <a role="button" class="btn btn-primary w-100" 
+                              href="<?= h($offer->detail_page_url) ?>" 
+                              target="_blank">
+                              <?= __('AM') ?>
+                            </a>
+                            <button type="button" class="btn btn-primary w-100"
+                              data-toggle="popover"
+                              data-content-id="#popover<?= h($offer->id) ?>">
+                              <?= __('詳') ?>
+                            </button>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="card">
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item">ランキング</li>
-                          <li class="list-group-item">ASIN</li>
-                          <li class="list-group-item">価格</li>
-                          <li class="list-group-item">平均価格</li>
-                          <li class="list-group-item">価格差</li>
-                          <li class="list-group-item">発売日</li>
-                        </ul>
+                        <div class="card hidden" id="popover<?= h($offer->id) ?>">
+                          <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                              <?=
+                                __('出品者数（新品 : ').$this->Number->format($offer->total_new)
+                              . __('／中古 : ').$this->Number->format($offer->total_used)
+                              . __('）')
+                              ?>
+                            </li>
+                            <li class="list-group-item">
+                              <?= __('更新日').__(' : ').h($offer->modified) ?>
+                            </li>
+                            <li class="list-group-item">
+                              <a role="button"
+                                class="btn btn-primary w-100" 
+                                href="<?= h($offer->customer_reviews_url) ?>" target="_blank">
+                                <?= __('カスタマー・レビュー') ?>
+                              </a>
+                            </li>
+                            <li class="list-group-item">
+                              <?=
+                                __('平均ランキング : ') 
+                              . $this->Number->format($offer->average_sales_ranking)
+                              ?>
+                            </li>
+                            <li class="list-group-item">
+                              <?= __('カテゴリー').__(' : ').h($offer->product_group) ?>
+                            </li>
+                          </ul>
                         </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="card">
-                        <img class="card-img" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22226%22%20height%3D%22260%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20226%20260%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211dc%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A13pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211dc%22%3E%3Crect%20width%3D%22226%22%20height%3D%22260%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2255.68333435058594%22%20y%3D%22135.85%22%3E%E3%82%AB%E3%83%BC%E3%83%896%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
-                        </div>
-                      </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div class="card mb-3">
-                    <div class="card-header">商品名</div>
-                    <div class="card-body p-2">
-                      <div class="card-group">
-                      <div class="col-sm-4">
-                        <div class="card">
-                          <img class="card-img-top" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22219%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20219%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211ce%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A11pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211ce%22%3E%3Crect%20width%3D%22219%22%20height%3D%22200%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2260.92499923706055%22%20y%3D%22104.95%22%3E%E3%82%AB%E3%83%BC%E3%83%891%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
-                          <div class="card-body p-2">
-                            <div class="btn-group d-flex" role="group"
-                              aria-label="button-group">
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                MO
-                              </button>
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                FB
-                              </button>
-                              <button type="button"
-                                class="btn btn-primary w-100">
-                                AM
-                              </button>
-                              <button type="button" class="btn btn-primary w-100"
-                                data-toggle="popover"
-                                data-content-id="#myPopover3">
-                                詳
-                              </button>
-                            </div>
-                          </div>
-                          <div class="card hidden" id="myPopover3">
-                            <ul class="list-group list-group-flush">
-                              <li class="list-group-item">出品者数（新品／中古）</li>
-                              <li class="list-group-item">更新日</li>
-                              <li class="list-group-item">レビュー数</li>
-                              <li class="list-group-item">平均レビュー</li>
-                              <li class="list-group-item">平均ランキング</li>
-                              <li class="list-group-item">カテゴリー</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="card">
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item">ランキング</li>
-                          <li class="list-group-item">ASIN</li>
-                          <li class="list-group-item">価格</li>
-                          <li class="list-group-item">平均価格</li>
-                          <li class="list-group-item">価格差</li>
-                          <li class="list-group-item">発売日</li>
-                        </ul>
-                        </div>
-                      </div>
-                      <div class="col-sm-4">
-                        <div class="card">
-                        <img class="card-img" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22226%22%20height%3D%22260%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20226%20260%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_16359a211dc%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A13pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_16359a211dc%22%3E%3Crect%20width%3D%22226%22%20height%3D%22260%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2255.68333435058594%22%20y%3D%22135.85%22%3E%E3%82%AB%E3%83%BC%E3%83%896%E3%81%AE%E7%94%BB%E5%83%8F%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="カード1の画像">
-                        </div>
-                      </div>
+                    <div class="col-sm-4">
+                      <div class="card">
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><?= 
+                          __('ランキング').__(' : ')
+                            .$this->Number->format($offer->sales_ranking)
+                        ?></li>
+                        <li class="list-group-item"><?= 
+                          __('ASIN')
+                            .__(' : ').h($offer->asin) 
+                        ?></li>
+                        <li class="list-group-item"><?= 
+                          __('価格')
+                            .__(' : ').$this->Number->format($offer->lowest_price)
+                            .__(' ')  .h($offer->lowest_price_currency)
+                        ?></li>
+                        <li class="list-group-item"><?= 
+                          __('平均価格')
+                            .__(' : ').$this->Number->format($offer->average_lowest_price)
+                            .__(' ')  .h($offer->average_lowest_price_currency) 
+                        ?></li>
+                        <li class="list-group-item"><?= 
+                          __('価格差')
+                            .__(' : ').$this->Number->format(
+                              $offer->average_lowest_price - $offer->lowest_price
+                            )
+                            .__(' ')  .h($offer->lowest_price_currency) 
+                        ?></li>
+                        <li class="list-group-item"><?= 
+                          __('発売日')
+                            .__(' : ')
+                            .h($offer->original_release_date_at->format('U') !== '0'
+                                ? $offer->original_release_date_at
+                                : ($offer->release_date_at->format('U') !== '0'
+                                  ? $offer->release_date_at
+                                  : ($offer->publication_date_at->format('U') !== '0'
+                                    ? $offer->publication_date_at
+                                    : '不明')))
+                        ?></li>
+                      </ul>
                       </div>
                     </div>
+                    <div class="col-sm-4">
+                      <div class="card">
+                      <img class="card-img" src="<?= h($offer->large_image_url) ?>"
+                        alt="<?= h($offer->title) ?>">
+                      </div>
+                    </div>
+                    </div>
                   </div>
+                </div>
+                <?php endforeach; ?>
 
               </div>
             </div>

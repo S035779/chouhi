@@ -125,12 +125,17 @@ class BootstrapController extends AppController
 
     if($this->request->is('get')) {
       $request = $this->request->getData();
+      $offers = $_offers->find()->contain(['Items']);
+
       $conditions = array();
+
       if(!empty($request['period'])) {
-        $conditions['modified'] = '> ' . $request['period'];
+        $timestamp = strtotime('-' . $request['period']. ' day');
+        $conditions['Offers.created >='] = new DateTime($timestamp);
       }
 
       if(!empty($request['riserate'])) {
+        $raiserate = ($newprice - $oldprice) / 100 - 1;
         $conditions['price'] = '> ' . $request['riserate'];
       }
 
@@ -138,10 +143,32 @@ class BootstrapController extends AppController
         $conditions['price'] = '> ' . $request['profitrange'];
       }
 
-      $offers = $_offers->find()->contain(['Items'])
-        ->where($conditions);
+      $offers->where($conditions);
+      $offers->select([
+          'id'                              => 'items.id'
+        , 'title'                           => 'items.title'
+        , 'asin'                            => 'items.asin'
+        , 'detail_page_url'                 => 'items.detail_page_url'
+        , 'total_new'                       => 'items.total_new'
+        , 'total_used'                      => 'items.total_used'
+        , 'modified'                        => 'items.modified'
+        , 'customer_reviews_url'            => 'items.customer_reviews_url'
+        , 'average_sales_ranking'           => $offers->func()->avg('offers.sales_ranking')
+        , 'product_group'                   => 'items.product_group'
+        , 'sales_ranking'                   => 'items.sales_ranking'
+        , 'lowest_price'                    => 'items.lowest_price'
+        , 'lowest_price_currency'           => 'items.lowest_price_currency'
+        , 'average_lowest_price'            => $offers->func()->avg('offers.lowest_price')
+        , 'average_lowest_price_currency'   => 'items.lowest_price_currency'
+        , 'original_release_date_at'        => 'items.original_release_date_at'
+        , 'release_date_at'                 => 'items.release_date_at'
+        , 'publication_date_at'             => 'items.publication_date_at'
+        , 'large_image_url'                 => 'items.large_image_url'
+        ])
+        ->group(['Offers.asin', 'Items.id']);
     }
 
+    $offers = $this->paginate($offers);
     $this->set(compact('title', 'offers'));
   }
 

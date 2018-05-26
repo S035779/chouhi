@@ -20,9 +20,21 @@ class FetchItemsTask extends Shell
 
   public function initialize()
   {
-    $this->access_key       = env('AMZ_PA_ACCESSKEY_JP', '');
-    $this->secret_key       = env('AMZ_PA_SECRETKEY_JP', '');
-    $this->associ_tag       = env('AMZ_PA_ASSOCITAG_JP', '');
+    $this->access_keys_jp = array(
+      'access_key' => env('AMZ_PA_ACCESSKEY_JP', '')
+    , 'secret_key' => env('AMZ_PA_SECRETKEY_JP', '')
+    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_JP', '')
+    );
+    $this->access_keys_au = array(
+      'access_key' => env('AMZ_PA_ACCESSKEY_AU', '')
+    , 'secret_key' => env('AMZ_PA_SECRETKEY_AU', '')
+    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_AU', '')
+    );
+    $this->access_keys_us = array(
+      'access_key' => env('AMZ_PA_ACCESSKEY_US', '')
+    , 'secret_key' => env('AMZ_PA_SECRETKEY_US', '')
+    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_US', '')
+    );
   }
 
   /**
@@ -50,7 +62,7 @@ class FetchItemsTask extends Shell
 
   private function execItemLookup() {
     $asins = TableRegistry::get('Asins');
-    $datas = $asins->find()->where(['asin' => false]);
+    $datas = $asins->find()->where(['suspended' => false]);
     $request = array();
     foreach($datas as $data) {
       array_push($request, ['asin' => $data->asin, 'marketplace' => $data->marketplace]);
@@ -115,16 +127,19 @@ class FetchItemsTask extends Shell
       , 'modified'                            => true
     );
     $items = TableRegistry::get('Items');
-    $datas = $this->setItems($header, $request);
+
+    $results = $this->setItems($header, $request);
+
     $query = $items->query();
     $query->insert(array_keys($header));
-    foreach($datas as $data) {
-      $query->values($data);
+    foreach($results as $result) {
+      $query->values($result);
     }
     if(!$query->execute()) {
       $this->logError($query->errors());
       return false;
     }
+
     return true;
   }
 
@@ -182,16 +197,19 @@ class FetchItemsTask extends Shell
       , 'modified'                            => true
     );
     $items = TableRegistry::get('Items');
-    $datas = $this->setItems($header, $request);
-    foreach($datas as $data) {
-      $entity = $items->newEntity($data);
+
+    $results = $this->setItems($header, $request);
+
+    foreach($results as $result) {
+      $entity = $items->newEntity($result);
       $item = $items->find()
         ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
         ->first();
       if($item) {
-        unset($data['created']);
-        $entity = $items->patchEntity($item, $data);
+        unset($result['created']);
+        $entity = $items->patchEntity($item, $result);
       }
+      //print_r($entity);
       if(!$items->save($entity)) {
         $this->logError($entity->errors());
         return false;
@@ -208,13 +226,15 @@ class FetchItemsTask extends Shell
     $keys     = array_keys($header);
     $vals     = array_values($header);
 
-    $response = $this->fetchItems($request);
+    $responses = $this->fetchItems($request);
 
-    foreach($response as $_response) {
-      $operation    = $_response['fetchItem']['OperationRequest'];
-      $parameter    = $_response['fetchItem']['Items']['Request'];
-      $items        = $_response['fetchItem']['Items']['Item'];
-      $marketplace  = $_response['marketplace'];
+    foreach($responses as $response) {
+      //print_r($response);
+      $operation    = $response['fetchItem']['OperationRequest'];
+      $parameter    = $response['fetchItem']['Items']['Request'];
+      $_items       = $response['fetchItem']['Items']['Item'];
+      $items        = array_values($_items) === $_items ? $_items : [$_items];
+      $marketplace  = $response['marketplace'];
       foreach($items as $item) {
         if($item) {
           //print_r($item);
@@ -344,18 +364,38 @@ class FetchItemsTask extends Shell
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
     switch($marketplace) {
-      case 'JP':  $country = Country::JAPAN;          break;
-      case 'US':  $country = Country::INTERNATIONAL;  break;
-      case 'AU':  $country = Country::AUSTRALIA;      break;
-      default:    $country = Country::JAPAN;          break;
+    case 'JP':
+      $country = Country::JAPAN;
+      $access_key = $this->access_keys_jp['access_key'];
+      $secret_key = $this->access_keys_jp['secret_key'];
+      $associ_tag = $this->access_keys_jp['associ_tag'];
+      break;
+    case 'AU':
+      $country = Country::AUSTRALIA;
+      $access_key = $this->access_keys_au['access_key'];
+      $secret_key = $this->access_keys_au['secret_key'];
+      $associ_tag = $this->access_keys_au['associ_tag'];
+      break;
+    case 'US':
+      $country = Country::INTERNATIONAL;
+      $access_key = $this->access_keys_us['access_key'];
+      $secret_key = $this->access_keys_us['secret_key'];
+      $associ_tag = $this->access_keys_us['associ_tag'];
+      break;
+    default:
+      $country = Country::JAPAN;
+      $access_key = $this->access_keys_jp['access_key'];
+      $secret_key = $this->access_keys_jp['secret_key'];
+      $associ_tag = $this->access_keys_jp['associ_tag'];
+      break;
     }
     sleep(5);
     try {
       $conf
         ->setCountry($country)
-        ->setAccessKey($this->access_key)
-        ->setSecretKey($this->secret_key)
-        ->setAssociateTag($this->associ_tag)
+        ->setAccessKey($access_key)
+        ->setSecretKey($secret_key)
+        ->setAssociateTag($associ_tag)
         ->setRequest($request)
         ->setResponseTransformer(new XmlToArray())
       ;
@@ -365,6 +405,7 @@ class FetchItemsTask extends Shell
     $apaiIo = new ApaiIO($conf);
     $lookup = new Lookup();
     $lookup->setItemId($asin);
+    $lookup->setMerchantId('All');
     $lookup->setResponseGroup(array(
       'Images', 'ItemAttributes', 'OfferListings', 'OfferSummary', 'SalesRank', 'Reviews'
     ));
@@ -377,11 +418,6 @@ class FetchItemsTask extends Shell
   }
 
   private function logError($message)
-  {
-    $this->log(print_r($message, true), LOG_ERROR);
-  }
-
-  private function logDebug($message)
   {
     $this->log(print_r($message, true), LOG_DEBUG);
   }

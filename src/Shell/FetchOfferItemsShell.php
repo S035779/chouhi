@@ -4,11 +4,11 @@ namespace App\Shell;
 use Cake\Console\Shell;
 
 /**
- * FetchItems shell command.
+ * FetchOfferItems shell command.
  */
-class FetchItemsShell extends Shell
+class FetchOfferItemsShell extends Shell
 {
-  public $tasks = ['FetchItems'];
+  public $tasks = ['FetchOfferItems'];
 
   /**
    * Manage the available sub-commands along with their arguments and help
@@ -31,6 +31,6 @@ class FetchItemsShell extends Shell
    */
   public function main()
   {
-    $this->FetchItems->main();
+    $this->FetchOfferItems->main();
   }
 }
