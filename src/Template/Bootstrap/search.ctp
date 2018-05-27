@@ -106,7 +106,7 @@
                               ?>
                             </li>
                             <li class="list-group-item">
-                              <?= __('更新日').__(' : ').h($offer->modified) ?>
+                              <?= __('更新日').__(' : ').h($offer->created) ?>
                             </li>
                             <li class="list-group-item">
                               <a role="button"

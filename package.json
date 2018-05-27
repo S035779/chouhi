@@ -6,19 +6,19 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "cron": "interval.sh"
+    "start": "cron.sh"
   },
   "devDependencies": {
-    "bootstrap-sass": "^3.3.7",
-    "cakephp3-elixir": "^1.0.5",
-    "gulp": "^3.9.1",
-    "jquery": "^3.3.1",
-    "laravel-elixir-browsersync-official": "^1.0.0",
-    "laravel-elixir-del": "^0.1.1",
-    "laravel-elixir-webpack-official": "^1.0.10",
-    "lodash": "^4.17.10"
+    "bootstrap-sass": "3.3.7",
+    "cakephp3-elixir": "1.0.5",
+    "gulp": "3.9.1",
+    "jquery": "3.3.1",
+    "laravel-elixir-browsersync-official": "1.0.0",
+    "laravel-elixir-del": "0.1.1",
+    "laravel-elixir-webpack-official": "1.0.10",
+    "lodash": "4.17.10"
   },
   "dependencies": {
-    "bootstrap": "^4.1.1"
+    "bootstrap": "4.1.1"
   }
 }

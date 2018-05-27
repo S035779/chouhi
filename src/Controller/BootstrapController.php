@@ -121,11 +121,10 @@ class BootstrapController extends AppController
   public function search()
   {
     $title = 'Search Amazon items';
-    $_offers = TableRegistry::get('Offers'); 
+    $offers = TableRegistry::get('Offers'); 
 
     if($this->request->is('get')) {
       $request = $this->request->getData();
-      $offers = $_offers->find()->contain(['Items']);
 
       $conditions = array();
 
@@ -134,41 +133,86 @@ class BootstrapController extends AppController
         $conditions['Offers.created >='] = new DateTime($timestamp);
       }
 
+      //$startprice = $query
+      //  ->select(['lowest_price'])
+      //  ->where(['Offers.created' => $subquery
+      //    ->select(['create_max' => $subquery->func()->min('created')])
+      //    ->where(['Offers.asin' => 'asin'])
+      //    ->first()
+      //  ])
+      //  ->first();
+      //$stopprice = $query
+      //  ->select(['lowest_price'])
+      //  ->where(['Offers.created' => $subquery
+      //    ->select(['create_max' => $subquery->func()->max('created')])
+      //    ->where(['Offers.asin' => 'asin'])
+      //    ->first()
+      //  ])
+      //  ->first();
+
       if(!empty($request['riserate'])) {
-        $raiserate = ($newprice - $oldprice) / 100 - 1;
-        $conditions['price'] = '> ' . $request['riserate'];
+      //  $request['riserate'] >=
+      //    $stopprice->lowest_price / $startPrice->lowest_price * 100 - 100;
       }
 
       if(!empty($request['profitrange'])) {
-        $conditions['price'] = '> ' . $request['profitrange'];
+      //  $request['profitrange'] >=
+      //    $stopprice->lowest_price - $startprice->lowest_price;
       }
 
-      $offers->where($conditions);
-      $offers->select([
-          'id'                              => 'items.id'
+      $query    = $offers->find()->contain(['Items']);
+      $subquery = $offers->find();
+      $query
+        ->select([
+          'id'                              => 'offers.id'
         , 'title'                           => 'items.title'
-        , 'asin'                            => 'items.asin'
+        , 'asin'                            => 'offers.asin'
         , 'detail_page_url'                 => 'items.detail_page_url'
         , 'total_new'                       => 'items.total_new'
         , 'total_used'                      => 'items.total_used'
-        , 'modified'                        => 'items.modified'
         , 'customer_reviews_url'            => 'items.customer_reviews_url'
-        , 'average_sales_ranking'           => $offers->func()->avg('offers.sales_ranking')
+        , 'average_sales_ranking'           => 'offers.sales_ranking'
         , 'product_group'                   => 'items.product_group'
         , 'sales_ranking'                   => 'items.sales_ranking'
         , 'lowest_price'                    => 'items.lowest_price'
         , 'lowest_price_currency'           => 'items.lowest_price_currency'
-        , 'average_lowest_price'            => $offers->func()->avg('offers.lowest_price')
+        , 'average_lowest_price'            => 'offers.lowest_price'
         , 'average_lowest_price_currency'   => 'items.lowest_price_currency'
         , 'original_release_date_at'        => 'items.original_release_date_at'
         , 'release_date_at'                 => 'items.release_date_at'
         , 'publication_date_at'             => 'items.publication_date_at'
         , 'large_image_url'                 => 'items.large_image_url'
+        , 'created'                         => 'offers.created'
         ])
-        ->group(['Offers.asin', 'Items.id']);
+        ->where($conditions)
+        ->where(['Offers.created' => $subquery
+          ->select(['created_max' => $subquery->func()->max('created')])
+          ->first()
+        ])
+        ->all();
+
+      // START PRICE
+      // 
+      // SELECT *
+      // FROM テーブル名 テーブル別名
+      // WHERE 取引日付 = (
+      //   SELECT MIN(取引日付)
+      //    FROM テーブル名 
+      //    WHERE 銘柄コード= テーブル別名.銘柄コード
+      //   )
+      //
+      // STOP PRICE
+      // 
+      // SELECT *
+      // FROM テーブル名 テーブル別名
+      // WHERE 取引日付 = (
+      //   SELECT MAX(取引日付)
+      //    FROM テーブル名 
+      //    WHERE 銘柄コード= テーブル別名.銘柄コード
+      //   )
     }
 
-    $offers = $this->paginate($offers);
+    $offers = $this->paginate($query);
     $this->set(compact('title', 'offers'));
   }
 
