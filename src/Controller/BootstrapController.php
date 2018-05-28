@@ -133,23 +133,6 @@ class BootstrapController extends AppController
         $conditions['Offers.created >='] = new DateTime($timestamp);
       }
 
-      //$startprice = $query
-      //  ->select(['lowest_price'])
-      //  ->where(['Offers.created' => $subquery
-      //    ->select(['create_max' => $subquery->func()->min('created')])
-      //    ->where(['Offers.asin' => 'asin'])
-      //    ->first()
-      //  ])
-      //  ->first();
-      //$stopprice = $query
-      //  ->select(['lowest_price'])
-      //  ->where(['Offers.created' => $subquery
-      //    ->select(['create_max' => $subquery->func()->max('created')])
-      //    ->where(['Offers.asin' => 'asin'])
-      //    ->first()
-      //  ])
-      //  ->first();
-
       if(!empty($request['riserate'])) {
       //  $request['riserate'] >=
       //    $stopprice->lowest_price / $startPrice->lowest_price * 100 - 100;
@@ -164,31 +147,62 @@ class BootstrapController extends AppController
       $subquery = $offers->find();
       $query
         ->select([
-          'id'                              => 'offers.id'
+          'id'                              => 'items.id'
         , 'title'                           => 'items.title'
         , 'asin'                            => 'offers.asin'
         , 'detail_page_url'                 => 'items.detail_page_url'
         , 'total_new'                       => 'items.total_new'
         , 'total_used'                      => 'items.total_used'
         , 'customer_reviews_url'            => 'items.customer_reviews_url'
-        , 'average_sales_ranking'           => 'offers.sales_ranking'
+        , 'average_sales_ranking'           => $query->func()->avg('offers.sales_ranking')
         , 'product_group'                   => 'items.product_group'
         , 'sales_ranking'                   => 'items.sales_ranking'
         , 'lowest_price'                    => 'items.lowest_price'
         , 'lowest_price_currency'           => 'items.lowest_price_currency'
-        , 'average_lowest_price'            => 'offers.lowest_price'
+        , 'average_lowest_price'            => $query->func()->avg('offers.lowest_price')
         , 'average_lowest_price_currency'   => 'items.lowest_price_currency'
         , 'original_release_date_at'        => 'items.original_release_date_at'
         , 'release_date_at'                 => 'items.release_date_at'
         , 'publication_date_at'             => 'items.publication_date_at'
         , 'large_image_url'                 => 'items.large_image_url'
-        , 'created'                         => 'offers.created'
+        , 'created'                         => $query->func()->max('offers.created')
         ])
-        ->where($conditions)
-        ->where(['Offers.created' => $subquery
-          ->select(['created_max' => $subquery->func()->max('created')])
-          ->first()
-        ])
+        //->where(function($e, $q) use ($subquery) {
+        //  $q->select(['created_max' => $subquery->func()->max('Offers2.created')])
+        //    ->from(['Offers2' => 'offers'])
+        //    ->first();
+        //  return $e->eq('Offers.created', $q);
+        //})
+        ->where(function($e) {
+          return $e->gte('Offers.created', '2018-05-27');
+        })
+        //->where(function($e, $q) use ($subquery) {
+        //  $start_date = $subquery->func()->min('created');
+        //  $stop_date  = $subquery->func()->max('created');
+
+        //  $start_price = $q->select(['lowest_price'])
+        //    ->where(['Offers.created' => $subquery
+        //      ->select(['create_max' => $start_date])
+        //      ->where(['Offers.asin' => 'asin'])
+        //      ->first()
+        //    ])
+        //    ->first();
+
+        //  $stop_price = $q->select(['lowest_price'])
+        //    ->where(['Offers.created' => $subquery
+        //      ->select(['create_max' => $stop_date])
+        //      ->where(['Offers.asin' => 'asin'])
+        //      ->first()
+        //    ])
+        //    ->first();
+        //  debug($start_price);
+        //  debug($stop_price);
+        //  $exp1 = $q->newExpr()->add($stop_price.' / '.$start_price.' * 100 - 100');
+        //  $exp2 = $q->newExpr()->add($stop_price.' - '.$start_prife);
+        //  return $e->add(exp1)->add(exp2);
+
+        //})
+        ->group(['Offers.asin','Items.id'])
         ->all();
 
       // START PRICE
@@ -213,6 +227,7 @@ class BootstrapController extends AppController
     }
 
     $offers = $this->paginate($query);
+    //debug($offers);
     $this->set(compact('title', 'offers'));
   }
 
