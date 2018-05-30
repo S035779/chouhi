@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use App\Form\UploadFilesForm;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
+use Cake\Datasource\ConnectionManager;
 
 /**
  * Bootstrap Controller
@@ -121,113 +122,122 @@ class BootstrapController extends AppController
   public function search()
   {
     $title = 'Search Amazon items';
-    $offers = TableRegistry::get('Offers'); 
+    $connection = ConnectionManager::get('default');
+    $avg_hours = 0;
+    $bck_hours = 6;
+    $rise_rate = 0;
+    $profit_range = 0;
+    $offers = array();
 
-    if($this->request->is('get')) {
+    if($this->request->is('post')) {
       $request = $this->request->getData();
 
-      $conditions = array();
-
       if(!empty($request['period'])) {
-        $timestamp = strtotime('-' . $request['period']. ' day');
-        $conditions['Offers.created >='] = new DateTime($timestamp);
+        $avg_hours = intval($request['period']) * 24; 
       }
 
-      if(!empty($request['riserate'])) {
-      //  $request['riserate'] >=
-      //    $stopprice->lowest_price / $startPrice->lowest_price * 100 - 100;
+      if(!empty($request['rise_rate'])) {
+        $rise_rate = floatval($request['rise_rate']);
       }
 
-      if(!empty($request['profitrange'])) {
-      //  $request['profitrange'] >=
-      //    $stopprice->lowest_price - $startprice->lowest_price;
+      if(!empty($request['profit_range'])) {
+        $profit_range = intval($request['profit_range']);
       }
 
-      $query    = $offers->find()->contain(['Items']);
-      $subquery = $offers->find();
-      $query
-        ->select([
-          'id'                              => 'items.id'
-        , 'title'                           => 'items.title'
-        , 'asin'                            => 'offers.asin'
-        , 'detail_page_url'                 => 'items.detail_page_url'
-        , 'total_new'                       => 'items.total_new'
-        , 'total_used'                      => 'items.total_used'
-        , 'customer_reviews_url'            => 'items.customer_reviews_url'
-        , 'average_sales_ranking'           => $query->func()->avg('offers.sales_ranking')
-        , 'product_group'                   => 'items.product_group'
-        , 'sales_ranking'                   => 'items.sales_ranking'
-        , 'lowest_price'                    => 'items.lowest_price'
-        , 'lowest_price_currency'           => 'items.lowest_price_currency'
-        , 'average_lowest_price'            => $query->func()->avg('offers.lowest_price')
-        , 'average_lowest_price_currency'   => 'items.lowest_price_currency'
-        , 'original_release_date_at'        => 'items.original_release_date_at'
-        , 'release_date_at'                 => 'items.release_date_at'
-        , 'publication_date_at'             => 'items.publication_date_at'
-        , 'large_image_url'                 => 'items.large_image_url'
-        , 'created'                         => $query->func()->max('offers.created')
-        ])
-        //->where(function($e, $q) use ($subquery) {
-        //  $q->select(['created_max' => $subquery->func()->max('Offers2.created')])
-        //    ->from(['Offers2' => 'offers'])
-        //    ->first();
-        //  return $e->eq('Offers.created', $q);
-        //})
-        ->where(function($e) {
-          return $e->gte('Offers.created', '2018-05-27');
-        })
-        //->where(function($e, $q) use ($subquery) {
-        //  $start_date = $subquery->func()->min('created');
-        //  $stop_date  = $subquery->func()->max('created');
+      $_offers = $connection
+        ->execute('
+          SELECT
+            time1                                   as created,
+            Offers1.asin                            as asin,
+            COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END) 
+                                                    as time_event_count,
+            Offers1.items_id                        as id,
+            Offers1.items_title                     as title,
+            Offers1.items_detail_page_url           as detail_page_url,
+            Offers1.items_total_new                 as total_new,
+            Offers1.items_total_used                as total_used,
+            Offers1.items_customer_reviews_url      as customer_reviews_url,
+            avg(Offers1.sales_ranking)              as average_sales_ranking,
+            Offers1.items_product_group             as product_group,
+            Offers1.items_sales_ranking             as sales_ranking,
+            Offers1.items_lowest_price              as lowest_price,
+            Offers1.items_lowest_price_currency     as lowest_price_currency,
+            avg(Offers1.lowest_price)               as average_lowest_price,
+            Offers1.items_lowest_price_currency     as average_lowest_price_currency,
+            Offers1.items_original_release_date_at  as original_release_date_at,
+            Offers1.items_release_date_at           as release_date_at,
+            Offers1.items_publication_date_at       as publication_date_at,
+            Offers1.items_large_image_url           as large_image_url, 
+            (
+              (select lowest_price from offers 
+                where created = max(Offers1.created) and asin = Offers1.asin ) /
+              (select lowest_price from offers 
+                where created = min(Offers1.created) and asin = Offers1.asin ) * 100 - 100
+            ) as rise_rate,
+            (
+              (select lowest_price from offers 
+                where created = max(Offers1.created) and asin = Offers1.asin ) -
+              (select lowest_price from offers 
+                where created = min(Offers1.created) and asin = Offers1.asin )
+            ) as profit_range
+          FROM 
+            (
+              (
+                SELECT
+                  timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) 
+                    hour) AS time1,
+                  timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n)
+                    + series_numbers.number % :n hour) AS time2
+                FROM 
+                  (
+                    SELECT @num := 0 AS number
+                    UNION ALL
+                    SELECT @num := @num + 1 FROM information_schema.COLUMNS
+                    LIMIT ' . $bck_hours . '
+                  ) AS series_numbers
+              ) AS date_map
+              LEFT JOIN 
+                (
+                  SELECT 
+                    items.id                       as items_id,
+                    items.title                    as items_title,
+                    offers.asin                    as asin,
+                    items.detail_page_url          as items_detail_page_url,
+                    items.total_new                as items_total_new,
+                    items.total_used               as items_total_used,
+                    items.customer_reviews_url     as items_customer_reviews_url,
+                    offers.sales_ranking           as sales_ranking,
+                    items.product_group            as items_product_group,
+                    items.sales_ranking            as items_sales_ranking,   
+                    items.lowest_price             as items_lowest_price,
+                    items.lowest_price_currency    as items_lowest_price_currency,
+                    offers.lowest_price            as lowest_price,
+                    offers.lowest_price_currency   as lowest_price_currency,
+                    items.original_release_date_at as items_original_release_date_at,
+                    items.release_date_at          as items_release_date_at,
+                    items.publication_date_at      as items_publication_date_at,
+                    items.large_image_url          as items_large_image_url,
+                    offers.created                 as created
+                  FROM offers
+                  inner join items 
+                  on items.id = offers.item_id
+                ) AS Offers1
+              ON 
+                Offers1.created between date_map.time2 and date_map.time2 + interval 1 hour
+            )
+          GROUP BY time1, Offers1.asin, Offers1.items_id
+          order by time1 desc;', ['n' => $avg_hours])
+        ->fetchAll('assoc');
 
-        //  $start_price = $q->select(['lowest_price'])
-        //    ->where(['Offers.created' => $subquery
-        //      ->select(['create_max' => $start_date])
-        //      ->where(['Offers.asin' => 'asin'])
-        //      ->first()
-        //    ])
-        //    ->first();
-
-        //  $stop_price = $q->select(['lowest_price'])
-        //    ->where(['Offers.created' => $subquery
-        //      ->select(['create_max' => $stop_date])
-        //      ->where(['Offers.asin' => 'asin'])
-        //      ->first()
-        //    ])
-        //    ->first();
-        //  debug($start_price);
-        //  debug($stop_price);
-        //  $exp1 = $q->newExpr()->add($stop_price.' / '.$start_price.' * 100 - 100');
-        //  $exp2 = $q->newExpr()->add($stop_price.' - '.$start_prife);
-        //  return $e->add(exp1)->add(exp2);
-
-        //})
-        ->group(['Offers.asin','Items.id'])
-        ->all();
-
-      // START PRICE
-      // 
-      // SELECT *
-      // FROM テーブル名 テーブル別名
-      // WHERE 取引日付 = (
-      //   SELECT MIN(取引日付)
-      //    FROM テーブル名 
-      //    WHERE 銘柄コード= テーブル別名.銘柄コード
-      //   )
-      //
-      // STOP PRICE
-      // 
-      // SELECT *
-      // FROM テーブル名 テーブル別名
-      // WHERE 取引日付 = (
-      //   SELECT MAX(取引日付)
-      //    FROM テーブル名 
-      //    WHERE 銘柄コード= テーブル別名.銘柄コード
-      //   )
+      foreach($_offers as $offer) {
+        if($offer['asin']) {
+          if($offer['rise_rate'] >= $rise_rate && $offer['profit_range'] >= $profit_range) { 
+            //debug($offer);
+            array_push($offers, $offer);
+          }
+        }
+      }
     }
-
-    $offers = $this->paginate($query);
-    //debug($offers);
     $this->set(compact('title', 'offers'));
   }
 
