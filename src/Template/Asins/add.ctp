@@ -46,6 +46,10 @@
           <legend><?= __('ASIN登録') ?></legend>
           <?php
             echo $this->Form->control('asin');
+            echo $this->Form->control('ean');
+            echo $this->Form->control('upc');
+            echo $this->Form->control('isbn');
+            echo $this->Form->control('sku');
             echo $this->Form->control('marketplace');
             echo $this->Form->control('suspended');
           ?>

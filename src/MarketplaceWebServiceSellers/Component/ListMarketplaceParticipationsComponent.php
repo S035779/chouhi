@@ -8,11 +8,21 @@ use MarketplaceWebServiceSellers\Model\MarketplaceWebServiceSellers_Model_ListMa
 use MarketplaceWebServiceSellers\MarketplaceWebServiceSellers_Interface;
 use MarketplaceWebServiceSellers\MarketplaceWebServiceSellers_Exception;
 
-class ListMarketplaceParticipations {
+class ListMarketplaceParticipationsCOmponent
+{
+  public function __construct($params) 
+  {
+    $this->service_url = $params['BaseURL'];
+    $this->access_key  = $params['AWSAccessKeyId'];
+    $this->secret_key  = $params['AWSSecretKeyId'];
+    $this->app_name    = env('APP_NAME');
+    $this->app_version = env('APP_VERSION');
+    $this->seller_id   = $params['SellerId'];
+  }
 
-  public function fetch($params) {
+  public function fetch() {
     $config = array (
-      'ServiceURL' => $params['BaseURL'] . 'Sellers/2011-07-01',
+      'ServiceURL' => $this->service_url . 'Sellers/2011-07-01',
       'ProxyHost' => null,
       'ProxyPort' => -1,
       'ProxyUsername' => null,
@@ -20,18 +30,20 @@ class ListMarketplaceParticipations {
       'MaxErrorRetry' => 3,
     );
     $service = new MarketplaceWebServiceSellers_Client(
-      $params['AWSAccessKeyId'],
-      $params['AWSSecretKey'],
-      env('APP_NAME'),
-      env('APP_VERSION'),
+      $this->access_key,
+      $this->secret_key,
+      $this->app_name,
+      $this->app_version,
       $config
     );
     $request = new MarketplaceWebServiceSellers_Model_ListMarketplaceParticipationsRequest();
-    $request->setSellerId($params['SellerId']);
+    $request->setSellerId($this->seller_id);
     return $this->invokeListMarketplaceParticipations($service, $request);
   }
 
-  private function invokeListMarketplaceParticipations(MarketplaceWebServiceSellers_Interface $service, $request) {
+  private function invokeListMarketplaceParticipations(
+    MarketplaceWebServiceSellers_Interface $service, $request
+  ) {
     try {
       $response = $service->ListMarketplaceParticipations($request);
       $result = array();
@@ -106,5 +118,3 @@ class ListMarketplaceParticipations {
     return $results;
   }
 }
-
-

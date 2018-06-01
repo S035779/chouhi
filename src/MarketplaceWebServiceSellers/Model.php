@@ -39,13 +39,10 @@ abstract class MarketplaceWebServiceSellers_Model
     {
         if (!is_null($data)) {
             if ($this->_isAssociativeArray($data)) {
-              //echo "---isAssociativeArray---" . $data->nodeValue . "-----\n";
               $this->_fromAssociativeArray($data);
             } elseif ($this->_isDOMElement($data)) {
-              //echo "---isDOMElement---" . $data->nodeValue . "-----\n";
               $this->_fromDOMElement($data);
             } else {
-              //echo "---error---" . $data->nodeValue . "-----\n";
               throw new \Exception ("Unable to construct from provided data. Please be sure to pass associative array or DOMElement");
             }
         }

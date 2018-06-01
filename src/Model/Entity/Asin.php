@@ -27,6 +27,10 @@ class Asin extends Entity
      */
     protected $_accessible = [
         'asin' => true,
+        'ean' => true,
+        'isbn' => true,
+        'sku' => true,
+        'upc' => true,
         'marketplace' => true,
         'created' => true,
         'modified' => true,

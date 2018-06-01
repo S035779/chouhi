@@ -5,12 +5,10 @@ use Cake\Console\Shell;
 use Cake\ORM\TableRegistry;
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Configuration\Country;
-use ApaiIO\Operations\Search;
-use ApaiIO\Operations\SimilarityLookup;
 use ApaiIO\Operations\Lookup;
-use ApaiIO\Operations\BrowseNodeLookup;
 use ApaiIO\ResponseTransformer\XmlToArray;
 use ApaiIO\ApaiIO;
+use React\Promise;
 
 /**
  * FetchOfferItems shell task.
@@ -117,7 +115,7 @@ class FetchOfferItemsTask extends Shell
       }
       //print_r($entity);
       if(!$offers->save($entity)) {
-        $this->logError($entity->errors());
+        $this->log_error($entity->errors());
         return false;
       }
     }
@@ -178,7 +176,7 @@ class FetchOfferItemsTask extends Shell
         }
       }
       if(!$offers->save($entity)) {
-        $this->logError($entity->errors());
+        $this->log_error($entity->errors());
         return false;
       }
     }
@@ -194,16 +192,16 @@ class FetchOfferItemsTask extends Shell
     $keys     = array_keys($header);
     $vals     = array_values($header);
 
-    $responses = $this->fetchOffers($request);
+    $_response = $this->fetchOffers($request);
 
-    //print_r($response);
-    foreach($responses as $response) {
+    //debug($_response);
+    foreach($_response as $response) {
       $operation = $response['fetchOffer']['OperationRequest'];
       $parameter = $response['fetchOffer']['Items']['Request'];
       $_items    = $response['fetchOffer']['Items']['Item'];
       $items     = array_values($_items) === $_items ? $_items : [$_items];
       foreach($items as $item) {
-        //print_r($item);
+        //debug($item);
         if($item) {
           $asin         = $item['ASIN'];
           $new          = $item['OfferSummary']['TotalNew'];
@@ -214,8 +212,11 @@ class FetchOfferItemsTask extends Shell
           $lowestPrice  = $item['OfferSummary']['LowestNewPrice']['Amount'];
           $lowestPriceCurrency = $item['OfferSummary']['LowestNewPrice']['CurrencyCode'];
           $total        = $item['Offers']['TotalOffers'];
-          $offers       = array_values($item['Offers']['Offer']) === $item['Offers']['Offer']
-            ? $item['Offers']['Offer'] : [$item['Offers']['Offer']];
+          $offers       = isset($item['Offers']['Offer'])
+            ? (array_values($item['Offers']['Offer']) === $item['Offers']['Offer']
+              ? $item['Offers']['Offer'] : [$item['Offers']['Offer']])
+            : [];
+          $data = array();
           foreach($offers as $offer) {
             //print_r($offer);
             $metadata = array(
@@ -232,39 +233,31 @@ class FetchOfferItemsTask extends Shell
             , 'lowestPrice' => $lowestPrice
             , 'lowestPriceCurrency' => $lowestPriceCurrency
             );
-            if($vals[ 0]) $data[$keys[ 0]] = $asin ?? 'N/A';
-            if($vals[ 1]) $data[$keys[ 1]] = $offer['OfferListing']['Availability']
-              ?? 'N/A';
-            if($vals[ 2]) $data[$keys[ 2]] = $offer['Seller']['AverageFeedbackRating']
-              ?? 0;
-            if($vals[ 3]) $data[$keys[ 3]] = $offer['OfferAttributes']['Condition']
-              ?? 'N/A';
-            if($vals[ 4]) $data[$keys[ 4]] = $offer['OfferAttributes']['ConditionNote']
-              ?? 'N/A';
-            if($vals[ 5]) $data[$keys[ 5]] = $offer['OfferAttributes']['Country']
-              ?? 'N/A';
-            if($vals[ 6]) $data[$keys[ 6]] = $offer['OfferListing']['ExchangeId']
-              ?? 'N/A';
+            if($vals[ 0]) $data[$keys[ 0]] = $asin                                  ?? 'N/A';
+            if($vals[ 1]) $data[$keys[ 1]] = $offer['OfferListing']['Availability'] ?? 'N/A';
+            if($vals[ 2]) $data[$keys[ 2]]
+              = $offer['Seller']['AverageFeedbackRating']                           ?? 0;
+            if($vals[ 3]) $data[$keys[ 3]] = $offer['OfferAttributes']['Condition'] ?? 'N/A';
+            if($vals[ 4]) $data[$keys[ 4]]
+              = $offer['OfferAttributes']['ConditionNote']                          ?? 'N/A';
+            if($vals[ 5]) $data[$keys[ 5]] = $offer['OfferAttributes']['Country']   ?? 'N/A';
+            if($vals[ 6]) $data[$keys[ 6]] = $offer['OfferListing']['ExchangeId']   ?? 'N/A';
             if($vals[ 7]) $data[$keys[ 7]]
-              = $offer['OfferListing']['IsEligibleForSuperSaverShipping']
-              ?? 0;
-            if($vals[ 8]) $data[$keys[ 8]] = $offer['OfferListing']['OfferListingId']
-              ?? 'N/A';
-            if($vals[ 9]) $data[$keys[ 9]] = $offer['OfferListing']['Price']['Amount']
-              ?? 0;
-            if($vals[10]) $data[$keys[10]] = $offer['OfferListing']['Price']['CurrencyCode']
-              ?? 'N/A';
-            if($vals[11]) $data[$keys[11]] = $offer['OfferAttributes']['State']
-              ?? 'N/A';
-            if($vals[12]) $data[$keys[12]] = $offer['Seller']['SellerId']
-              ?? 'N/A';
-            if($vals[13]) $data[$keys[13]] = $offer['OfferAttributes']['SubCondition']
-              ?? 'N/A';
-            if($vals[14]) $data[$keys[14]] = $offer['Seller']['TotalFeedback']
-              ?? 0;
-            if($vals[15]) $data[$keys[15]] = $salesRanking ?? 0;
-            if($vals[16]) $data[$keys[16]] = $lowestPrice ?? 0;
-            if($vals[17]) $data[$keys[17]] = $lowestPriceCurrency ?? 'N/A';
+              = $offer['OfferListing']['IsEligibleForSuperSaverShipping']           ?? 0;
+            if($vals[ 8]) $data[$keys[ 8]]
+              = $offer['OfferListing']['OfferListingId']                            ?? 'N/A';
+            if($vals[ 9]) $data[$keys[ 9]]
+              = $offer['OfferListing']['Price']['Amount']                           ?? 0;
+            if($vals[10]) $data[$keys[10]]
+              = $offer['OfferListing']['Price']['CurrencyCode']                     ?? 'N/A';
+            if($vals[11]) $data[$keys[11]] = $offer['OfferAttributes']['State']     ?? 'N/A';
+            if($vals[12]) $data[$keys[12]] = $offer['Seller']['SellerId']           ?? 'N/A';
+            if($vals[13]) $data[$keys[13]] 
+              = $offer['OfferAttributes']['SubCondition']                           ?? 'N/A';
+            if($vals[14]) $data[$keys[14]] = $offer['Seller']['TotalFeedback']      ?? 0;
+            if($vals[15]) $data[$keys[15]] = $salesRanking                          ?? 0;
+            if($vals[16]) $data[$keys[16]] = $lowestPrice                           ?? 0;
+            if($vals[17]) $data[$keys[17]] = $lowestPriceCurrency                   ?? 'N/A';
             if($vals[18]) $data[$keys[18]] = $datetime;
             if($vals[19]) $data[$keys[19]] = $datetime;
             array_push($datas, array('Headers' => $metadata, 'Results' => $data));
@@ -278,48 +271,78 @@ class FetchOfferItemsTask extends Shell
 
   private function fetchOffers($request)
   {
+    $response = [];
+    Promise\all($this->_fetchOffers($request))
+      ->then(function($result) use (&$response) {
+        //debug($result);
+        $response = $result;
+      }, function($error) {
+        //debug($error);
+        $this->log_error($error);
+      });
+    return $response;
+  }
+
+  private function _fetchOffers($request)
+  {
     $response = array();
     $asins_jp = array();
     $asins_au = array();
     $asins_us = array();
     $eol = count($request);
     $idx = 0;
+    //debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {
       case 'JP':
         array_push($asins_jp, $_request['asin']);
-        if(count($asins_jp) > 10 || $idx === $eol - 1) {
-          array_push($response
-            , ['fetchOffer' => $this->fetchOffer(implode(',', $asins_jp), 'JP')
-            , 'marketplace' => 'JP']);
+        if(count($asins_jp) > 10) {
+          array_push($response, $this->fetchOffer(implode(',', $asins_jp), 'JP'));
           $asins_jp = array();
         }
         break;
       case 'AU':
         array_push($asins_au, $_request['asin']);
-        if(count($asins_au) > 10 || $idx === $eol - 1 ) {
-          array_push($response
-            , ['fetchOffer' => $this->fetchOffer(implode(',', $asins_au), 'AU')
-            , 'marketplace' => 'AU']);
+        if(count($asins_au) > 10) {
+          array_push($response, $this->fetchOffer(implode(',', $asins_au), 'AU'));
           $asins_au = array();
         }
         break;
       case 'US':
         array_push($asins_us, $_request['asin']);
-        if(count($asins_us) > 10 || $idx === $eol - 1) {
-          array_push($response
-            , ['fetchOffer' => $this->fetchOffer(implode(',', $asins_us), 'US')
-            , 'marketplace' => 'US']);
+        if(count($asins_us) > 10) {
+          array_push($response, $this->fetchOffer(implode(',', $asins_us), 'US'));
           $asins_us = array();
         }
         break;
+      }
+      if($idx === $eol - 1) {
+        if(count($asins_jp) !== 0)
+          array_push($response, $this->fetchOffer(implode(',', $asins_jp), 'JP'));
+        if(count($asins_au) !== 0)
+          array_push($response, $this->fetchOffer(implode(',', $asins_au), 'AU'));
+        if(count($asins_us) !== 0)
+          array_push($response, $this->fetchOffer(implode(',', $asins_us), 'US'));
       }
       $idx += 1;
     }
     return $response;
   }
 
-  private function fetchOffer($asin, $marketplace) {
+  private function fetchOffer($asin, $marketplace) 
+  {
+    $deferred = new Promise\Deferred();
+    $this->_fetchOffer(function($error, $response) use ($deferred) {
+      if($error) {
+        $this->log_error($error);
+        $deferred->reject($error);
+      }
+      $deferred->resolve($response);
+    }, $asin, $marketplace);
+    return $deferred->promise();
+  }
+
+  private function _fetchOffer($callback, $asin, $marketplace) {
     $conf = new GenericConfiguration();
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
@@ -360,7 +383,7 @@ class FetchOfferItemsTask extends Shell
         ->setResponseTransformer(new XmlToArray())
       ;
     } catch (\Exception $e) {
-      echo $e->getMessage();
+      $callback($e->getMessage(), []);
     }
     $apaiIo = new ApaiIO($conf);
     $lookup = new Lookup();
@@ -368,10 +391,14 @@ class FetchOfferItemsTask extends Shell
     $lookup->setResponseGroup(array('OfferFull', 'SalesRank'));
     $lookup->setCondition('New');
     $lookup->setMerchantId('All');
-    return $apaiIo->runOperation($lookup);
+
+    $callback(null, [
+      'fetchOffer'  => $apaiIo->runOperation($lookup)
+    , 'marketplace' => $marketplace
+    ]);
   }
 
-  private function logError($message)
+  private function log_error($message)
   {
     $this->log(print_r($message, true), LOG_DEBUG);
   }

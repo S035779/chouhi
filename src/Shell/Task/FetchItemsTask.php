@@ -5,12 +5,10 @@ use Cake\Console\Shell;
 use Cake\ORM\TableRegistry;
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Configuration\Country;
-use ApaiIO\Operations\Search;
-use ApaiIO\Operations\SimilarityLookup;
 use ApaiIO\Operations\Lookup;
-use ApaiIO\Operations\BrowseNodeLookup;
 use ApaiIO\ResponseTransformer\XmlToArray;
 use ApaiIO\ApaiIO;
+use React\Promise;
 
 /**
  * FetchItems shell task.
@@ -136,7 +134,7 @@ class FetchItemsTask extends Shell
       $query->values($result);
     }
     if(!$query->execute()) {
-      $this->logError($query->errors());
+      $this->log_error($query->errors());
       return false;
     }
 
@@ -211,7 +209,7 @@ class FetchItemsTask extends Shell
       }
       //print_r($entity);
       if(!$items->save($entity)) {
-        $this->logError($entity->errors());
+        $this->log_error($entity->errors());
         return false;
       }
     }
@@ -235,80 +233,93 @@ class FetchItemsTask extends Shell
       $_items       = $response['fetchItem']['Items']['Item'];
       $items        = array_values($_items) === $_items ? $_items : [$_items];
       $marketplace  = $response['marketplace'];
+      $data = array();
       foreach($items as $item) {
         if($item) {
           //print_r($item);
-          if($vals[ 0]) $data[$keys[ 0]] = $item['ASIN'] ?? 'N/A';
-          if($vals[ 1]) $data[$keys[ 1]] = $item['ItemAttributes']['Title'] ?? 'N/A';
-          if($vals[ 2]) $data[$keys[ 2]] = $item['Offers']['Offer']['OfferListing']
-            ['IsEligibleForPrime'] ?? 0;
-          if($vals[ 3]) $data[$keys[ 3]] = $item['Offers']['Offer']['OfferListing']
-            ['IsEligibleForSuperSaverShipping'] ?? 0;
+          if($vals[ 0]) $data[$keys[ 0]] = $item['ASIN']                            ?? 'N/A';
+          if($vals[ 1]) $data[$keys[ 1]] = $item['ItemAttributes']['Title']         ?? 'N/A';
+          if($vals[ 2]) $data[$keys[ 2]]
+            = $item['Offers']['Offer']['OfferListing']['IsEligibleForPrime']        ?? 0;
+          if($vals[ 3]) $data[$keys[ 3]]
+            = $item['Offers']['Offer']['OfferListing']['IsEligibleForSuperSaverShipping']
+                                                                                    ?? 0;
           if($vals[ 4]) $data[$keys[ 4]]
-            = $item['ItemAttributes']['ItemDimensions']['Height'] ?? 0;
+            = $item['ItemAttributes']['ItemDimensions']['Height']                   ?? 0;
           if($vals[ 5]) $data[$keys[ 5]]
-            = $item['ItemAttributes']['ItemDimensions']['Length'] ?? 0;
+            = $item['ItemAttributes']['ItemDimensions']['Length']                   ?? 0;
           if($vals[ 6]) $data[$keys[ 6]]
-            = $item['ItemAttributes']['ItemDimensions']['Weight'] ?? 0;
+            = $item['ItemAttributes']['ItemDimensions']['Weight']                   ?? 0;
           if($vals[ 7]) $data[$keys[ 7]]
-            = $item['ItemAttributes']['ItemDimensions']['Width'] ?? 0;
+            = $item['ItemAttributes']['ItemDimensions']['Width']                    ?? 0;
           if($vals[ 8]) $data[$keys[ 8]]
-            = $item['ItemAttributes']['PackageDimensions']['Height'] ?? 0;
+            = $item['ItemAttributes']['PackageDimensions']['Height']                ?? 0;
           if($vals[ 9]) $data[$keys[ 9]]
-            = $item['ItemAttributes']['PackageDimensions']['Length'] ?? 0;
+            = $item['ItemAttributes']['PackageDimensions']['Length']                ?? 0;
           if($vals[10]) $data[$keys[10]]
-            = $item['ItemAttributes']['PackageDimensions']['Weight'] ?? 0;
+            = $item['ItemAttributes']['PackageDimensions']['Weight']                ?? 0;
           if($vals[11]) $data[$keys[11]]
-            = $item['ItemAttributes']['PackageDimensions']['Width'] ?? 0;
-          if($vals[12]) $data[$keys[12]] = $item['ItemAttributes']['ListPrice']['Amount'] ?? 0;
+            = $item['ItemAttributes']['PackageDimensions']['Width']                 ?? 0;
+          if($vals[12]) $data[$keys[12]]
+            = $item['ItemAttributes']['ListPrice']['Amount']                        ?? 0;
           if($vals[13]) $data[$keys[13]]
-            = $item['ItemAttributes']['ListPrice']['CurrencyCode'] ?? 'N/A';
+            = $item['ItemAttributes']['ListPrice']['CurrencyCode']                  ?? 'N/A';
           if($vals[14]) $data[$keys[14]]
-            = $item['OfferSummary']['LowestNewPrice']['Amount'] ?? 0;
+            = $item['OfferSummary']['LowestNewPrice']['Amount']                     ?? 0;
           if($vals[15]) $data[$keys[15]]
-            = $item['OfferSummary']['LowestNewPrice']['CurrencyCode'] ?? 'N/A';
+            = $item['OfferSummary']['LowestNewPrice']['CurrencyCode']               ?? 'N/A';
           if($vals[16]) $data[$keys[16]]
-            = $item['OfferSummary']['LowestUsedPrice']['Amount'] ?? 0;
+            = $item['OfferSummary']['LowestUsedPrice']['Amount']                    ?? 0;
           if($vals[17]) $data[$keys[17]]
-            = $item['OfferSummary']['LowestUsedPrice']['CurrencyCode'] ?? 'N/A';
+            = $item['OfferSummary']['LowestUsedPrice']['CurrencyCode']              ?? 'N/A';
           if($vals[18]) $data[$keys[18]]
-            = $item['OfferSummary']['LowestCollectiblePrice']['Amount'] ?? 0;
+            = $item['OfferSummary']['LowestCollectiblePrice']['Amount']             ?? 0;
           if($vals[19]) $data[$keys[19]]
-            = $item['OfferSummary']['LowestCollectiblePrice']['CurrencyCode'] ?? 'N/A';
+            = $item['OfferSummary']['LowestCollectiblePrice']['CurrencyCode']       ?? 'N/A';
           if($vals[20]) $data[$keys[20]]
-            = $item['Offers']['Offer']['OfferListing']['Price']['Amount'] ?? 0;
+            = $item['Offers']['Offer']['OfferListing']['Price']['Amount']           ?? 0;
           if($vals[21]) $data[$keys[21]]
-            = $item['Offers']['Offer']['OfferListing']['Price']['CurrencyCode'] ?? 'N/A';
+            = $item['Offers']['Offer']['OfferListing']['Price']['CurrencyCode']     ?? 'N/A';
           if($vals[22]) $data[$keys[22]]
-            = $item['Offers']['Offer']['OfferListing']['AmountSaved']['Amount'] ?? 0;
+            = $item['Offers']['Offer']['OfferListing']['AmountSaved']['Amount']     ?? 0;
           if($vals[23]) $data[$keys[23]]
-            = $item['Offers']['Offer']['OfferListing']['AmountSaved']['CurrencyCode'] ?? 'N/A';
-          if($vals[24]) $data[$keys[24]] = $item['SalesRank'] ?? 0;
-          if($vals[25]) $data[$keys[25]] = $item['ItemAttributes']['EAN'] ?? 'N/A';
-          if($vals[26]) $data[$keys[26]] = isset($item['ItemAttributes']['ReleaseDate'])
-            ? $this->getTimeStamp($item['ItemAttributes']['ReleaseDate'])         : $deftime;
-          if($vals[27]) $data[$keys[27]] = isset($item['ItemAttributes']['PublicationDate'])
-            ? $this->getTimeStamp($item['ItemAttributes']['PublicationDate'])     : $deftime;
-          if($vals[28]) $data[$keys[28]] = isset($item['ItemAttributes']['OriginalReleaseDate'])
-            ? $this->getTimeStamp($item['ItemAttributes']['OriginalReleaseDate']) : $deftime;
+            = $item['Offers']['Offer']['OfferListing']['AmountSaved']['CurrencyCode']
+                                                                                    ?? 'N/A';
+          if($vals[24]) $data[$keys[24]] = $item['SalesRank']                       ?? 0;
+          if($vals[25]) $data[$keys[25]] = $item['ItemAttributes']['EAN']           ?? 'N/A';
+          if($vals[26]) $data[$keys[26]]
+            = isset($item['ItemAttributes']['ReleaseDate'])
+              ? $this->getTimeStamp($item['ItemAttributes']['ReleaseDate'])
+              : $deftime;
+          if($vals[27]) $data[$keys[27]]
+            = isset($item['ItemAttributes']['PublicationDate'])
+              ? $this->getTimeStamp($item['ItemAttributes']['PublicationDate']) 
+              : $deftime;
+          if($vals[28]) $data[$keys[28]] 
+            = isset($item['ItemAttributes']['OriginalReleaseDate'])
+              ? $this->getTimeStamp($item['ItemAttributes']['OriginalReleaseDate'])
+              : $deftime;
           if($vals[29]) $data[$keys[29]]
-            = $item['Offers']['Offer']['OfferAttributes']['Condition'] ?? 'N/A';
+            = $item['Offers']['Offer']['OfferAttributes']['Condition']              ?? 'N/A';
           if($vals[30]) $data[$keys[30]] = $item['CustomerReviews']['TotalReviews'] ?? 0;
-          if($vals[31]) $data[$keys[31]] = $item['CustomerReviews']['AverageRating'] ?? 0;
-          if($vals[32]) $data[$keys[32]] = $item['CustomerReviews']['TotalVotes'] ?? 0;
-          if($vals[33]) $data[$keys[33]] = $item['ItemAttributes']['ProductGroup'] ?? 'N/A';
-          if($vals[34]) $data[$keys[34]] = $item['Cart']['Quantity'] ?? 0;
-          if($vals[35]) $data[$keys[35]] = $item['Status'] ?? 0;
-          if($vals[36]) $data[$keys[36]] = $item['QuantityAllocated'] ?? 0;
-          if($vals[37]) $data[$keys[37]] = $item['DetailPageURL'] ?? 'N/A';
-          if($vals[38]) $data[$keys[38]] = $item['SmallImage']['URL'] ?? 'N/A';
-          if($vals[39]) $data[$keys[39]] = $item['MediumImage']['URL'] ?? 'N/A';
-          if($vals[40]) $data[$keys[40]] = $item['LargeImage']['URL'] ?? 'N/A';
-          if($vals[41]) $data[$keys[41]] = $item['OfferSummary']['TotalNew'] ?? 0;        
-          if($vals[42]) $data[$keys[42]] = $item['OfferSummary']['TotalUsed'] ?? 0;       
-          if($vals[43]) $data[$keys[43]] = $item['OfferSummary']['TotalCollectible'] ?? 0;
-          if($vals[44]) $data[$keys[44]] = $item['OfferSummary']['TotalRefurbished'] ?? 0;
-          if($vals[45]) $data[$keys[45]] = $item['CustomerReviews']['IFrameURL'] ?? 'N/A';
+          if($vals[31]) $data[$keys[31]]
+            = $item['CustomerReviews']['AverageRating']                             ?? 0;
+          if($vals[32]) $data[$keys[32]] = $item['CustomerReviews']['TotalVotes']   ?? 0;
+          if($vals[33]) $data[$keys[33]] = $item['ItemAttributes']['ProductGroup']  ?? 'N/A';
+          if($vals[34]) $data[$keys[34]] = $item['Cart']['Quantity']                ?? 0;
+          if($vals[35]) $data[$keys[35]] = $item['Status']                          ?? 0;
+          if($vals[36]) $data[$keys[36]] = $item['QuantityAllocated']               ?? 0;
+          if($vals[37]) $data[$keys[37]] = $item['DetailPageURL']                   ?? 'N/A';
+          if($vals[38]) $data[$keys[38]] = $item['SmallImage']['URL']               ?? 'N/A';
+          if($vals[39]) $data[$keys[39]] = $item['MediumImage']['URL']              ?? 'N/A';
+          if($vals[40]) $data[$keys[40]] = $item['LargeImage']['URL']               ?? 'N/A';
+          if($vals[41]) $data[$keys[41]] = $item['OfferSummary']['TotalNew']        ?? 0;
+          if($vals[42]) $data[$keys[42]] = $item['OfferSummary']['TotalUsed']       ?? 0;
+          if($vals[43]) $data[$keys[43]]
+            = $item['OfferSummary']['TotalCollectible']                             ?? 0;
+          if($vals[44]) $data[$keys[44]]
+            = $item['OfferSummary']['TotalRefurbished']                             ?? 0;
+          if($vals[45]) $data[$keys[45]] = $item['CustomerReviews']['IFrameURL']    ?? 'N/A';
           if($vals[46]) $data[$keys[46]] = $marketplace;
           if($vals[47]) $data[$keys[47]] = $datetime;
           if($vals[48]) $data[$keys[48]] = $datetime;    
@@ -321,6 +332,18 @@ class FetchItemsTask extends Shell
 
   private function fetchItems($request)
   {
+    $response = [];
+    Promise\all($this->_fetchItems($request))
+      ->then(function($result) use (&$response) {
+        $response = $result;
+      }, function($error) {
+        $this->log_error($error);
+      });
+    return $response;
+  }
+
+  private function _fetchItems($request)
+  {
     $response = array();
     $asins_jp = array();
     $asins_au = array();
@@ -331,28 +354,33 @@ class FetchItemsTask extends Shell
       switch($_request['marketplace']) {
       case 'JP':
         array_push($asins_jp, $_request['asin']);
-        if(count($asins_jp) > 10 || $idx === $eol - 1) {
-          array_push($response, ['fetchItem' => $this->fetchItem(implode(',', $asins_jp), 'JP')
-            , 'marketplace' => 'JP']);
+        if(count($asins_jp) > 10) {
+          array_push($response, $this->fetchItem(implode(',', $asins_jp), 'JP'));
           $asins_jp = array();
         }
         break;
       case 'AU':
         array_push($asins_au, $_request['asin']);
-        if(count($asins_au) > 10 || $idx === $eol - 1 ) {
-          array_push($response, ['fetchItem' => $this->fetchItem(implode(',', $asins_au), 'AU')
-            , 'marketplace' => 'AU']);
+        if(count($asins_au) > 10) {
+          array_push($response, $this->fetchItem(implode(',', $asins_au), 'AU'));
           $asins_au = array();
         }
         break;
       case 'US':
         array_push($asins_us, $_request['asin']);
-        if(count($asins_us) > 10 || $idx === $eol - 1) {
-          array_push($response, ['fetchItem' => $this->fetchItem(implode(',', $asins_us), 'US')
-            , 'marketplace' => 'US']);
+        if(count($asins_us) > 10) {
+          array_push($response, $this->fetchItem(implode(',', $asins_us), 'US'));
           $asins_us = array();
         }
         break;
+      }
+      if($idx === $eol - 1) {
+        if(count($asins_jp) !== 0)
+          array_push($response, $this->fetchItem(implode(',', $asins_jp), 'JP'));
+        if(count($asins_au) !== 0)
+          array_push($response, $this->fetchItem(implode(',', $asins_au), 'AU'));
+        if(count($asins_us) !== 0)
+          array_push($response, $this->fetchItem(implode(',', $asins_us), 'US'));
       }
       $idx += 1;
     }
@@ -360,6 +388,19 @@ class FetchItemsTask extends Shell
   }
 
   private function fetchItem($asin, $marketplace) {
+    $deferred = new Promise\Deferred();
+    $this->_fetchItem(function($error, $response) use ($deferred) {
+      if($error) {
+        $this->log_error($error);
+        $deferred->reject($error);
+      }
+      $deferred->resolve($response);
+    }, $asin, $marketplace);
+    return $deferred->promise();
+  }
+
+  private function _fetchItem($callback, $asin, $marketplace) 
+  {
     $conf = new GenericConfiguration();
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
@@ -400,16 +441,21 @@ class FetchItemsTask extends Shell
         ->setResponseTransformer(new XmlToArray())
       ;
     } catch (\Exception $e) {
-      echo $e->getMessage();
+      $callback($e->getMessage(), []);
     }
     $apaiIo = new ApaiIO($conf);
     $lookup = new Lookup();
     $lookup->setItemId($asin);
+    $lookup->setCondition('All');
     $lookup->setMerchantId('All');
     $lookup->setResponseGroup(array(
       'Images', 'ItemAttributes', 'OfferListings', 'OfferSummary', 'SalesRank', 'Reviews'
     ));
-    return $apaiIo->runOperation($lookup);
+
+    $callback(null, [
+      'fetchItem'   => $apaiIo->runOperation($lookup)
+    , 'marketplace' => $marketplace
+    ]);
   }
 
   private function getTimeStamp($str)
@@ -417,7 +463,7 @@ class FetchItemsTask extends Shell
     return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
   }
 
-  private function logError($message)
+  private function log_error($message)
   {
     $this->log(print_r($message, true), LOG_DEBUG);
   }

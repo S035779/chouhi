@@ -45,6 +45,10 @@
           <tr>
             <th scope="col"><?= $this->Paginator->sort('id') ?></th>
             <th scope="col"><?= $this->Paginator->sort('asin') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('ean') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('upc') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('isbn') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('sku') ?></th>
             <th scope="col"><?= $this->Paginator->sort('marketplace') ?></th>
             <th scope="col"><?= $this->Paginator->sort('created') ?></th>
             <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
@@ -57,6 +61,10 @@
           <tr>
             <td><?= $this->Number->format($asin->id) ?></td>
             <td><?= h($asin->asin) ?></td>
+            <td><?= h($asin->ean) ?></td>
+            <td><?= h($asin->upc) ?></td>
+            <td><?= h($asin->isbn) ?></td>
+            <td><?= h($asin->sku) ?></td>
             <td><?= h($asin->marketplace) ?></td>
             <td><?= h($asin->created) ?></td>
             <td><?= h($asin->modified) ?></td>

@@ -22,6 +22,7 @@ class BootstrapController extends AppController
     parent::initialize();
     $this->viewBuilder()->setLayout('dashboard');
     $this->loadComponent('Common');
+    $this->loadComponent('AmazonMWS');
   }
 
   public function beforeFilter(Event $event)
@@ -77,25 +78,25 @@ class BootstrapController extends AppController
       } elseif (isset($this->request->data['confirmation'])) {
         switch($request['seller']['marketplace']) {
           case 'JP':
-            $mws_base_url = $this->Common::MWS_BASEURL_JP;
-            $mws_marketId = $this->Common::MWS_MARKETPLACE_JP;
+            $mws_base_url = $this->AmazonMWS::MWS_BASEURL_JP;
+            $mws_marketId = $this->AmazonMWS::MWS_MARKETPLACE_JP;
             break;
           case 'AU':
-            $mws_base_url = $this->Common::MWS_BASEURL_AU;
-            $mws_marketId = $this->Common::MWS_MARKETPLACE_AU;
+            $mws_base_url = $this->AmazonMWS::MWS_BASEURL_AU;
+            $mws_marketId = $this->AmazonMWS::MWS_MARKETPLACE_AU;
             break;
           case 'US':
-            $mws_base_url = $this->Common::MWS_BASEURL_US;
-            $mws_marketId = $this->Common::MWS_MARKETPLACE_US;
+            $mws_base_url = $this->AmazonMWS::MWS_BASEURL_US;
+            $mws_marketId = $this->AmazonMWS::MWS_MARKETPLACE_US;
             break;
         }
         //$jobType = 1;
         $params=array();
         $params['AWSAccessKeyId']   = $request['access_key'];
-        $params['AWSSecretKey']     = $request['secret_key'];
+        $params['AWSSecretKeyId']   = $request['secret_key'];
         $params['SellerId']         = $request['seller']['seller'];
         $params['BaseURL']          = $mws_base_url;
-        $response = $this->Common->listMarketplaceParticipations($params);
+        $response = $this->AmazonMWS->listMarketplaceParticipations($params);
         $suspended = '';
         foreach($response['Result']['Participations'] as $participations) {
           if($participations['MarketplaceId'] === $mws_marketId
@@ -230,6 +231,7 @@ class BootstrapController extends AppController
         ->fetchAll('assoc');
 
       foreach($_offers as $offer) {
+        //debug($offer);
         if($offer['asin']) {
           if($offer['rise_rate'] >= $rise_rate && $offer['profit_range'] >= $profit_range) { 
             //debug($offer);
@@ -295,7 +297,7 @@ class BootstrapController extends AppController
         $new_file = sprintf(ROOT.'\storage\%s'
           , $this->request->data['upload_file']['name'] . '_' . time());
         move_uploaded_file($tmp_file, $new_file);
-        if($this->upsertAsin($new_file, FALSE)) {
+        if($this->AmazonMWS->upsertAsin($new_file, FALSE)) {
           $this->Flash->success(__('The csv file has been uploaded.'));
         } else {
           $this->Flash->error(__('The csv file did not complete the upload.'));
@@ -320,7 +322,7 @@ class BootstrapController extends AppController
         $new_file = sprintf(ROOT.'\storage\%s'
           , $this->request->data['upload_file']['name'] . '_' . time());
         move_uploaded_file($tmp_file, $new_file);
-        if($this->upsertAsin($new_file, TRUE)) {
+        if($this->AmazonMWS->upsertAsin($new_file, TRUE)) {
           $this->Flash->success(__('The csv file has been uploaded.'));
         } else {
           $this->Flash->error(__('The csv file did not complete the upload.'));
@@ -340,100 +342,4 @@ class BootstrapController extends AppController
     $title = 'Price calculation';
     $this->set(compact('title'));
   }
-
-  private function insertAsin($filename, $suspended)
-  {
-    $header = array(
-      'asin' => true
-    , 'marketplace' => true
-    , 'created' => true
-    , 'modified' => true
-    , 'suspended' => true
-    );
-    $asins = TableRegistry::get('Asins');
-    $datas = $this->setAsin($filename, $header, $suspended);
-    $query = $asins->query();
-    $query->insert(array_keys($header));
-    foreach($datas as $data) {
-      $query->values($data);
-    }
-    if(!$query->execute()) {
-      $this->logError($query->errors());
-      return false;
-    }
-    return true;
-  }
-
-  private function upsertAsin($filename, $suspended)
-  {
-    $header = array(
-      'asin' => true
-    , 'marketplace' => true
-    , 'created' => true
-    , 'modified' => true
-    , 'suspended' => true
-    );
-    $asins = TableRegistry::get('Asins');
-    $datas = $this->setAsin($filename, $header, $suspended);
-    foreach($datas as $data) {
-      $entity = $asins->newEntity($data);
-      $asin = $asins->find()
-        ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
-        ->first();
-      if($asin) {
-        unset($data['created']);
-        $entity = $asins->patchEntity($asin, $data);
-      }
-      if(!$asins->save($entity)) {
-        $this->logError($asins->errors());
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private function logError($message)
-  {
-    $this->log(print_r($message, true),LOG_DEBUG);
-  }
-
-  private function setAsin($filename, $header, $suspended)
-  {
-    $datas = array();
-    $datetime = date('Y-m-d H:i:s');
-    $org_file = @fopen($filename, 'rb') or die("File can not opened.\n");
-    flock($org_file, LOCK_SH);
-    while($row = fgetcsv($org_file, 1024, "\t")) {
-      $idx = 0; $_idx = 0;
-      foreach(array_keys($header) as $_header) {
-        if(array_values($header)[$_idx]) {
-          if($_header === 'created' || $_header === 'modified') {
-            $_body = $datetime;
-          } else if($_header === 'suspended' && $suspended === FALSE) {
-            $_body = 0;
-          } else if($_header === 'suspended' && $suspended === TRUE) {
-            $_body = 1;
-          } else {
-            $_body = $this->e($row[$idx]);
-            $idx += 1;
-          }
-          $_idx += 1;
-        } else {
-          $_body = 'N/A';
-          $_idx += 1;
-        }
-        $data[$_header] = $_body;
-      }
-      array_push($datas, $data);
-    }
-    flock($org_file, LOCK_UN);
-    fclose($org_file);
-    return $datas;
-  }
-
-  private function e($str)
-  {
-    return mb_convert_encoding($str, 'utf8', 'sjis-win');
-  }
-
 }

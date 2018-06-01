@@ -64,6 +64,22 @@
             <td><?= h($asin->asin) ?></td>
           </tr>
           <tr>
+            <th scope="row"><?= __('Ean') ?></th>
+            <td><?= h($asin->ean) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Upc') ?></th>
+            <td><?= h($asin->upc) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Isbn') ?></th>
+            <td><?= h($asin->isbn) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Sku') ?></th>
+            <td><?= h($asin->sku) ?></td>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Marketplace') ?></th>
             <td><?= h($asin->marketplace) ?></td>
           </tr>

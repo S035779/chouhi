@@ -58,6 +58,30 @@ class AsinsTable extends Table
             ->notEmpty('asin');
 
         $validator
+            ->scalar('ean')
+            ->maxLength('ean', 255)
+            ->requirePresence('ean', 'create')
+            ->allowEmpty('ean');
+
+        $validator
+            ->scalar('isbn')
+            ->maxLength('isbn', 255)
+            ->requirePresence('isbn', 'create')
+            ->allowEmpty('isbn');
+
+        $validator
+            ->scalar('sku')
+            ->maxLength('sku', 255)
+            ->requirePresence('sku', 'create')
+            ->allowEmpty('sku');
+
+        $validator
+            ->scalar('upc')
+            ->maxLength('upc', 255)
+            ->requirePresence('upc', 'create')
+            ->allowEmpty('upc');
+
+        $validator
             ->scalar('marketplace')
             ->maxLength('marketplace', 255)
             ->requirePresence('marketplace', 'create')

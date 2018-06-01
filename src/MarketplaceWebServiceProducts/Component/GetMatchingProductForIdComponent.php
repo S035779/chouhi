@@ -8,37 +8,50 @@ use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_GetM
 use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_IdListType;
 use MarketplaceWebServiceProducts\MarketplaceWebServiceProducts_Interface;
 
-class GetMatchingProductForIdComponent {
+class GetMatchingProductForIdComponent
+{
+  public function __construct($params) 
+  {
+    $this->service_url = $params['BaseURL'];
+    $this->access_key  = $params['AWSAccessKeyId'];
+    $this->secret_key  = $params['AWSSecretKeyId'];
+    $this->app_name    = env('APP_NAME');
+    $this->app_version = env('APP_VERSION');
+    $this->marketplace = $params['MarketplaceId'];
+    $this->seller_id   = $params['SellerId'];
+    $this->id          = $params['IdList.Id.1'];
+    $this->id_type     = $params['IdType'];
+  }
 
-  public function fetch($params, $serviceUrl, $secret_key) {
+  public function fetch() {
     $config = array (
-      'ServiceURL' => $serviceUrl,
+      'ServiceURL' => $this->service_url,
       'ProxyHost' => null,
       'ProxyPort' => -1,
       'ProxyUsername' => null,
       'ProxyPassword' => null,
       'MaxErrorRetry' => 3,
     );
-    $service = new MarketplaceWebServiceProducts_Client(
-      $params['AWSAccessKeyId'],
-      $secret_key,
-      env('APP_NAME'),
-      env('APP_VERSION'),
+    $this->service = new MarketplaceWebServiceProducts_Client(
+      $this->access_key,
+      $this->secret_key,
+      $this->app_name,
+      $this->app_version,
       $config
     );
-    //echo ("<p>MWS AccessKey:" . $params['AWSAccessKeyId'] . "</p>");
-    //echo ("<p>MWS SecretKey:" . $secret_key . "</p>");
     $request = new MarketplaceWebServiceProducts_Model_GetMatchingProductForIdRequest();
-    $request->setSellerId($params['SellerId']);
-    $request->setMarketplaceId($params['MarketplaceId']);
+    $request->setSellerId($this->seller_id);
+    $request->setMarketplaceId($this->marketplace);
     $idList = new MarketplaceWebServiceProducts_Model_IdListType();
-    $idList->setId($params['IdList.Id.1']);
+    $idList->setId($this->id);
     $request->setIdList($idList);
-    $request->setIdType($params['IdType']);
+    $request->setIdType($this->id_type);
     return $this->invokeGetMatchingProductForId($service, $request);
   }
 
-  private function invokeGetMatchingProductForId(MarketplaceWebServiceProducts_Interface $service, $request) {
+  private function invokeGetMatchingProductForId(
+    MarketplaceWebServiceProducts_Interface $service, $request
+  ) {
     try {
       $result = array();
       $response = $service->GetMatchingProductForId($request);

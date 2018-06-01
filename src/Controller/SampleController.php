@@ -29,7 +29,9 @@ class SampleController extends AppController
   {
     parent::initialize();
     $this->viewBuilder()->setLayout('default');
-    $this->loadComponent('Common', ['className' => 'MyHoge']);
+    //$this->loadComponent('Common', ['className' => 'MyHoge']);
+    $this->loadComponent('Common');
+    $this->loadComponent('AmazonMWS');
     $this->access_key       = env('AMZ_PA_ACCESSKEY_JP2', '');
     $this->secret_key       = env('AMZ_PA_SECRETKEY_JP2', '');
     $this->associ_tag       = env('AMZ_PA_ASSOCITAG_JP2', '');
@@ -68,9 +70,9 @@ class SampleController extends AppController
     $this->set(compact('title', 'maxim_en', 'maxim_jp', 'maxim_person'));
 
     //$number = 20;
-    //$ret1 = $this->Common->abcd($number);
-    //$ret2 = $this->Common->efgh()['name'];
-    //$ret3 = $this->Common->plusMethod();
+    //$ret1 = $this->AmazonMWS->abcd($number);
+    //$ret2 = $this->AmazonMWS->efgh()['name'];
+    //$ret3 = $this->AmazonMWS->plusMethod();
     //print_r($ret1);
     //print_r($ret2);
     //print_r($ret3);
@@ -194,7 +196,7 @@ class SampleController extends AppController
     $params['IdType']           = 'ASIN';
     $params['IdList.Id.1']      = 'B00JPYHRQ2';
     $baseurl = $this->mws_base_url . 'Products/' . $params['Version'];
-    $response = $this->Common
+    $response = $this->AmazonMWS
         ->fetchMatchingProductForId($params, $baseurl, $this->mws_secret_key, $jobType);
     $this->Flash->success(__('Success: MWS GetMatchingProductForId completed!'));
     $this->set(compact('title', 'response'));
@@ -216,7 +218,7 @@ class SampleController extends AppController
     $params['ASINList.ASIN.1']  = 'B00JPYHRQ2';
     $baseurl = $this->mws_base_url . 'Products/' . $params['Version'];
     $response
-      = $this->Common->fetch($params, $baseurl, $this->mws_secret_key, $jobType);
+      = $this->AmazonMWS->fetch($params, $baseurl, $this->mws_secret_key, $jobType);
     foreach($response->GetLowestOfferListingsForASINResult as $products) {
       $getLowestPrice = 0;
       foreach($products->Product->LowestOfferListings->LowestOfferListing as $lowOffer) {
@@ -239,14 +241,14 @@ class SampleController extends AppController
     $params['Timestamp']              = gmdate('Y-m-d\TH:i:s\Z');
     $params['Version']                = '2009-01-01';
     $params['MarketplaceIdList.Id.1'] = $this->marketplace_id;
-    $params['ReportType']             = $this->Common->getReportType($reportType);
+    $params['ReportType']             = $this->AmazonMWS->getReportType($reportType);
     $response
-      = $this->Common->fetch($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
+      = $this->AmazonMWS->fetch($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
     if(isset($response->RequestReportResult->ReportRequestInfo->ReportRequestId)) {
       $this->Flash->success(__('Success: MWS RequestReport completed!'));
       $ReportRequestId = $response->RequestReportResult->ReportRequestInfo->ReportRequestId;
     } else {
-      $this->Flash->error(__('Error: MWS RequestReport con\'t get RequestId.'));
+      $this->Flash->error(__('Error: MWS RequestReport can\'t get RequestId.'));
     }
     $this->set(compact('ReportRequestId'));
   }
@@ -263,7 +265,7 @@ class SampleController extends AppController
     $params['Version']                  = '2009-01-01';
     $params['ReportRequestIdList.Id.1'] = '';
     $response
-      = $this->Common->fetch($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
+      = $this->AmazonMWS->fetch($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
     if(isset($response->GetReportRequestListResult->ReportRequestInfo->ReportProcessingStatus)) {
       $ReportProcessingStatus
         = $response->GetReportRequestListResult->ReportRequestInfo->ReportProcessingStatus;
@@ -291,7 +293,7 @@ class SampleController extends AppController
     $params['Version']          = '2009-01-01';
     $params['ReportId']         = '';
     $response
-      = $this->Common->fetch($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
+      = $this->AmazonMWS->fetch($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
     if($response == 1) {
       $this->Flash->success(__('Success: MWS GetReport completed!'));
     } else {
@@ -312,10 +314,10 @@ class SampleController extends AppController
     $params['Timestamp']              = gmdate('Y-m-d\TH:i:s\Z');
     $params['Version']                = '2009-01-01';
     $params['MarkerplaceIdList.Id.1'] = $this->marketplace_id;
-    $params['FeedType']               = $this->Common->getFeedType($jobType);
-    $params['PurgeAndReplace']        = $this->Common->getPurgeAndReplace($jobType, $allChange);
+    $params['FeedType']               = $this->AmazonMWS->getFeedType($jobType);
+    $params['PurgeAndReplace']        = $this->AmazonMWS->getPurgeAndReplace($jobType, $allChange);
     $response
-      = $this->Common->upload($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
+      = $this->AmazonMWS->upload($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
     if(isset($response->SubmitFeedResult->FeedSubmitInfo->FeedSubmissionId)) {
       $this->Flash->success(__('Success: MWS SubmitFeed completed!'));
       $FeedSubmissionId = $response->SubmitFeedResult->FeedSubmissionInfo->FeedSubmissionId;
@@ -339,7 +341,7 @@ class SampleController extends AppController
     $params['Version']                    = '2009-01-01';
     $params['FeedSubmissionIdList.Id.1']  = '';
     $response
-      = $this->Common->fetch($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
+      = $this->AmazonMWS->fetch($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
     if(isset($response->GetFeedSubmissionListResult->FeedSubmissionInfo->FeedProcessingStatus)) {
       $FeedProcessingStatus
         = $response->GetFeedSubmissionListResult->FeedSubmissionInfo->FeedProcessingStatus;
@@ -365,7 +367,7 @@ class SampleController extends AppController
     $params['Version']           = '2009-01-01';
     $params['FeedSubmissionId']  = '';
     $response
-      = $this->Common->upload($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
+      = $this->AmazonMWS->upload($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
     $this->Flash->success(__('Success: MWS GetFeedSubmissionResult completed!'));
     $this->set(compact('response'));
   }
@@ -386,7 +388,7 @@ class SampleController extends AppController
     $params['LastUpdatedAfter']       = gmdate('Y-m-d\TH:i:s\Z', strtotime("- $fromGetDay day"));
     $baseurl = $this->mws_base_url . 'Orders/' . $params['Version'];
     $response
-      = $this->Common->fetch($params, $baseurl, $this->mws_secret_key, $jobType);
+      = $this->AmazonMWS->fetch($params, $baseurl, $this->mws_secret_key, $jobType);
     $getOrderId = '';
     foreach($response->ListOrdersResult->Orders->Order as $Order) {
       $getOrderId = $getOrderId . $Order->AmazonOrderId . ':';
