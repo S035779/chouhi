@@ -37,7 +37,7 @@
     <h1 class="h2"><?= __('出品管理マスタ') ?></h1>
   </div>
   
-  <div class="cotainer">
+  <div class="container">
     <div class="row">
       <h3><?= __('出品一覧') ?></h3>
       <table class="table table-striped">

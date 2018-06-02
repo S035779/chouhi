@@ -59,12 +59,37 @@ class AmazonMWSComponent extends Component
     return $amazon->fetch();
   }
 
+  /**
+   * Amazon MWS SubmitFeed(1) / GetSubmissionList(2) / GetFeedSubmissionResult(3)
+   *
+   * (1) max request quota = 15 request / 30 request per hour, recovery rate = 1 count/2min.
+   * (2) max request quota = 10 request / 80 request per hour, recovery rate = 1 count/45sec.
+   * (3) max request quota = 15 request / 60 request per hour, recovery rate = 1 count/min.
+   */
+  public function addDelFeed($params)
+  {
+    $amazon = new SubmitFeedComponent($params);
+    return $amazon->addDell();
+  }
+
+  public function updateFeed($params)
+  {
+    $amazon = new SubmitFeedComponent($params);
+    return $amazon->update();
+  }
+
+  /**
+   *
+   */
   public function fetchMatchingProductForId($params)
   {
     $amazon =  new GetMatchingProductForIdComponent($params);
     return $amazon->fetch();
   }
 
+  /**
+   *
+   */
   public function insertAsin($filename, $suspended)
   {
     $header = array(

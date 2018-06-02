@@ -12,6 +12,10 @@ use MarketplaceWebService\Model\MarketplaceWebService_Model_GetReportRequest;
 
 class GetReportComponent
 {
+  private const MWS_MARKETPLACE_JP = 'A1VC38T7YXB528';
+  private const MWS_MARKETPLACE_US = 'ATVPDKIKX0DER';
+  private const MWS_MARKETPLACE_AU = 'A39IBJ37TRP1C6';
+
   public function __construct($params)
   {
     $this->service_url = $params['BaseURL'];
@@ -39,11 +43,14 @@ class GetReportComponent
     );
     $request_id     = $this->getRequestId($service);
     $generated_id   = $this->getGeneratedId($service, $request_id);
-    $request_result = $this->getRequestResult($service, $generated_id);
-    printf('Filename:'    . $request_result . "\n");
+    $content        = $this->getRequestResult($service, $generated_id);
+    $filename       = $this->createFile($content);
+    $result         = $this->setReport($content);
+    printf('Filename:'    . $filename . "\n");
     printf('Generate ID:' . $generated_id . "\n");
     printf('Request  ID:' . $request_id . "\n");
-    return true;
+    //print_r($result);
+    return $result;
   }
 
   private function getRequestId($service)
@@ -86,27 +93,9 @@ class GetReportComponent
     );
     $request = new MarketplaceWebService_Model_GetReportRequest($parameters);
     $getReportCont = $this->invokeGetReport($service, $request);
-    $filename = $this->createFile($getReportCont);
-    return $filename;
+    return $getReportCont;
   }
 
-  private function createFile($content)
-  {
-    $path = getcwd();
-    $basedir = $path . "/storage";   // JP
-    $outDir = sprintf('%s/%s', $basedir, date('Y'));
-    if (!is_dir($outDir)) {
-      if (!mkdir($outDir, 0777, true)) {
-        die('Failed to create output Directory [mkdir]...');
-      }
-    }
-    $filename = sprintf('%s/List_%s_%s.csv', $outDir, date('Ymd'), date('His'));
-    $fp = fopen( $filename , 'w');
-    fwrite($fp, $content);
-    fclose($fp);
-    return $filename;
-  }
- 
   private function invokeRequestReport(MarketplaceWebService_Interface $service, $request)
   {
     try {
@@ -207,5 +196,111 @@ class GetReportComponent
       printf("XML: " . $ex->getXML() . "\n");
       printf("ResponseHeaderMetadata: " . $ex->getResponseHeaderMetadata() . "\n");
     }
+  }
+
+  private function createFile($content)
+  {
+    $path = getcwd();
+    $basedir = $path . "/storage";   // JP
+    $outDir = sprintf('%s/%s', $basedir, date('Y'));
+    if (!is_dir($outDir)) {
+      if (!mkdir($outDir, 0777, true)) {
+        die('Failed to create output Directory [mkdir]...');
+      }
+    }
+    $filename = sprintf('%s/List_%s_%s.csv', $outDir, date('Ymd'), date('His'));
+    $fp = fopen( $filename , 'w');
+    fwrite($fp, $this->encode($content));
+    fclose($fp);
+    return $filename;
+  }
+ 
+  private function setReport($content)
+  {
+    $datas = array();
+    $header = array(               //     JP  AU  US
+      'item-name'                  //     o   o   o
+    , 'item-description'           //     -   o   o
+    , 'listing-id'                 //     o   o   o
+    , 'seller-sku'                 //     o   o   o
+    , 'price'                      //     o   o   o
+    , 'quantity'                   //     o   o   o
+    , 'open-date'                  //     o   o   o
+    , 'image-url'                  //     -   o   o
+    , 'item-is-marketplace'        //     -   o   o
+    , 'product-id-type'            //     o   o   o
+    , 'zshop-shipping-fee'         //     -   o   o
+    , 'item-note'                  //     o   o   o
+    , 'item-condition'             //     o   o   o
+    , 'zshop-category1'            //     -   o   o
+    , 'zshop-browse-path'          //     -   o   o
+    , 'zshop-storefront-feature'   //     -   o   o
+    , 'asin1'                      //     -   o   o
+    , 'asin2'                      //     -   o   o
+    , 'asin3'                      //     -   o   o
+    , 'will-ship-internationally'  //     o   o   o
+    , 'expedited-shipping'         //     o   o   o
+    , 'zshop-boldface'             //     -   o   o
+    , 'product-id'                 //     o   o   o
+    , 'bid-for-featured-placement' //     -   o   o
+    , 'add-delete'                 //     -   o   o
+    , 'pending-quantity'           //     o   o   o
+    , 'fulfillment-channel'        //     o   o   o
+    , 'merchant-shipping-group'    //     -   o   o
+    , 'point'                      //     o   -   -
+    );
+
+    switch($this->marketplace) {
+    case self::MWS_MARKETPLACE_JP:
+      $column = array(
+         TRUE,FALSE, TRUE, TRUE, TRUE, TRUE, TRUE,FALSE,FALSE, TRUE,FALSE, TRUE, TRUE
+      , FALSE,FALSE,FALSE,FALSE,FALSE,FALSE, TRUE, TRUE,FALSE, TRUE,FALSE,FALSE, TRUE
+      ,  TRUE,FALSE, TRUE
+      );
+      break;
+    case self::MWS_MARKETPLACE_AU:
+      $column = array(
+         TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+      ,  TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+      ,  TRUE, TRUE,FALSE
+      );
+      break;
+    case self::MWS_MARKETPLACE_US:
+      $column = array(
+         TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+      ,  TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+      ,  TRUE, TRUE,FALSE
+      );
+      break;
+    default:
+      return $datas;
+    }
+    
+    $record = str_getcsv($content, "\n");
+    unset($record[0]);
+    foreach($record as $_record) {
+      $data = array();
+      $row = str_getcsv($_record, "\t");
+      $idx = 0; $_idx = 0;
+      foreach($header as $_header) {
+        if($column[$_idx]) {
+          $body = $row[$idx] !== '' ? $this->encode($row[$idx]) : null;
+          $idx += 1;
+          $_idx += 1;
+        } else {
+          $body = null;
+          $_idx += 1;
+        }
+        //printf("header: [ %s ],\t value: [ %s ].\n", $_header, $body);
+        $data[$_header] = $body;
+      }
+      array_push($datas, $data);
+    }
+    return $datas;
+  }
+
+  private function encode($content)
+  {
+    return mb_convert_encoding($content, 'utf8', 'sjis-win');
   }
 };

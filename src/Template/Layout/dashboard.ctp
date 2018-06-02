@@ -79,7 +79,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'user'])
-                  . __(' ユーザ管理 ')
+                  . __(' ユーザ設定 ')
                 , ['controller' => 'Bootstrap', 'action' => 'setting']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -121,7 +121,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' ASIN管理マスタ ')
+                  . __(' ASIN管理 ')
                 , ['controller' => 'Asins', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -129,7 +129,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' ユーザ管理マスタ ')
+                  . __(' ユーザ管理 ')
                 , ['controller' => 'Users', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -137,7 +137,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' 商品管理マスタ ')
+                  . __(' 商品管理 ')
                 , ['controller' => 'Items', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -145,7 +145,15 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' 送料管理マスタ ')
+                  . __(' セラー出品管理 ')
+                , ['controller' => 'Merchants', 'action' => 'index']
+                , ['escape' => false, 'class' => 'nav-link']
+                ) ?>
+              </li>
+              <li class="nav-item">
+                <?= $this->Html->link(
+                  $this->Html->tag('span', '', ['data-feather' => 'file-text'])
+                  . __(' 送料管理 ')
                 , ['controller' => 'Delivery', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -153,7 +161,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' トークン管理マスタ ')
+                  . __(' トークン管理 ')
                 , ['controller' => 'Tokens', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
