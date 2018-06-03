@@ -118,7 +118,6 @@ class ItemsTable extends Table
             ->notEmpty('package_width');
 
         $validator
-            ->integer('list_price')
             ->requirePresence('list_price', 'create')
             ->notEmpty('list_price');
 
@@ -129,7 +128,6 @@ class ItemsTable extends Table
             ->notEmpty('list_price_currency');
 
         $validator
-            ->integer('lowest_price')
             ->requirePresence('lowest_price', 'create')
             ->notEmpty('lowest_price');
 
@@ -140,7 +138,6 @@ class ItemsTable extends Table
             ->notEmpty('lowest_price_currency');
 
         $validator
-            ->integer('lowest_used_price')
             ->requirePresence('lowest_used_price', 'create')
             ->notEmpty('lowest_used_price');
 
@@ -151,7 +148,6 @@ class ItemsTable extends Table
             ->notEmpty('lowest_used_price_currency');
 
         $validator
-            ->integer('lowest_collectible_price')
             ->requirePresence('lowest_collectible_price', 'create')
             ->notEmpty('lowest_collectible_price');
 
@@ -162,7 +158,6 @@ class ItemsTable extends Table
             ->notEmpty('lowest_collectible_price_currency');
 
         $validator
-            ->integer('offer_listing_price')
             ->requirePresence('offer_listing_price', 'create')
             ->notEmpty('offer_listing_price');
 
@@ -173,7 +168,6 @@ class ItemsTable extends Table
             ->notEmpty('offer_listing_price_currency');
 
         $validator
-            ->integer('offer_listing_saved_price')
             ->requirePresence('offer_listing_saved_price', 'create')
             ->notEmpty('offer_listing_saved_price');
 

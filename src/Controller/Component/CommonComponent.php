@@ -3,6 +3,7 @@ namespace App\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Log\Log;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Exception\TransferException;
 
@@ -137,14 +138,15 @@ class CommonComponent extends Component
     return $handleFile;
   }
 
-  private function error($message)
+  public function log_error($message)
   {
-    $this->log(print_r($message, true),LOG_DEBUG);
+    $displayName = '[' . get_class($this) . '] ';
+    Log::error($displayName . print_r($message, true), ['scope' => ['apps']]);
   }
 
-  public function debug($message)
+  public function log_debug($message)
   {
-    $this->log(print_r($message, true), LOG_DEBUG);
+    $displayName = '[' . get_class($this) . '] ';
+    Log::debug($displayName . print_r($message, true), ['scope' => ['apps']]);
   }
-
 }

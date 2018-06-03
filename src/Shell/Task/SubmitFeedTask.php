@@ -2,6 +2,7 @@
 namespace App\Shell\Task;
 
 use Cake\Console\Shell;
+use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
@@ -56,8 +57,10 @@ class SubmitFeedTask extends Shell
       ]);
     }
     if(!$this->selectMerchant($request)) {
+      $this->log_error('');
       return false;
     }
+    $this->log_debug($request);
     return true;
   }
 
@@ -151,8 +154,15 @@ class SubmitFeedTask extends Shell
     ]);
   }
 
+  private function log_debug($message) 
+  {
+    $displayName = '[' . get_class($this) . '] ';
+    Log::debug($displayName . print_r($message, true), ['scope' => ['crons']]);
+  }
+
   private function log_error($message) 
   {
-    $this->log(print_r($message, true), LOG_DEBUG);
+    $displayName = '[' . get_class($this) . '] ';
+    Log::error($displayName . print_r($message, true), ['scope' => ['crons']]);
   }
 }

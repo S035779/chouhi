@@ -53,7 +53,7 @@
                   <div class="mb-3">
                     <label for="seller.marketplace"><?= __('マーケットプレイス') ?></label>
                     <?= $this->Form->select('seller.marketplace', [
-                      'JP' =>  'Japan', 'AU' =>  'Austraria', 'US' => 'United stats'
+                      'JP' =>  'Japan', 'AU' =>  'Australia', 'US' => 'United stats'
                     ], [
                       'required'    => true
                     , 'class'       => 'form-control'

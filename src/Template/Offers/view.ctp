@@ -88,10 +88,6 @@
             <td><?= h($offer->offer_listing_identifier) ?></td>
           </tr>
           <tr>
-            <th scope="row"><?= __('Price Currency') ?></th>
-            <td><?= h($offer->price_currency) ?></td>
-          </tr>
-          <tr>
             <th scope="row"><?= __('State') ?></th>
             <td><?= h($offer->state) ?></td>
           </tr>
@@ -110,6 +106,10 @@
           <tr>
             <th scope="row"><?= __('Price') ?></th>
             <td><?= $this->Number->format($offer->price) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Price Currency') ?></th>
+            <td><?= h($offer->price_currency) ?></td>
           </tr>
           <tr>
             <th scope="row"><?= __('Total Feedback') ?></th>

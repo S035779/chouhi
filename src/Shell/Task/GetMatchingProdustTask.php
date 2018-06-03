@@ -4,36 +4,19 @@ namespace App\Shell\Task;
 use Cake\Console\Shell;
 use Cake\ORM\TableRegistry;
 use Cake\Log\Log;
-use ApaiIO\Configuration\GenericConfiguration;
-use ApaiIO\Configuration\Country;
-use ApaiIO\Operations\Lookup;
-use ApaiIO\ResponseTransformer\XmlToArray;
-use ApaiIO\ApaiIO;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\AmazonMWSComponent;
 use React\Promise;
 
 /**
- * FetchItems shell task.
+ * GetMatchingProdust shell task.
  */
-class FetchItemsTask extends Shell
+class GetMatchingProdustTask extends Shell
 {
-
   public function initialize()
   {
-    $this->access_keys_jp = array(
-      'access_key' => env('AMZ_PA_ACCESSKEY_JP', '')
-    , 'secret_key' => env('AMZ_PA_SECRETKEY_JP', '')
-    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_JP', '')
-    );
-    $this->access_keys_au = array(
-      'access_key' => env('AMZ_PA_ACCESSKEY_AU', '')
-    , 'secret_key' => env('AMZ_PA_SECRETKEY_AU', '')
-    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_AU', '')
-    );
-    $this->access_keys_us = array(
-      'access_key' => env('AMZ_PA_ACCESSKEY_US', '')
-    , 'secret_key' => env('AMZ_PA_SECRETKEY_US', '')
-    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_US', '')
-    );
+    $this->AmazonMWS = new AmazonMWSComponent(new ComponentRegistry());
   }
 
   /**
@@ -45,6 +28,7 @@ class FetchItemsTask extends Shell
   public function getOptionParser()
   {
     $parser = parent::getOptionParser();
+
     return $parser;
   }
 
@@ -55,16 +39,22 @@ class FetchItemsTask extends Shell
    */
   public function main()
   {
-    $this->execItemLookup();
+    $this->execGetMatchingProduct();
   }
 
-
-  private function execItemLookup() {
-    $asins = TableRegistry::get('Asins');
-    $datas = $asins->find()->where(['suspended' => false]);
+  private function execGetMatchingProduct()
+  {
+    $tokens = TableRegistry::get('Tokens');
+    $datas  = $tokens->find()->contain(['Sellers'])
+      ->where(['suspended' => false])->all();
     $request = array();
     foreach($datas as $data) {
-      array_push($request, ['asin' => $data->asin, 'marketplace' => $data->marketplace]);
+      array_push($request, [
+        'seller'      => $data->seller->seller
+      , 'marketplace' => $data->seller->marketplace
+      , 'access_key'  => $data->access_key
+      , 'secret_key'  => $data->secret_key
+      ]);
     }
     if(!$this->upsertItem($request)) {
       return false;
@@ -326,7 +316,7 @@ class FetchItemsTask extends Shell
 
   private function fetchItems($request)
   {
-    $response = [];
+    $response = array();
     Promise\all($this->_fetchItems($request))
       ->done(function($result) use (&$response) {
         $response = $result;
@@ -349,39 +339,52 @@ class FetchItemsTask extends Shell
       case 'JP':
         array_push($asins_jp, $_request['asin']);
         if(count($asins_jp) > 10) {
-          array_push($response, $this->fetchItem(implode(',', $asins_jp), 'JP'));
+          array_push($response, $this->fetchItem([
+            'asin' => implode(',', $asins_jp), 'marketplace' => 'JP'
+          ]));
           $asins_jp = array();
         }
         break;
       case 'AU':
         array_push($asins_au, $_request['asin']);
         if(count($asins_au) > 10) {
-          array_push($response, $this->fetchItem(implode(',', $asins_au), 'AU'));
+          array_push($response, $this->fetchItem([
+            'asin' => implode(',', $asins_au), 'marketplace' => 'AU'
+          ]));
           $asins_au = array();
         }
         break;
       case 'US':
         array_push($asins_us, $_request['asin']);
         if(count($asins_us) > 10) {
-          array_push($response, $this->fetchItem(implode(',', $asins_us), 'US'));
+          array_push($response, $this->fetchItem([
+            'asin' => implode(',', $asins_us), 'marketplace' => 'US'
+          ]));
           $asins_us = array();
         }
         break;
       }
       if($idx === $eol - 1) {
         if(count($asins_jp) !== 0)
-          array_push($response, $this->fetchItem(implode(',', $asins_jp), 'JP'));
+          array_push($response, $this->fetchItem([
+            'asin' => implode(',', $asins_jp), 'marketplace' => 'JP'
+          ]));
         if(count($asins_au) !== 0)
-          array_push($response, $this->fetchItem(implode(',', $asins_au), 'AU'));
+          array_push($response, $this->fetchItem([
+            'asin' => implode(',', $asins_au), 'marketplace' => 'AU'
+          ]));
         if(count($asins_us) !== 0)
-          array_push($response, $this->fetchItem(implode(',', $asins_us), 'US'));
+          array_push($response, $this->fetchItem([
+            'asin' => implode(',', $asins_us), 'marketplace' => 'US'
+          ]));
       }
       $idx += 1;
     }
     return $response;
   }
 
-  private function fetchItem($asin, $marketplace) {
+  private function fetchItem($request)
+  {
     $deferred = new Promise\Deferred();
     $this->_fetchItem(function($error, $response) use ($deferred) {
       if($error) {
@@ -389,66 +392,52 @@ class FetchItemsTask extends Shell
         $deferred->reject($error);
       }
       $deferred->resolve($response);
-    }, $asin, $marketplace);
+    }, $request);
     return $deferred->promise();
   }
 
-  private function _fetchItem($callback, $asin, $marketplace) 
+  private function _fetchItem($callback, $request) 
   {
-    $conf = new GenericConfiguration();
-    $client = new \GuzzleHttp\Client();
-    $request = new \ApaiIO\Request\GuzzleRequest($client);
-    switch($marketplace) {
+    $request = array();
+    $access_key = $request['access_key'];
+    $secret_key = $request['secret_key'];
+    $seller     = $request['seller'];
+    switch($request['marketplace']) {
     case 'JP':
-      $country = Country::JAPAN;
-      $access_key = $this->access_keys_jp['access_key'];
-      $secret_key = $this->access_keys_jp['secret_key'];
-      $associ_tag = $this->access_keys_jp['associ_tag'];
+      $market_id = $this->AmazonMWS::MWS_MARKETPLACE_JP;
+      $country = $this->AmazonMWS::MWS_BASEURL_JP;
       break;
     case 'AU':
-      $country = Country::AUSTRALIA;
-      $access_key = $this->access_keys_au['access_key'];
-      $secret_key = $this->access_keys_au['secret_key'];
-      $associ_tag = $this->access_keys_au['associ_tag'];
+      $market_id = $this->AmazonMWS::MWS_MARKETPLACE_AU;
+      $country = $this->AmazonMWS::MWS_BASEURL_AU;
       break;
     case 'US':
-      $country = Country::INTERNATIONAL;
-      $access_key = $this->access_keys_us['access_key'];
-      $secret_key = $this->access_keys_us['secret_key'];
-      $associ_tag = $this->access_keys_us['associ_tag'];
+      $market_id = $this->AmazonMWS::MWS_MARKETPLACE_US;
+      $country = $this->AmazonMWS::MWS_BASEURL_US;
       break;
     default:
-      $country = Country::JAPAN;
-      $access_key = $this->access_keys_jp['access_key'];
-      $secret_key = $this->access_keys_jp['secret_key'];
-      $associ_tag = $this->access_keys_jp['associ_tag'];
+      $market_id = $this->AmazonMWS::MWS_MARKETPLACE_JP;
+      $country = $this->AmazonMWS::MWS_BASEURL_JP;
       break;
     }
     sleep(5);
     try {
-      $conf
-        ->setCountry($country)
-        ->setAccessKey($access_key)
-        ->setSecretKey($secret_key)
-        ->setAssociateTag($associ_tag)
-        ->setRequest($request)
-        ->setResponseTransformer(new XmlToArray())
-      ;
+      $responst = $this->AmazonMWS->GetMatchingProduct([
+        'Marketplace'     => $market_id
+      , 'SellerId'        => $seller
+      , 'AWSSecretKeyId'  => $secret_key
+      , 'AWSAccessKeyId'  => $access_key
+      , 'BaseURL'         => $country
+      , 'IdTypw'          => $request['id_type']
+      , 'IdList'          => $request['id_list']
+      ]);
     } catch (\Exception $e) {
       $callback($e->getMessage(), []);
     }
-    $apaiIo = new ApaiIO($conf);
-    $lookup = new Lookup();
-    $lookup->setItemId($asin);
-    $lookup->setCondition('All');
-    $lookup->setMerchantId('All');
-    $lookup->setResponseGroup(array(
-      'Images', 'ItemAttributes', 'OfferListings', 'OfferSummary', 'SalesRank', 'Reviews'
-    ));
 
     $callback(null, [
-      'fetchItem'   => $apaiIo->runOperation($lookup)
-    , 'marketplace' => $marketplace
+      'fetchItem'   => $response
+    , 'marketplace' => $request['marketplace']
     ]);
   }
 
@@ -468,5 +457,4 @@ class FetchItemsTask extends Shell
     $displayName = '[' . __CLASS__ . '] ';
     Log::error($displayName . print_r($message, true), ['scope' => ['crons']]);
   }
-
 }

@@ -109,7 +109,6 @@ class OffersTable extends Table
             ->notEmpty('offer_listing_identifier');
 
         $validator
-            ->integer('price')
             ->requirePresence('price', 'create')
             ->notEmpty('price');
 
@@ -148,7 +147,6 @@ class OffersTable extends Table
             ->notEmpty('sales_ranking');
 
         $validator
-            ->integer('lowest_price')
             ->requirePresence('lowest_price', 'create')
             ->notEmpty('lowest_price');
 

@@ -3,6 +3,7 @@ namespace App\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\ORM\TableRegistry;
+use Cake\Log\Log;
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Configuration\Country;
 use ApaiIO\Operations\Lookup;
@@ -173,7 +174,7 @@ class AsinImportTask extends Shell
   private function fetchAsins($request) {
     $response = [];
     Promise\all($this->_fetchAsins($request))
-      ->then(function($result) use (&$response) {
+      ->done(function($result) use (&$response) {
           //debug($result);
           $response = $result;
         }, function($error) {
@@ -299,8 +300,15 @@ class AsinImportTask extends Shell
     ]);
   }
   
+  private function log_debug($messate)
+  {
+    $displayName = '[' . get_class($this) . '] ';
+    Log::debug($displayName . print_r($message, true),  ['scope' => ['crons']]);
+  }
+
   private function log_error($messate)
   {
-    $this->log(print_r($message, true), LOG_DEBUG);
+    $displayName = '[' . get_class($this) . '] ';
+    Log::error($displayName . print_r($message, true),  ['scope' => ['crons']]);
   }
 }

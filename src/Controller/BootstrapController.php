@@ -73,7 +73,7 @@ class BootstrapController extends AppController
           $this->Flash->success(__('The token has been saved.'));
           return $this->redirect(['action' => 'index']);
         }
-        $this->Common->debug($entity->errors());
+        $this->Common->log_error($entity->errors());
         $this->Flash->error(__('The token cound not be saved. Please, try again.'));
       } elseif (isset($this->request->data['confirmation'])) {
         switch($request['seller']['marketplace']) {
@@ -107,7 +107,6 @@ class BootstrapController extends AppController
         if($suspended === 'No') {
           $this->Flash->success(__('The token has been confirmed.'));
         } else {
-          $this->Common->debug($entity->errors());
           $this->Flash->error(__('The token cound not be confirmed. Please, try again.'));
         }
       }
@@ -276,7 +275,7 @@ class BootstrapController extends AppController
           return $this->redirect(['action' => 'index']);
         }
       }
-      $this->Common->debug($entity->errors());
+      $this->Common->log_error($entity->errors());
       $this->Flash->error(__('The password cound not be changed. Please, try again.'));
     }
     $this->set(compact('title', 'user'));

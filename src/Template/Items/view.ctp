@@ -68,34 +68,6 @@
             <td><?= h($item->title) ?></td>
           </tr>
           <tr>
-            <th scope="row"><?= __('List Price Currency') ?></th>
-            <td><?= h($item->list_price_currency) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Lowest Price') ?></th>
-            <td><?= h($item->lowest_price) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Lowest Price Currency') ?></th>
-            <td><?= h($item->lowest_price_currency) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Lowest Used Price Currency') ?></th>
-            <td><?= h($item->lowest_used_price_currency) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Lowest Collectible Price Currency') ?></th>
-            <td><?= h($item->lowest_collectible_price_currency) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Offer Listing Price Currency') ?></th>
-            <td><?= h($item->offer_listing_price_currency) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Offer Listing Saved Price Currency') ?></th>
-            <td><?= h($item->offer_listing_saved_price_currency) ?></td>
-          </tr>
-          <tr>
             <th scope="row"><?= __('Ean') ?></th>
             <td><?= h($item->ean) ?></td>
           </tr>
@@ -172,20 +144,48 @@
             <td><?= $this->Number->format($item->list_price) ?></td>
           </tr>
           <tr>
+            <th scope="row"><?= __('List Price Currency') ?></th>
+            <td><?= h($item->list_price_currency) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Lowest Price') ?></th>
+            <td><?= $this->Number->format($item->lowest_price) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Lowest Price Currency') ?></th>
+            <td><?= h($item->lowest_price_currency) ?></td>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Lowest Used Price') ?></th>
             <td><?= $this->Number->format($item->lowest_used_price) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Lowest Used Price Currency') ?></th>
+            <td><?= h($item->lowest_used_price_currency) ?></td>
           </tr>
           <tr>
             <th scope="row"><?= __('Lowest Collectible Price') ?></th>
             <td><?= $this->Number->format($item->lowest_collectible_price) ?></td>
           </tr>
           <tr>
+            <th scope="row"><?= __('Lowest Collectible Price Currency') ?></th>
+            <td><?= h($item->lowest_collectible_price_currency) ?></td>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Offer Listing Price') ?></th>
             <td><?= $this->Number->format($item->offer_listing_price) ?></td>
           </tr>
           <tr>
+            <th scope="row"><?= __('Offer Listing Price Currency') ?></th>
+            <td><?= h($item->offer_listing_price_currency) ?></td>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Offer Listing Saved Price') ?></th>
             <td><?= $this->Number->format($item->offer_listing_saved_price) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Offer Listing Saved Price Currency') ?></th>
+            <td><?= h($item->offer_listing_saved_price_currency) ?></td>
           </tr>
           <tr>
             <th scope="row"><?= __('Sales Ranking') ?></th>

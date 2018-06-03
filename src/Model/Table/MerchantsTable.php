@@ -69,16 +69,13 @@ class MerchantsTable extends Table
             ->notEmpty('product_id_type');
 
         $validator
-            ->integer('price')
             ->requirePresence('price', 'create')
             ->notEmpty('price');
 
         $validator
-            ->integer('minimum_seller_allow_price')
             ->allowEmpty('minimum_seller_allow_price');
 
         $validator
-            ->integer('maximum_seller_allow_price')
             ->allowEmpty('maximum_seller_allow_price');
 
         $validator

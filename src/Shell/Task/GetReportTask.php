@@ -3,6 +3,7 @@ namespace App\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\ORM\TableRegistry;
+use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use App\Controller\Component\AmazonMWSComponent;
@@ -308,7 +309,8 @@ class GetReportTask extends Shell
           if($vals[43]) $data[$keys[43]] = $merchant['item-description'          ] ?? 'N/A';
           if($vals[44]) $data[$keys[44]] = $merchant['listing-id'                ] ?? 'N/A';
           if($vals[45]) $data[$keys[45]] = isset($merchant['open-date'])
-            ? $this->getTimeStamp($merchant['open-date']) : $deftime;
+            ? $this->getTimeStamp($merchant['open-date'], $_response['marketplace'])
+            : $deftime;
           if($vals[46]) $data[$keys[46]] = $merchant['image-url'                 ] ?? 'N/A';
           if($vals[47]) $data[$keys[47]] = $merchant['item-is-marketplace'       ] ?? 'N/A';
           if($vals[48]) $data[$keys[48]] = $merchant['zshop-shipping-fee'        ] ?? 0;
@@ -385,7 +387,7 @@ class GetReportTask extends Shell
       $country   = $this->AmazonMWS::MWS_BASEURL_JP;
       break;
     case 'AU':
-      $market_id = $this->AmazonMWS::MWS_MAEKETPLACE_AU;
+      $market_id = $this->AmazonMWS::MWS_MARKETPLACE_AU;
       $country   = $this->AmazonMWS::MWS_BASEURL_AU;
       break;
     case 'US':
@@ -417,13 +419,30 @@ class GetReportTask extends Shell
     ]);
   }
   
-  private function getTimeStamp ($str)
+  private function getTimeStamp ($date, $marketplace)
   {
-    return \DateTime::createFromFormat('Y/m/d H:i:s T', $str)->format('Y/m/d H:i:s');
+    $format = 'd/m/Y H:i:s T';
+    switch($marketplace) {
+    case 'JP':
+      $format = 'Y/m/d H:i:s T';
+      break;
+    case 'AU':
+    case 'US':
+      $format = 'd/m/Y H:i:s T';
+      break;
+    }
+    return \DateTime::createFromFormat($format, $date)->format('Y/m/d H:i:s');
+  }
+
+  private function log_debug($message) 
+  {
+    $displayName = '[' . __CLASS__ . '] ';
+    Log::debug($displayName . print_r($message, true), ['scope' => ['crons']]);
   }
 
   private function log_error($message) 
   {
-    $this->log(print_r($message, true), LOG_DEBUG);
+    $displayName = '[' . __CLASS__ . '] ';
+    Log::error($displayName . print_r($message, true), ['scope' => ['crons']]);
   }
 }

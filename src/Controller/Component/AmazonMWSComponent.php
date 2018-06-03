@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use MarketplaceWebServiceProducts\Component\GetMatchingProductForIdComponent;
 use MarketplaceWebServiceSellers\Component\ListMarketplaceParticipationsComponent;
 use MarketplaceWebService\Component\GetReportComponent;
+use MarketplaceWebService\Component\SubmitFeedComponent;
 
 /**
  * AmazonMWS component
@@ -50,12 +51,24 @@ class AmazonMWSComponent extends Component
    * (1) max request quota = 15 request / 60 request per hour, recovery rate = 1 count/min.
    * (2) max request quota = 10 request / 80 request per hour, recovery rate = 1 count/45sec.
    * (3) max request quota = 10 request / 80 request per hour, reconery rate = 1 count/45sec.
-   * response: RequestReport/GetReportRequestList/GetReportRequest.
+   * response: RequestReport, GetReportRequestList, GetReportRequest.
    *
    */
   public function GetReport($params) 
   {
     $amazon = new GetReportComponent($params);
+    return $amazon->fetch();
+  }
+
+  /**
+   * Amazon MWS GetMatchingProductForIdRequest(1)
+   *
+   * (1) max request quota = 20 request / 18000 request per hour, recovery rate = 5 item/1sec.
+   * response: GetMatchingProductForId.
+   */
+  public function GetMatchingProductComponent($params)
+  {
+    $amazon =  new GetMatchingProductForIdComponent($params);
     return $amazon->fetch();
   }
 
@@ -76,15 +89,6 @@ class AmazonMWSComponent extends Component
   {
     $amazon = new SubmitFeedComponent($params);
     return $amazon->update();
-  }
-
-  /**
-   *
-   */
-  public function fetchMatchingProductForId($params)
-  {
-    $amazon =  new GetMatchingProductForIdComponent($params);
-    return $amazon->fetch();
   }
 
   /**

@@ -3,6 +3,7 @@ namespace App\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\ORM\TableRegistry;
+use Cake\Log\Log;
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Configuration\Country;
 use ApaiIO\Operations\Lookup;
@@ -273,7 +274,7 @@ class FetchOfferItemsTask extends Shell
   {
     $response = [];
     Promise\all($this->_fetchOffers($request))
-      ->then(function($result) use (&$response) {
+      ->done(function($result) use (&$response) {
         //debug($result);
         $response = $result;
       }, function($error) {
@@ -398,9 +399,16 @@ class FetchOfferItemsTask extends Shell
     ]);
   }
 
+  private function log_debug($message)
+  {
+    $displayName = '[' . __CLASS__ . '] ';
+    Log::debug($displayName . print_r($message, true), ['scope' => ['crons']]);
+  }
+
   private function log_error($message)
   {
-    $this->log(print_r($message, true), LOG_DEBUG);
+    $displayName = '[' . __CLASS__ . '] ';
+    Log::error($displayName . print_r($message, true), ['scope' => ['crons']]);
   }
 
 }
