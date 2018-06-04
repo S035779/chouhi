@@ -66,9 +66,9 @@ class AmazonMWSComponent extends Component
    * (1) max request quota = 20 request / 18000 request per hour, recovery rate = 5 item/1sec.
    * response: GetMatchingProductForId.
    */
-  public function GetMatchingProductComponent($params)
+  public function GetMatchingProduct($params)
   {
-    $amazon =  new GetMatchingProductForIdComponent($params);
+    $amazon = new GetMatchingProductForIdComponent($params);
     return $amazon->fetch();
   }
 

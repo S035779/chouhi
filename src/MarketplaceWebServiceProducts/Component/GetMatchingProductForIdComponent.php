@@ -12,14 +12,14 @@ class GetMatchingProductForIdComponent
 {
   public function __construct($params) 
   {
-    $this->service_url = $params['BaseURL'];
+    $this->service_url = $params['BaseURL'] . 'Products/2011-10-01';
     $this->access_key  = $params['AWSAccessKeyId'];
     $this->secret_key  = $params['AWSSecretKeyId'];
     $this->app_name    = env('APP_NAME');
     $this->app_version = env('APP_VERSION');
-    $this->marketplace = $params['MarketplaceId'];
+    $this->marketplace = $params['Marketplace'];
     $this->seller_id   = $params['SellerId'];
-    $this->id          = $params['IdList.Id.1'];
+    $this->id          = $params['Id'];
     $this->id_type     = $params['IdType'];
   }
 
@@ -32,13 +32,17 @@ class GetMatchingProductForIdComponent
       'ProxyPassword' => null,
       'MaxErrorRetry' => 3,
     );
-    $this->service = new MarketplaceWebServiceProducts_Client(
+    $service = new MarketplaceWebServiceProducts_Client(
       $this->access_key,
       $this->secret_key,
       $this->app_name,
       $this->app_version,
       $config
     );
+    return $this->getResult($service);
+  }
+
+  private function getResult($service) {
     $request = new MarketplaceWebServiceProducts_Model_GetMatchingProductForIdRequest();
     $request->setSellerId($this->seller_id);
     $request->setMarketplaceId($this->marketplace);
@@ -106,14 +110,16 @@ class GetMatchingProductForIdComponent
               $result[$idx1]['products'][$idx2]['AttributeSets'] = array();
               $attributeSets = $product->getAttributeSets();
               if ($attributeSets->isSetAny()){
-                $result[$idx1]['products'][$idx2]['AttributeSets']['Any'] = $this->prettyPrint($attributeSets->getAny());
+                $result[$idx1]['products'][$idx2]['AttributeSets']['Any']
+                  = $this->toArray($attributeSets->getAny());
               }
             }
             if ($product->isSetRelationships()) {
               $result[$idx1]['products'][$idx2]['Relationships'] = array();
               $relationships = $product->getRelationships();
               if ($relationships->isSetAny()){
-                $result[$idx1]['products'][$idx2]['Relationships']['Any'] = $this->prettyPrint($relationships->getAny());
+                $result[$idx1]['products'][$idx2]['Relationships']['Any']
+                  = $this->toArray($relationships->getAny());
               }
             }
             if ($product->isSetCompetitivePricing()) { 
@@ -411,7 +417,8 @@ class GetMatchingProductForIdComponent
     return $results;
   }
 
-  private function prettyPrint($nodeList) {
+  private function toString($nodeList)
+  {
     foreach ($nodeList as $domNode){
       $domDocument =  new \DOMDocument();
       $domDocument->preserveWhiteSpace = false;
@@ -419,6 +426,51 @@ class GetMatchingProductForIdComponent
       $nodeStr = $domDocument->saveXML($domDocument->importNode($domNode,true));
       return $nodeStr;
     }
+  }
+
+  private function toArray($nodeList)
+  {
+    foreach ($nodeList as $domNode){
+      return $this->xml_to_array($domNode);
+    }
+  }
+
+  private function xml_to_array($root)
+  {
+    $result = array();
+    if ($root->hasAttributes()) {
+      $attrs = $root->attributes;
+      foreach ($attrs as $attr) {
+        $result['@attributes'][$attr->name] = $attr->value;
+      }
+    }
+
+    if ($root->hasChildNodes()) {
+      $children = $root->childNodes;
+      if ($children->length == 1) {
+        $child = $children->item(0);
+        if ($child->nodeType == XML_TEXT_NODE) {
+          $result['_value'] = $child->nodeValue;
+          return count($result) == 1
+            ? $result['_value']
+            : $result;
+        }
+      }
+      $groups = array();
+      foreach ($children as $child) {
+        if (!isset($result[$child->nodeName])) {
+          $result[$child->nodeName] = $this->xml_to_array($child);
+        } else {
+          if (!isset($groups[$child->nodeName])) {
+            $result[$child->nodeName] = array($result[$child->nodeName]);
+            $groups[$child->nodeName] = 1;
+          }
+          $result[$child->nodeName][] = $this->xml_to_array($child);
+        }
+      }
+    }
+
+    return $result;
   }
 }
 

@@ -1,4 +1,5 @@
 <?php
+namespace MarketplaceWebServiceProducts\Model;
 /*******************************************************************************
  * Copyright 2009-2017 Amazon Services. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -23,6 +24,7 @@
 
 require_once (dirname(__FILE__) . '/../Model.php');
 
+use MarketplaceWebServiceProducts\MarketplaceWebServiceProducts_Model;
 
 /**
  * MarketplaceWebServiceProducts_Model_Error

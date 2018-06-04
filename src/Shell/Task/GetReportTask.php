@@ -377,7 +377,7 @@ class GetReportTask extends Shell
 
   private function _fetchMerchant($callback, $request)
   {
-    $response = [];
+    $response = array();
     $access_key = $request['access_key'];
     $secret_key = $request['secret_key'];
     $seller     = $request['seller'];

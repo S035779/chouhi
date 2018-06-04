@@ -18,6 +18,16 @@ namespace MarketplaceWebServiceProducts;
  * Generated: Wed Mar 22 23:24:40 UTC 2017
  */
 
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_GetMatchingProductForIdResult;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_ProductList;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_Product;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_IdentifierType;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_ASIN_Identifier;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_AttributeSetList;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_RelationshipList;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_SalesRankList;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_ResponseMetadata;
+
 /**
  * MarketplaceWebServiceProducts_Model - base class for all model classes
  */
@@ -119,8 +129,10 @@ abstract class MarketplaceWebServiceProducts_Model
                     }
                     if ($elements->length >= 1) {
                         require_once (dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $fieldType[0]) . ".php");
+                        $classNames = explode('_', $fieldType[0]);
+                        $className = $classNames[0].'\\'.$classNames[1].'\\'.$fieldType[0];
                         foreach ($elements as $element) {
-                            $this->_fields[$fieldName]['FieldValue'][] = new $fieldType[0]($element);
+                            $this->_fields[$fieldName]['FieldValue'][] = new $className($element);
                         }
                     } 
                 } else {
@@ -142,7 +154,9 @@ abstract class MarketplaceWebServiceProducts_Model
                     $elements = $xpath->query("./*[local-name()='$fieldName']", $dom);
                     if ($elements->length == 1) {
                         require_once (dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $fieldType) . ".php");
-                        $this->_fields[$fieldName]['FieldValue'] = new $fieldType($elements->item(0));
+                        $classNames = explode('_', $fieldType);
+                        $className = $classNames[0].'\\'.$classNames[1].'\\'.$fieldType;
+                        $this->_fields[$fieldName]['FieldValue'] =new $className($elements->item(0));
                     }   
                 } else {
                     if($fieldType[0] == "@") {

@@ -19,17 +19,17 @@ class AsinImportTask extends Shell
 
   public function initialize() 
   {
-    $this->access_key_jp = array(
+    $this->access_keys_jp = array(
       'access_key' => env('AMZ_PA_ACCESSKEY_JP', '')
     , 'secret_key' => env('AMZ_PA_SECRETKEY_JP', '')
     , 'associ_tag' => env('AMZ_PA_ASSOCITAG_JP', '')
     );
-    $this->access_key_au = array(
+    $this->access_keys_au = array(
       'access_key' => env('AMZ_PA_ACCESSKEY_AU', '')
     , 'secret_key' => env('AMZ_PA_SECRETKEY_AU', '')
     , 'associ_tag' => env('AMZ_PA_ASSOCITAG_AU', '')
     );
-    $this->access_key_us = array(
+    $this->access_keys_us = array(
       'access_key' => env('AMZ_PA_ACCESSKEY_US', '')
     , 'secret_key' => env('AMZ_PA_SECRETKEY_US', '')
     , 'associ_tag' => env('AMZ_PA_ASSOCITAG_US', '')
@@ -195,21 +195,21 @@ class AsinImportTask extends Shell
     foreach($request as $_request) {
       switch($_request['marketplace']) {
       case 'JP':
-        array_push($asins_jp, $_request['asin']);
+        if($this->isKey('JP')) array_push($asins_jp, $_request['asin']);
         if(count($asins_jp) > 10) {
           array_push($response, $this->fetchAsin(implode(',', $asins_jp), 'JP'));
           $asins_jp = array();
         }
         break;
       case 'AU':
-        array_push($asins_au, $_request['asin']);
+        if($this->isKey('AU')) array_push($asins_au, $_request['asin']);
         if(count($asins_au) > 10) {
           array_push($response, $this->fetchAsin(implode(',', $asins_au), 'AU'));
           $asins_au = array();
         }
         break;
       case 'US':
-        array_push($asins_us, $_request['asin']);
+        if($this->isKey('US')) array_push($asins_us, $_request['asin']);
         if(count($asins_us) > 10) {
           array_push($response, $this->fetchAsin(implode(',', $asins_us), 'US'));
           $asins_us = array();
@@ -251,27 +251,27 @@ class AsinImportTask extends Shell
     switch($marketplace) {
     case 'JP':
       $country = Country::JAPAN;
-      $access_key = $this->access_key_jp['access_key'];
-      $secret_key = $this->access_key_jp['secret_key'];
-      $associ_tag = $this->access_key_jp['associ_tag'];
+      $access_key = $this->access_keys_jp['access_key'];
+      $secret_key = $this->access_keys_jp['secret_key'];
+      $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     case 'AU':
       $country = Country::AUSTRALIA;
-      $access_key = $this->access_key_au['access_key'];
-      $secret_key = $this->access_key_au['secret_key'];
-      $associ_tag = $this->access_key_au['associ_tag'];
+      $access_key = $this->access_keys_au['access_key'];
+      $secret_key = $this->access_keys_au['secret_key'];
+      $associ_tag = $this->access_keys_au['associ_tag'];
       break;
     case 'US':
       $country = Country::INTERNATIONAL;
-      $access_key = $this->access_key_us['access_key'];
-      $secret_key = $this->access_key_us['secret_key'];
-      $associ_tag = $this->access_key_us['associ_tag'];
+      $access_key = $this->access_keys_us['access_key'];
+      $secret_key = $this->access_keys_us['secret_key'];
+      $associ_tag = $this->access_keys_us['associ_tag'];
       break;
     default:
       $country = Country::JAPAN;
-      $access_key = $this->access_key_jp['access_key'];
-      $secret_key = $this->access_key_jp['secret_key'];
-      $associ_tag = $this->access_key_jp['associ_tag'];
+      $access_key = $this->access_keys_jp['access_key'];
+      $secret_key = $this->access_keys_jp['secret_key'];
+      $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
     sleep(5);
@@ -300,6 +300,33 @@ class AsinImportTask extends Shell
     ]);
   }
   
+  private function isKey($marketplace)
+  {
+    $isKey = false;
+    switch($marketplace) {
+    case 'JP':
+      if(   $this->access_keys_jp['access_key'] !== ''
+        &&  $this->access_keys_jp['secret_key'] !== ''
+        &&  $this->access_keys_jp['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    case 'AU':
+      if(   $this->access_keys_au['access_key'] !== ''
+        &&  $this->access_keys_au['secret_key'] !== ''
+        &&  $this->access_keys_au['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    case 'US':
+      if(   $this->access_keys_us['access_key'] !== ''
+        &&  $this->access_keys_us['secret_key'] !== ''
+        &&  $this->access_keys_us['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    }
+    //print_r($isKey . "\n");
+    return $isKey;
+  }
+
   private function log_debug($messate)
   {
     $displayName = '[' . get_class($this) . '] ';

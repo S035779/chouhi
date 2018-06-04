@@ -8,7 +8,7 @@ use Cake\Console\Shell;
  */
 class GetMatchingProductShell extends Shell
 {
-  public $tasks = ['GetMatchingProdust'];
+  public $tasks = ['GetMatchingProduct'];
 
   /**
    * Manage the available sub-commands along with their arguments and help

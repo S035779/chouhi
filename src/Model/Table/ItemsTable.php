@@ -69,145 +69,117 @@ class ItemsTable extends Table
 
         $validator
             ->boolean('is_eligible_prime')
-            ->requirePresence('is_eligible_prime', 'create')
-            ->notEmpty('is_eligible_prime');
+            ->allowEmpty('is_eligible_prime');
 
         $validator
             ->boolean('is_eligible_for_supersaver_shipping')
-            ->requirePresence('is_eligible_for_supersaver_shipping', 'create')
-            ->notEmpty('is_eligible_for_supersaver_shipping');
+            ->allowEmpty('is_eligible_for_supersaver_shipping');
 
         $validator
-            ->integer('item_height')
             ->requirePresence('item_height', 'create')
             ->notEmpty('item_height');
 
         $validator
-            ->integer('item_length')
             ->requirePresence('item_length', 'create')
             ->notEmpty('item_length');
 
         $validator
-            ->integer('item_weight')
             ->requirePresence('item_weight', 'create')
             ->notEmpty('item_weight');
 
         $validator
-            ->integer('item_width')
             ->requirePresence('item_width', 'create')
             ->notEmpty('item_width');
 
         $validator
-            ->integer('package_height')
             ->requirePresence('package_height', 'create')
             ->notEmpty('package_height');
 
         $validator
-            ->integer('package_length')
             ->requirePresence('package_length', 'create')
             ->notEmpty('package_length');
 
         $validator
-            ->integer('package_weight')
             ->requirePresence('package_weight', 'create')
             ->notEmpty('package_weight');
 
         $validator
-            ->integer('package_width')
             ->requirePresence('package_width', 'create')
             ->notEmpty('package_width');
 
         $validator
-            ->requirePresence('list_price', 'create')
-            ->notEmpty('list_price');
+            ->allowEmpty('list_price');
 
         $validator
             ->scalar('list_price_currency')
             ->maxLength('list_price_currency', 255)
-            ->requirePresence('list_price_currency', 'create')
-            ->notEmpty('list_price_currency');
+            ->allowEmpty('list_price_currency');
 
         $validator
-            ->requirePresence('lowest_price', 'create')
-            ->notEmpty('lowest_price');
+            ->allowEmpty('lowest_price');
 
         $validator
             ->scalar('lowest_price_currency')
             ->maxLength('lowest_price_currency', 255)
-            ->requirePresence('lowest_price_currency', 'create')
-            ->notEmpty('lowest_price_currency');
+            ->allowEmpty('lowest_price_currency');
 
         $validator
-            ->requirePresence('lowest_used_price', 'create')
-            ->notEmpty('lowest_used_price');
+            ->allowEmpty('lowest_used_price');
 
         $validator
             ->scalar('lowest_used_price_currency')
             ->maxLength('lowest_used_price_currency', 255)
-            ->requirePresence('lowest_used_price_currency', 'create')
-            ->notEmpty('lowest_used_price_currency');
+            ->allowEmpty('lowest_used_price_currency');
 
         $validator
-            ->requirePresence('lowest_collectible_price', 'create')
-            ->notEmpty('lowest_collectible_price');
+            ->allowEmpty('lowest_collectible_price');
 
         $validator
             ->scalar('lowest_collectible_price_currency')
             ->maxLength('lowest_collectible_price_currency', 255)
-            ->requirePresence('lowest_collectible_price_currency', 'create')
-            ->notEmpty('lowest_collectible_price_currency');
+            ->allowEmpty('lowest_collectible_price_currency');
 
         $validator
-            ->requirePresence('offer_listing_price', 'create')
-            ->notEmpty('offer_listing_price');
+            ->allowEmpty('offer_listing_price');
 
         $validator
             ->scalar('offer_listing_price_currency')
             ->maxLength('offer_listing_price_currency', 255)
-            ->requirePresence('offer_listing_price_currency', 'create')
-            ->notEmpty('offer_listing_price_currency');
+            ->allowEmpty('offer_listing_price_currency');
 
         $validator
-            ->requirePresence('offer_listing_saved_price', 'create')
-            ->notEmpty('offer_listing_saved_price');
+            ->allowEmpty('offer_listing_saved_price');
 
         $validator
             ->scalar('offer_listing_saved_price_currency')
             ->maxLength('offer_listing_saved_price_currency', 255)
-            ->requirePresence('offer_listing_saved_price_currency', 'create')
-            ->notEmpty('offer_listing_saved_price_currency');
+            ->allowEmpty('offer_listing_saved_price_currency');
 
         $validator
             ->integer('sales_ranking')
-            ->requirePresence('sales_ranking', 'create')
-            ->notEmpty('sales_ranking');
+            ->allowEmpty('sales_ranking');
 
         $validator
             ->scalar('ean')
             ->maxLength('ean', 255)
-            ->requirePresence('ean', 'create')
-            ->notEmpty('ean');
+            ->allowEmpty('ean');
 
         $validator
             ->dateTime('release_date_at')
-            ->requirePresence('release_date_at', 'create')
-            ->notEmpty('release_date_at');
+            ->allowEmpty('release_date_at');
 
         $validator
             ->dateTime('publication_date_at')
-            ->requirePresence('publication_date_at', 'create')
-            ->notEmpty('publication_date_at');
+            ->allowEmpty('publication_date_at');
 
         $validator
             ->dateTime('original_release_date_at')
-            ->requirePresence('original_release_date_at', 'create')
-            ->notEmpty('original_release_date_at');
+            ->allowEmpty('original_release_date_at');
 
         $validator
             ->scalar('condition_status')
             ->maxLength('condition_status', 255)
-            ->requirePresence('condition_status', 'create')
-            ->notEmpty('condition_status');
+            ->allowEmpty('condition_status');
 
         $validator
             ->integer('total_reviews')
@@ -271,29 +243,24 @@ class ItemsTable extends Table
 
         $validator
             ->integer('total_new')
-            ->requirePresence('total_new', 'create')
-            ->notEmpty('total_new');
+            ->allowEmpty('total_new');
 
         $validator
             ->integer('total_used')
-            ->requirePresence('total_used', 'create')
-            ->notEmpty('total_used');
+            ->allowEmpty('total_used');
 
         $validator
             ->integer('total_collectible')
-            ->requirePresence('total_collectible', 'create')
-            ->notEmpty('total_collectible');
+            ->allowEmpty('total_collectible');
 
         $validator
             ->integer('total_refurbished')
-            ->requirePresence('total_refurbished', 'create')
-            ->notEmpty('total_refurbished');
+            ->allowEmpty('total_refurbished');
 
         $validator
             ->scalar('customer_reviews_url')
             ->maxLength('customer_reviews_url', 4095)
-            ->requirePresence('customer_reviews_url', 'create')
-            ->notEmpty('customer_reviews_url');
+            ->allowEmpty('customer_reviews_url');
 
         return $validator;
     }

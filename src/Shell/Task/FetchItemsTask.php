@@ -347,21 +347,21 @@ class FetchItemsTask extends Shell
     foreach($request as $_request) {
       switch($_request['marketplace']) {
       case 'JP':
-        array_push($asins_jp, $_request['asin']);
+        if($this->isKey('JP')) array_push($asins_jp, $_request['asin']);
         if(count($asins_jp) > 10) {
           array_push($response, $this->fetchItem(implode(',', $asins_jp), 'JP'));
           $asins_jp = array();
         }
         break;
       case 'AU':
-        array_push($asins_au, $_request['asin']);
+        if($this->isKey('AU')) array_push($asins_au, $_request['asin']);
         if(count($asins_au) > 10) {
           array_push($response, $this->fetchItem(implode(',', $asins_au), 'AU'));
           $asins_au = array();
         }
         break;
       case 'US':
-        array_push($asins_us, $_request['asin']);
+        if($this->isKey('US')) array_push($asins_us, $_request['asin']);
         if(count($asins_us) > 10) {
           array_push($response, $this->fetchItem(implode(',', $asins_us), 'US'));
           $asins_us = array();
@@ -455,6 +455,32 @@ class FetchItemsTask extends Shell
   private function getTimeStamp($str)
   {
     return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
+  }
+
+  private function isKey($marketplace)
+  {
+    $isKey = false;
+    switch($marketplace) {
+    case 'JP':
+      if(   $this->access_keys_jp['access_key'] !== ''
+        &&  $this->access_keys_jp['secret_key'] !== ''
+        &&  $this->access_keys_jp['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    case 'AU':
+      if(   $this->access_keys_au['access_key'] !== ''
+        &&  $this->access_keys_au['secret_key'] !== ''
+        &&  $this->access_keys_au['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    case 'US':
+      if(   $this->access_keys_us['access_key'] !== ''
+        &&  $this->access_keys_us['secret_key'] !== ''
+        &&  $this->access_keys_us['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    }
+    return $isKey;
   }
 
   private function log_debug($message)
