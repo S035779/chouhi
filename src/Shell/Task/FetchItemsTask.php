@@ -198,6 +198,7 @@ class FetchItemsTask extends Shell
     $items = TableRegistry::get('Items');
 
     $results = $this->setItems($header, $request);
+    //debug($results);
 
     foreach($results as $result) {
       $entity = $items->newEntity($result);
@@ -226,6 +227,7 @@ class FetchItemsTask extends Shell
     $vals     = array_values($header);
 
     $responses = $this->fetchItems($request);
+    //debug($responses);
 
     foreach($responses as $response) {
       //print_r($response);
@@ -246,43 +248,97 @@ class FetchItemsTask extends Shell
             = $item['Offers']['Offer']['OfferListing']['IsEligibleForSuperSaverShipping']
                                                                                     ?? 0;
           if($vals[ 4]) $data[$keys[ 4]]
-            = $item['ItemAttributes']['ItemDimensions']['Height']                   ?? 0;
+            = isset($item['ItemAttributes']['ItemDimensions']['Height'])
+              ? $this->getLocalLength($item['ItemAttributes']['ItemDimensions']['Height']
+              , 'inches')
+              : 0;
           if($vals[ 5]) $data[$keys[ 5]]
-            = $item['ItemAttributes']['ItemDimensions']['Length']                   ?? 0;
+            = isset($item['ItemAttributes']['ItemDimensions']['Length'])
+              ? $this->getLocalLength($item['ItemAttributes']['ItemDimensions']['Length']
+                , 'inches')
+              : 0;
           if($vals[ 6]) $data[$keys[ 6]]
-            = $item['ItemAttributes']['ItemDimensions']['Weight']                   ?? 0;
+            = isset($item['ItemAttributes']['ItemDimensions']['Weight'])
+              ? $this->getLocalWeight($item['ItemAttributes']['ItemDimensions']['Weight']
+              , 'pounds')
+              : 0;
           if($vals[ 7]) $data[$keys[ 7]]
-            = $item['ItemAttributes']['ItemDimensions']['Width']                    ?? 0;
+            = isset($item['ItemAttributes']['ItemDimensions']['Width'])
+              ? $this->getLocalLength($item['ItemAttributes']['ItemDimensions']['Width']
+              , 'inches')
+              : 0;
           if($vals[ 8]) $data[$keys[ 8]]
-            = $item['ItemAttributes']['PackageDimensions']['Height']                ?? 0;
+            = isset($item['ItemAttributes']['PackageDimensions']['Height'])
+              ? $this->getLocalLength($item['ItemAttributes']['PackageDimensions']['Height']
+                , 'inches')
+              : 0;
           if($vals[ 9]) $data[$keys[ 9]]
-            = $item['ItemAttributes']['PackageDimensions']['Length']                ?? 0;
+            = isset($item['ItemAttributes']['PackageDimensions']['Length'])
+              ? $this->getLocalLength($item['ItemAttributes']['PackageDimensions']['Length']
+                , 'inches')
+              : 0;
           if($vals[10]) $data[$keys[10]]
-            = $item['ItemAttributes']['PackageDimensions']['Weight']                ?? 0;
+            = isset($item['ItemAttributes']['PackageDimensions']['Weight'])
+              ? $this->getLocalWeight($item['ItemAttributes']['PackageDimensions']['Weight']
+                , 'pounds')
+              : 0;
           if($vals[11]) $data[$keys[11]]
-            = $item['ItemAttributes']['PackageDimensions']['Width']                 ?? 0;
+            = isset($item['ItemAttributes']['PackageDimensions']['Width'])
+              ? $this->getLocalLength($item['ItemAttributes']['PackageDimensions']['Width']
+                , 'inches')
+              : 0;
           if($vals[12]) $data[$keys[12]]
-            = $item['ItemAttributes']['ListPrice']['Amount']                        ?? 0;
+            = isset($item['ItemAttributes']['ListPrice']['Amount'])
+              ? $this->getLocalPrice(
+                  $item['ItemAttributes']['ListPrice']['Amount']
+                , $item['ItemAttributes']['ListPrice']['CurrencyCode']
+                )
+              : 0;
           if($vals[13]) $data[$keys[13]]
             = $item['ItemAttributes']['ListPrice']['CurrencyCode']                  ?? 'N/A';
           if($vals[14]) $data[$keys[14]]
-            = $item['OfferSummary']['LowestNewPrice']['Amount']                     ?? 0;
+            = isset($item['OfferSummary']['LowestNewPrice']['Amount'])
+              ? $this->getLocalPrice(
+                  $item['OfferSummary']['LowestNewPrice']['Amount']
+                , $item['OfferSummary']['LowestNewPrice']['CurrencyCode']
+                )
+              : 0;
           if($vals[15]) $data[$keys[15]]
             = $item['OfferSummary']['LowestNewPrice']['CurrencyCode']               ?? 'N/A';
           if($vals[16]) $data[$keys[16]]
-            = $item['OfferSummary']['LowestUsedPrice']['Amount']                    ?? 0;
+            = isset($item['OfferSummary']['LowestUsedPrice']['Amount'])
+              ? $this->getLocalPrice(
+                  $item['OfferSummary']['LowestUsedPrice']['Amount']
+                , $item['OfferSummary']['LowestUsedPrice']['CurrencyCode']
+                )
+              : 0;
           if($vals[17]) $data[$keys[17]]
             = $item['OfferSummary']['LowestUsedPrice']['CurrencyCode']              ?? 'N/A';
           if($vals[18]) $data[$keys[18]]
-            = $item['OfferSummary']['LowestCollectiblePrice']['Amount']             ?? 0;
+            = isset($item['OfferSummary']['LowestCollectiblePrice']['Amount'])
+              ? $this->getLocalPrice(
+                  $item['OfferSummary']['LowestCollectiblePrice']['Amount']
+                , $item['OfferSummary']['LowestCollectiblePrice']['CurrencyCode']
+                )
+              : 0;
           if($vals[19]) $data[$keys[19]]
             = $item['OfferSummary']['LowestCollectiblePrice']['CurrencyCode']       ?? 'N/A';
           if($vals[20]) $data[$keys[20]]
-            = $item['Offers']['Offer']['OfferListing']['Price']['Amount']           ?? 0;
+            = isset($item['Offers']['Offer']['OfferListing']['Price']['Amount'])
+              ? $this->getLocalPrice(
+                  $item['Offers']['Offer']['OfferListing']['Price']['Amount']
+                , $item['Offers']['Offer']['OfferListing']['Price']['CurrencyCode']
+                )
+              : 0;
           if($vals[21]) $data[$keys[21]]
             = $item['Offers']['Offer']['OfferListing']['Price']['CurrencyCode']     ?? 'N/A';
           if($vals[22]) $data[$keys[22]]
-            = $item['Offers']['Offer']['OfferListing']['AmountSaved']['Amount']     ?? 0;
+            = isset($item['Offers']['Offer']['OfferListing']['AmountSaved']['Amount'])
+              ? $this->getLocalPrice(
+                  $item['Offers']['Offer']['OfferListing']['AmountSaved']['Amount']
+                , $item['Offers']['Offer']['OfferListing']['AmountSaved']['CurrencyCode']
+                )
+              : 0;
           if($vals[23]) $data[$keys[23]] = 
             $item['Offers']['Offer']['OfferListing']['AmountSaved']['CurrencyCode'] ?? 'N/A';
           if($vals[24]) $data[$keys[24]] = $item['SalesRank']                       ?? 0;
@@ -455,6 +511,48 @@ class FetchItemsTask extends Shell
   private function getTimeStamp($str)
   {
     return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
+  }
+
+  private function getLocalLength($length, $units) 
+  {
+    $rate = 0;
+    switch($units) {
+    case 'inches':
+      $rate = 25.4;
+      break;
+    default:
+      $rate = 1;
+      break;
+    }
+    return (float)($length * $rate / 100);
+  }
+
+  private function getLocalWeight($weight, $units)
+  {
+    $rate = 0;
+    switch($units) {
+    case 'pounds':
+      $rate = 0.45359237;
+      break;
+    default:
+      break;
+    }
+    return (float)($weight * $rate / 100);
+  }
+
+  private function getLocalPrice($price, $currency)
+  {
+    $rate = 0;
+    switch($currency) {
+    case 'AUD':
+    case 'USD':
+      $rate = 0.01;
+      break;
+    default:
+      $rate = 1;
+      break;
+    }
+    return (float)($price * $rate);
   }
 
   private function isKey($marketplace)

@@ -55,6 +55,8 @@
             <th scope="col"><?= $this->Paginator->sort('offer_listing_identifier') ?></th>
             <th scope="col"><?= $this->Paginator->sort('price') ?></th>
             <th scope="col"><?= $this->Paginator->sort('price_currency') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('lowest_price') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('lowest_price_currency') ?></th>
             <th scope="col"><?= $this->Paginator->sort('state') ?></th>
             <th scope="col"><?= $this->Paginator->sort('sub_condition_status') ?></th>
             <th scope="col"><?= $this->Paginator->sort('total_feedback') ?></th>
@@ -80,6 +82,8 @@
             <td><?= h($offer->offer_listing_identifier) ?></td>
             <td><?= $this->Number->format($offer->price) ?></td>
             <td><?= h($offer->price_currency) ?></td>
+            <td><?= $this->Number->format($offer->lowest_price) ?></td>
+            <td><?= h($offer->lowest_price_currency) ?></td>
             <td><?= h($offer->state) ?></td>
             <td><?= h($offer->sub_condition_status) ?></td>
             <td><?= $this->Number->format($offer->total_feedback) ?></td>

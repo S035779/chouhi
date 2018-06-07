@@ -104,25 +104,25 @@
             <td><?= h($item->title) ?></td>
             <td><?= h($item->is_eligible_prime) ?></td>
             <td><?= h($item->is_eligible_for_supersaver_shipping) ?></td>
-            <td><?= $this->Number->format($item->item_height) ?></td>
-            <td><?= $this->Number->format($item->item_length) ?></td>
-            <td><?= $this->Number->format($item->item_weight) ?></td>
-            <td><?= $this->Number->format($item->item_width) ?></td>
-            <td><?= $this->Number->format($item->package_height) ?></td>
-            <td><?= $this->Number->format($item->package_length) ?></td>
-            <td><?= $this->Number->format($item->package_weight) ?></td>
-            <td><?= $this->Number->format($item->package_width) ?></td>
-            <td><?= $this->Number->format($item->list_price) ?></td>
+            <td><?= $this->Number->precision($item->item_height, 2) ?> <?= __('mm') ?></td>
+            <td><?= $this->Number->precision($item->item_length, 2) ?> <?= __('mm') ?></td>
+            <td><?= $this->Number->precision($item->item_weight, 2) ?> <?= __('kg') ?></td>
+            <td><?= $this->Number->precision($item->item_width, 2) ?> <?= __('mm') ?></td>
+            <td><?= $this->Number->precision($item->package_height, 2) ?> <?= __('mm') ?></td>
+            <td><?= $this->Number->precision($item->package_length, 2) ?> <?= __('mm') ?></td>
+            <td><?= $this->Number->precision($item->package_weight, 2) ?> <?= __('kg') ?></td>
+            <td><?= $this->Number->precision($item->package_width, 2) ?> <?= __('mm') ?></td>
+            <td><?= $this->Number->currency($item->list_price, $item->list_price_currency, ['zero' => '---']) ?></td>
             <td><?= h($item->list_price_currency) ?></td>
-            <td><?= $this->Number->format($item->lowest_price) ?></td>
+            <td><?= $this->Number->currency($item->lowest_price, $item->lowest_price_currency, ['zero' => '---']) ?></td>
             <td><?= h($item->lowest_price_currency) ?></td>
-            <td><?= $this->Number->format($item->lowest_used_price) ?></td>
+            <td><?= $this->Number->currency($item->lowest_used_price, $item->lowest_used_price_currency, ['zero' => '---']) ?></td>
             <td><?= h($item->lowest_used_price_currency) ?></td>
-            <td><?= $this->Number->format($item->lowest_collectible_price) ?></td>
+            <td><?= $this->Number->currency($item->lowest_collectible_price, $item->lowest_collectible_price_currency, ['zero' => '---']) ?></td>
             <td><?= h($item->lowest_collectible_price_currency) ?></td>
-            <td><?= $this->Number->format($item->offer_listing_price) ?></td>
+            <td><?= $this->Number->currency($item->offer_listing_price, $item->offer_listing_price_currency, ['zero' => '---']) ?></td>
             <td><?= h($item->offer_listing_price_currency) ?></td>
-            <td><?= $this->Number->format($item->offer_listing_saved_price) ?></td>
+            <td><?= $this->Number->currency($item->offer_listing_saved_price, $item->offer_listing_saved_price_currency, ['zero' => '---']) ?></td>
             <td><?= h($item->offer_listing_saved_price_currency) ?></td>
             <td><?= $this->Number->format($item->sales_ranking) ?></td>
             <td><?= h($item->ean) ?></td>

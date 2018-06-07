@@ -46,7 +46,8 @@ class GetMatchingProductTask extends Shell
   private function setAsins()
   {
     $asins = TableRegistry::get('Asins');
-    $datas = $asins->find()->where(['suspended' => false]);
+    $datas = $asins->find()->where(['suspended' => false])
+      ->all();
     $ids = array();
     foreach($datas as $data) {
       array_push($ids, ['asin' => $data->asin, 'ean' => $data->ean]);
@@ -456,9 +457,9 @@ class GetMatchingProductTask extends Shell
       break;
     }
     $result = (float)($length * $rate);
-    $this->log_debug($length);
-    $this->log_debug($units);
-    $this->log_debug($result);
+    //$this->log_debug($length);
+    //$this->log_debug($units);
+    //$this->log_debug($result);
     return $result;
   }
 
@@ -474,9 +475,9 @@ class GetMatchingProductTask extends Shell
       break;
     }
     $result = (float)($weight * $rate);
-    $this->log_debug($weight);
-    $this->log_debug($units);
-    $this->log_debug($result);
+    //$this->log_debug($weight);
+    //$this->log_debug($units);
+    //$this->log_debug($result);
     return $result;
   }
 

@@ -79,13 +79,19 @@ class AmazonMWSComponent extends Component
    * (2) max request quota = 10 request / 80 request per hour, recovery rate = 1 count/45sec.
    * (3) max request quota = 15 request / 60 request per hour, recovery rate = 1 count/min.
    */
-  public function addDelFeed($params)
+  public function create($params)
   {
     $amazon = new SubmitFeedComponent($params);
-    return $amazon->addDell();
+    return $amazon->create();
   }
 
-  public function updateFeed($params)
+  public function adddel($params)
+  {
+    $amazon = new SubmitFeedComponent($params);
+    return $amazon->adddel();
+  }
+
+  public function update($params)
   {
     $amazon = new SubmitFeedComponent($params);
     return $amazon->update();

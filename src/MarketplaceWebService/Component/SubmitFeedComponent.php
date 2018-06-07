@@ -24,7 +24,29 @@ class SubmitFeedComponent
     $this->app_version = env('APP_VERSION');
   }
 
-  public function addDel()
+  public function create()
+  {
+    $config = array (
+      'ServiceURL' => $this->service_url
+    , 'ProxyHost' => null
+    , 'ProxyPort' => -1
+    , 'MaxErrorRetry' => 3,
+    );
+    $service = new MarketplaceWebService_Client(
+      $this->access_key
+    , $this->secret_key
+    , $config
+    , $this->app_name
+    , $this->app_version
+    );
+    $feed = $this->readFile('_create_');
+    $feedId = $this->requestMerchant($service, $feed, '_POST_FLAT_FILE_LISTINGS_DATA_');
+    $listId = $this->getSubmitFeedList($service, $feedId); 
+    $result = $this->getSubmitFeedResult($service, $listId);
+    return $result;
+  }
+
+  public function adddel()
   {
     $config = array (
       'ServiceURL' => $this->service_url
@@ -40,7 +62,7 @@ class SubmitFeedComponent
     , $this->app_version
     );
     $feed = $this->readFile('_AddDel_');
-    $feedId = $this->addDelMerchant($service, $feed);
+    $feedId = $this->requestMerchant($service, $feed, '_POST_FLAT_FILE_INVLOADER_DATA_');
     $listId = $this->getSubmitFeedList($service, $feedId); 
     $result = $this->getSubmitFeedResult($service, $listId);
     return $result;
@@ -62,7 +84,7 @@ class SubmitFeedComponent
     , $this->app_version
     );
     $feed = $this->readFile('_revPrice_');
-    $feedId  = $this->reviseMerchant($service, $feed);
+    $feedId  = $this->requestMerchant($service, $feed, '_POST_FLAT_FILE_PRICEANDQUANTITYONLY_UPDATE_DATA_');
     $listId = $this->getSubmitFeedList($service, $feedId); 
     $result = $this->getSubmitFeedResult($service, $listId);
     return $result;
@@ -79,15 +101,13 @@ class SubmitFeedComponent
       if ( strstr($file_name, $dateWord) and strstr($file_name, $request) ) {
         $fullName = $dirName . "/" . $file_name;
         $feed = file_get_contents($fullName);
-        $dstFullName = $dirName . "/" . $dateWord . "loaded/" .$file_name;
-        rename($fullName, $dstFullName);
       }
     }
     closedir( $res_dir );
     return $feed;
   }
 
-  private function addDelMerchant($service, $feed)
+  private function requestMerchant($service, $feed, $feedType)
   {
     $marketplaceIdArray = array(
       "Id" => array($this->marketplace)
@@ -98,37 +118,15 @@ class SubmitFeedComponent
     $request = new MarketplaceWebService_Model_SubmitFeedRequest();
     $request->setMerchant($this->seller_id);
     $request->setMarketplaceIdList($marketplaceIdArray);
-    $request->setFeedType('_POST_FLAT_FILE_INVLOADER_DATA_');
+    $request->setFeedType($feedType);
     $request->setContentMd5(base64_encode(md5(stream_get_contents($feedHandle), true)));
     rewind($feedHandle);
     $request->setPurgeAndReplace(false);
     $request->setFeedContent($feedHandle);
     rewind($feedHandle);
-    $addSubFeedId = invokeSubmitFeed($service, $request);
+    $feedId = invokeSubmitFeed($service, $request);
     @fclose($feedHandle);
-    return $addSubFeedId;
-  }
-
-  private function reviseMerchant($service, $feed)
-  {
-    $marketplaceIdArray = array(
-      "Id" => array($this->marketplace)
-    );
-    $feedHandle = @fopen('php://temp', 'rw+');
-    fwrite($feedHandle, $feed);
-    rewind($feedHandle);
-    $request = new MarketplaceWebService_Model_SubmitFeedRequest();
-    $request->setMerchant($this->seller_id);
-    $request->setMarketplaceIdList($marketplaceIdArray);
-    $request->setFeedType('_POST_FLAT_FILE_PRICEANDQUANTITYONLY_UPDATE_DATA_');
-    $request->setContentMd5(base64_encode(md5(stream_get_contents($feedHandle), true)));
-    rewind($feedHandle);
-    $request->setPurgeAndReplace(false);
-    $request->setFeedContent($feedHandle);
-    rewind($feedHandle);
-    $revSubFeedId = invokeSubmitFeed($service, $request);
-    @fclose($feedHandle);
-    return $revSubFeedId;
+    return $feedId;
   }
 
   private function getSubmitFeedList($service, $feedId)

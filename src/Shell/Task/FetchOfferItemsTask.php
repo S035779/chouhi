@@ -247,8 +247,12 @@ class FetchOfferItemsTask extends Shell
               = $offer['OfferListing']['IsEligibleForSuperSaverShipping']           ?? 0;
             if($vals[ 8]) $data[$keys[ 8]]
               = $offer['OfferListing']['OfferListingId']                            ?? 'N/A';
-            if($vals[ 9]) $data[$keys[ 9]]
-              = $offer['OfferListing']['Price']['Amount']                           ?? 0;
+            if($vals[ 9]) $data[$keys[ 9]] = isset($offer['OfferListing']['Price']['Amount'])
+              ? $this->getLocalPrice(
+                  $offer['OfferListing']['Price']['Amount']
+                , $offer['OfferListing']['Price']['CurrencyCode']
+                )
+              : 0;
             if($vals[10]) $data[$keys[10]]
               = $offer['OfferListing']['Price']['CurrencyCode']                     ?? 'N/A';
             if($vals[11]) $data[$keys[11]] = $offer['OfferAttributes']['State']     ?? 'N/A';
@@ -257,7 +261,8 @@ class FetchOfferItemsTask extends Shell
               = $offer['OfferAttributes']['SubCondition']                           ?? 'N/A';
             if($vals[14]) $data[$keys[14]] = $offer['Seller']['TotalFeedback']      ?? 0;
             if($vals[15]) $data[$keys[15]] = $salesRanking                          ?? 0;
-            if($vals[16]) $data[$keys[16]] = $lowestPrice                           ?? 0;
+            if($vals[16]) $data[$keys[16]] = isset($lowestPrice)
+              ? $this->getLocalPrice($lowestPrice, $lowestPriceCurrency) : 0;
             if($vals[17]) $data[$keys[17]] = $lowestPriceCurrency                   ?? 'N/A';
             if($vals[18]) $data[$keys[18]] = $datetime;
             if($vals[19]) $data[$keys[19]] = $datetime;
@@ -397,6 +402,20 @@ class FetchOfferItemsTask extends Shell
       'fetchOffer'  => $apaiIo->runOperation($lookup)
     , 'marketplace' => $marketplace
     ]);
+  }
+
+  private function getLocalPrice($price, $currency)
+  {
+    $rate = 0;
+    switch($currency) {
+    case 'USD':
+      $rate = 0.01;
+      break;
+    default:
+      $rate = 1;
+      break;
+    }
+    return (float)($price * $rate);
   }
 
   private function isKey($marketplace)
