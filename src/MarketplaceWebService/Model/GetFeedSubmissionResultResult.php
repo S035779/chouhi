@@ -1,4 +1,5 @@
 <?php
+namespace MarketplaceWebService\Model;
 /** 
  *  PHP Version 5
  *
@@ -21,7 +22,7 @@
  */
 require_once ('MarketplaceWebService/Model.php');  
 
-    
+use MarketplaceWebService\MarketplaceWebService_Model;    
 
 /**
  * MarketplaceWebService_Model_GetFeedSubmissionResultResult

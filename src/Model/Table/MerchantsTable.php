@@ -54,23 +54,19 @@ class MerchantsTable extends Table
         $validator
             ->scalar('item_name')
             ->maxLength('item_name', 255)
-            ->requirePresence('item_name', 'create')
-            ->notEmpty('item_name');
+            ->allowEmpty('item_name', 'update');
 
         $validator
             ->scalar('product_identifier')
             ->maxLength('product_identifier', 255)
-            ->requirePresence('product_identifier', 'create')
-            ->notEmpty('product_identifier');
+            ->allowEmpty('product_identifier', 'update');
 
         $validator
             ->integer('product_id_type')
-            ->requirePresence('product_id_type', 'create')
-            ->notEmpty('product_id_type');
+            ->allowEmpty('product_id_type', 'update');
 
         $validator
-            ->requirePresence('price', 'create')
-            ->notEmpty('price');
+            ->allowEmpty('price', 'update');
 
         $validator
             ->allowEmpty('minimum_seller_allow_price');
@@ -80,31 +76,26 @@ class MerchantsTable extends Table
 
         $validator
             ->integer('item_condition')
-            ->requirePresence('item_condition', 'create')
-            ->notEmpty('item_condition');
+            ->allowEmpty('item_condition', 'update');
 
         $validator
             ->integer('quantity')
-            ->requirePresence('quantity', 'create')
-            ->notEmpty('quantity');
+            ->allowEmpty('quantity', 'update');
 
         $validator
             ->scalar('add_delete')
             ->maxLength('add_delete', 255)
-            ->requirePresence('add_delete', 'create')
-            ->notEmpty('add_delete');
+            ->allowEmpty('add_delete', 'update');
 
         $validator
             ->scalar('will_ship_internationally')
             ->maxLength('will_ship_internationally', 255)
-            ->requirePresence('will_ship_internationally', 'create')
-            ->notEmpty('will_ship_internationally');
+            ->allowEmpty('will_ship_internationally', 'update');
 
         $validator
             ->scalar('expedited_shipping')
             ->maxLength('expedited_shipping', 255)
-            ->requirePresence('expedited_shipping', 'create')
-            ->notEmpty('expedited_shipping');
+            ->allowEmpty('expedited_shipping', 'update');
 
         $validator
             ->scalar('standard_plus')
@@ -114,14 +105,12 @@ class MerchantsTable extends Table
         $validator
             ->scalar('item_note')
             ->maxLength('item_note', 2047)
-            ->requirePresence('item_note', 'create')
-            ->notEmpty('item_note');
+            ->allowEmpty('item_note', 'update');
 
         $validator
             ->scalar('fullfillment_channel')
             ->maxLength('fullfillment_channel', 1023)
-            ->requirePresence('fullfillment_channel', 'create')
-            ->notEmpty('fullfillment_channel');
+            ->allowEmpty('fullfillment_channel', 'update');
 
         $validator
             ->scalar('product_tax_code')
@@ -135,8 +124,7 @@ class MerchantsTable extends Table
         $validator
             ->scalar('seller_sku')
             ->maxLength('seller_sku', 255)
-            ->requirePresence('seller_sku', 'create')
-            ->notEmpty('seller_sku');
+            ->allowEmpty('seller_sku', 'update');
 
         $validator
             ->scalar('currency')
@@ -259,112 +247,93 @@ class MerchantsTable extends Table
         $validator
             ->scalar('item_description')
             ->maxLength('item_description', 1023)
-            ->requirePresence('item_description', 'create')
-            ->notEmpty('item_description');
+            ->allowEmpty('item_description', 'update');
 
         $validator
             ->scalar('listing_identifier')
             ->maxLength('listing_identifier', 255)
-            ->requirePresence('listing_identifier', 'create')
-            ->notEmpty('listing_identifier');
+            ->allowEmpty('listing_identifier', 'update');
 
         $validator
             ->dateTime('open_date_at')
-            ->requirePresence('open_date_at', 'create')
-            ->notEmpty('open_date_at');
+            ->allowEmpty('open_date_at', 'update');
 
         $validator
             ->scalar('image_url')
             ->maxLength('image_url', 2047)
-            ->requirePresence('image_url', 'create')
-            ->notEmpty('image_url');
+            ->allowEmpty('image_url', 'update');
 
         $validator
             ->scalar('item_is_marketplace')
             ->maxLength('item_is_marketplace', 255)
-            ->requirePresence('item_is_marketplace', 'create')
-            ->notEmpty('item_is_marketplace');
+            ->allowEmpty('item_is_marketplace', 'update');
 
         $validator
             ->integer('zshop_shipping_fee')
-            ->requirePresence('zshop_shipping_fee', 'create')
-            ->notEmpty('zshop_shipping_fee');
+            ->allowEmpty('zshop_shippping_fee', 'update');
 
         $validator
             ->scalar('zshop_category1')
             ->maxLength('zshop_category1', 255)
-            ->requirePresence('zshop_category1', 'create')
-            ->notEmpty('zshop_category1');
+            ->allowEmpty('zshop_category1', 'update');
 
         $validator
             ->scalar('zshop_browse_path')
             ->maxLength('zshop_browse_path', 255)
-            ->requirePresence('zshop_browse_path', 'create')
-            ->notEmpty('zshop_browse_path');
+            ->allowEmpty('zshop_browse_path', 'update');
 
         $validator
             ->scalar('zshop_storefront_feature')
             ->maxLength('zshop_storefront_feature', 255)
-            ->requirePresence('zshop_storefront_feature', 'create')
-            ->notEmpty('zshop_storefront_feature');
+            ->allowEmpty('zshop_storefront_feature', 'update');
 
         $validator
             ->scalar('asin1')
             ->maxLength('asin1', 255)
-            ->requirePresence('asin1', 'create')
-            ->notEmpty('asin1');
+            ->allowEmpty('asin1', 'update');
 
         $validator
             ->scalar('asin2')
             ->maxLength('asin2', 255)
-            ->requirePresence('asin2', 'create')
-            ->notEmpty('asin2');
+            ->allowEmpty('asin2', 'update');
 
         $validator
             ->scalar('asin3')
             ->maxLength('asin3', 255)
-            ->requirePresence('asin3', 'create')
-            ->notEmpty('asin3');
+            ->allowEmpty('asin3', 'update');
 
         $validator
             ->scalar('zshop_boldface')
             ->maxLength('zshop_boldface', 255)
-            ->requirePresence('zshop_boldface', 'create')
-            ->notEmpty('zshop_boldface');
+            ->allowEmpty('zshop_boldface', 'update');
 
         $validator
             ->scalar('bid_for_featured_placement')
             ->maxLength('bid_for_featured_placement', 255)
-            ->requirePresence('bid_for_featured_placement', 'create')
-            ->notEmpty('bid_for_featured_placement');
+            ->allowEmpty('bid_for_featured_placement', 'update');
 
         $validator
             ->integer('pending_quantity')
-            ->requirePresence('pending_quantity', 'create')
-            ->notEmpty('pending_quantity');
+            ->allowEmpty('pending_quantity', 'update');
 
         $validator
             ->scalar('merchant_shipping_group')
             ->maxLength('merchant_shipping_group', 255)
-            ->requirePresence('merchant_shipping_group', 'create')
-            ->notEmpty('merchant_shipping_group');
+            ->allowEmpty('merchant_shipping_group', 'update');
 
         $validator
             ->integer('point')
-            ->requirePresence('point', 'create')
-            ->notEmpty('point');
+            ->allowEmpty('point', 'update');
 
         $validator
             ->scalar('seller_identifier')
             ->maxLength('seller_identifier', 255)
-            ->requirePresence('seller_identifier', 'create')
-            ->notEmpty('seller_identifier');
+            ->allowEmpty('seller_identifier', 'update');
 
         $validator
             ->scalar('marketplace')
             ->maxLength('marketplace', 255)
-            ->requirePresence('marketplace', 'create')
-            ->notEmpty('marketplace');
+            ->allowEmpty('marketplace', 'update');
 
         return $validator;
     }

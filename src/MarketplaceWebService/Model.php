@@ -238,9 +238,11 @@ abstract class MarketplaceWebService_Model
                             $elements =  array($elements);    
                         }
                         if (count ($elements) >= 1) {
-                            require_once (str_replace('_', DIRECTORY_SEPARATOR, $fieldType[0]) . ".php");
+                            require_once (dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $fieldType[0]) . ".php");
+                            $classNames = explode('_', $fieldType[0]);
+                            $className = $classNames[0].'\\'.$classNames[1].'\\'.$fieldType[0];
                             foreach ($elements as $element) {
-                                $this->fields[$fieldName]['FieldValue'][] = new $fieldType[0]($element);
+                                $this->fields[$fieldName]['FieldValue'][] = new $className($element);
                             }
                         }
                     } 
@@ -260,8 +262,10 @@ abstract class MarketplaceWebService_Model
             } else {
                 if ($this->isComplexType($fieldType)) {
                     if (array_key_exists($fieldName, $array)) {
-                        require_once (str_replace('_', DIRECTORY_SEPARATOR, $fieldType) . ".php");
-                        $this->fields[$fieldName]['FieldValue'] = new $fieldType($array[$fieldName]);
+                        require_once (dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $fieldType) . ".php");
+                        $classNames = explode('_', $fieldType);
+                        $className = $classNames[0].'\\'.$classNames[1].'\\'.$fieldType;
+                        $this->fields[$fieldName]['FieldValue'] = new $className($array[$fieldName]);
                     }   
                 } else {
                     if (array_key_exists($fieldName, $array)) {

@@ -23,13 +23,19 @@ namespace MarketplaceWebService;
 require_once ('MarketplaceWebService/Interface.php');
 require_once ('RequestType.php');
 
-use MarketplaceWebService\Model\MarketplaceWebService_Model_RequestReportRequest;
 use MarketplaceWebService\MarketplaceWebService_Exception;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_RequestReportRequest;
 use MarketplaceWebService\Model\MarketplaceWebService_Model_GetReportRequestListRequest;
 use MarketplaceWebService\Model\MarketplaceWebService_Model_ResponseHeaderMetadata;
 use MarketplaceWebService\Model\MarketplaceWebService_Model_GetReportRequestListResponse;
 use MarketplaceWebService\Model\MarketplaceWebService_Model_GetReportRequest;
 use MarketplaceWebService\Model\MarketplaceWebService_Model_GetReportResponse;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_SubmitFeedRequest;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_SubmitFeedResponse;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_GetFeedSubmissionListRequest;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_GetFeedSubmissionListResponse;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_GetFeedSubmissionResultRequest;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_GetFeedSubmissionResultResponse;
 
 define('CONVERTED_PARAMETERS_KEY', 'PARAMETERS');
 define('CONVERTED_HEADERS_KEY', 'HEADERS');

@@ -1,4 +1,5 @@
 <?php
+namespace MarketplaceWebService\Model;
 /** 
  *  PHP Version 5
  *
@@ -21,7 +22,7 @@
  */
 require_once ('MarketplaceWebService/Model.php');  
 
-    
+use MarketplaceWebService\MarketplaceWebService_Model;    
 
 /**
  * MarketplaceWebService_Model_SubmitFeedResponse
@@ -69,15 +70,15 @@ class MarketplaceWebService_Model_SubmitFeedResponse extends MarketplaceWebServi
      */
     public static function fromXML($xml)
     {
-        $dom = new DOMDocument();
+        $dom = new \DOMDocument();
         $dom->loadXML($xml);
-        $xpath = new DOMXPath($dom);
+        $xpath = new \DOMXPath($dom);
     	$xpath->registerNamespace('a', 'http://mws.amazonaws.com/doc/2009-01-01/');
         $response = $xpath->query('//a:SubmitFeedResponse');
         if ($response->length == 1) {
             return new MarketplaceWebService_Model_SubmitFeedResponse(($response->item(0))); 
         } else {
-            throw new Exception ("Unable to construct MarketplaceWebService_Model_SubmitFeedResponse from provided XML. 
+            throw new \Exception ("Unable to construct MarketplaceWebService_Model_SubmitFeedResponse from provided XML. 
                                   Make sure that SubmitFeedResponse is a root element");
         }
           

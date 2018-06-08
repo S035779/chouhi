@@ -1,4 +1,5 @@
 <?php
+namespace MarketplaceWebService\Model;
 /** 
  *  PHP Version 5
  *

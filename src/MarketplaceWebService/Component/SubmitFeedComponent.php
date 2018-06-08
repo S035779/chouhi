@@ -1,7 +1,7 @@
 <?php
 namespace MarketplaceWebService\Component;
 
-include_once dirname(__FILE__) . '/../Sample/.config.inc.php';
+include_once dirname(__FILE__) . '/../Samples/.config.inc.php';
 
 use MarketplaceWebService\MarketplaceWebService_Client;
 use MarketplaceWebService\MarketplaceWebService_Interface;
@@ -20,8 +20,11 @@ class SubmitFeedComponent
     $this->seller_id   = $params['SellerId'];
     $this->access_key  = $params['AWSAccessKeyId'];
     $this->secret_key  = $params['AWSSecretKeyId'];
+    $this->data        = $params['Data'];
     $this->app_name    = env('APP_NAME');
     $this->app_version = env('APP_VERSION');
+    $this->path        = getcwd() . "/storage";
+    //debug($params);
   }
 
   public function create()
@@ -39,7 +42,8 @@ class SubmitFeedComponent
     , $this->app_name
     , $this->app_version
     );
-    $feed = $this->readFile('_create_');
+    //$feed = $this->readFile('_create_');
+    $feed = $this->str_putcsv($this->data);
     $feedId = $this->requestMerchant($service, $feed, '_POST_FLAT_FILE_LISTINGS_DATA_');
     $listId = $this->getSubmitFeedList($service, $feedId); 
     $result = $this->getSubmitFeedResult($service, $listId);
@@ -61,7 +65,8 @@ class SubmitFeedComponent
     , $this->app_name
     , $this->app_version
     );
-    $feed = $this->readFile('_AddDel_');
+    //$feed = $this->readFile('_AddDel_');
+    $feed = $this->str_putcsv($this->data);
     $feedId = $this->requestMerchant($service, $feed, '_POST_FLAT_FILE_INVLOADER_DATA_');
     $listId = $this->getSubmitFeedList($service, $feedId); 
     $result = $this->getSubmitFeedResult($service, $listId);
@@ -83,35 +88,19 @@ class SubmitFeedComponent
     , $this->app_name
     , $this->app_version
     );
-    $feed = $this->readFile('_revPrice_');
+    //$feed = $this->readFile('_revPrice_');
+    $feed = $this->str_putcsv($this->data);
     $feedId  = $this->requestMerchant($service, $feed, '_POST_FLAT_FILE_PRICEANDQUANTITYONLY_UPDATE_DATA_');
     $listId = $this->getSubmitFeedList($service, $feedId); 
     $result = $this->getSubmitFeedResult($service, $listId);
     return $result;
   }
 
-  private function readFile($request)
-  {
-    $path       = getcwd();
-    $outBaseDir = $path . "/storage";
-    $dirName    = $path . 'csv'; 
-    $res_dir    = opendir( $dirName );
-    $dateWord   = date('Ymd');
-    while( $file_name = readdir( $res_dir ) ){
-      if ( strstr($file_name, $dateWord) and strstr($file_name, $request) ) {
-        $fullName = $dirName . "/" . $file_name;
-        $feed = file_get_contents($fullName);
-      }
-    }
-    closedir( $res_dir );
-    return $feed;
-  }
-
   private function requestMerchant($service, $feed, $feedType)
   {
-    $marketplaceIdArray = array(
-      "Id" => array($this->marketplace)
-    );
+    //debug($feed);
+    //debug($feedType);
+    $marketplaceIdArray = array("Id" => array($this->marketplace));
     $feedHandle = @fopen('php://temp', 'rw+');
     fwrite($feedHandle, $feed);
     rewind($feedHandle);
@@ -124,7 +113,7 @@ class SubmitFeedComponent
     $request->setPurgeAndReplace(false);
     $request->setFeedContent($feedHandle);
     rewind($feedHandle);
-    $feedId = invokeSubmitFeed($service, $request);
+    $feedId = $this->invokeSubmitFeed($service, $request);
     @fclose($feedHandle);
     return $feedId;
   }
@@ -146,6 +135,7 @@ class SubmitFeedComponent
 
   private function getSubmitFeedResult($service, $listId)
   {
+    $outBaseDir = $this->path;
     $outDir = sprintf('%s/%s', $outBaseDir, date('Y'));
     if (!is_dir($outDir)) {
       if (!mkdir($outDir, 0777, true)) {
@@ -159,9 +149,9 @@ class SubmitFeedComponent
     $request->setFeedSubmissionId($listId);
     $request->setFeedSubmissionResult($resultFilename);
     print date( "Y年n月j日  G時i分s秒\t ID=" ) . $listId;
-    $resopnse = $this->invokeGetFeedSubmissionResult($service, $request);
+    $result = $this->invokeGetFeedSubmissionResult($service, $request);
     @fclose($filename);
-    return $response;
+    return $result;
   }
 
   private function invokeSubmitFeed (
@@ -228,7 +218,6 @@ class SubmitFeedComponent
         }
       } 
       printf("ResponseHeaderMetadata: " . $response->getResponseHeaderMetadata() . "\n");
-      return $getFeedSubId_f;
     } catch (MarketplaceWebService_Exception $ex) {
       printf("Caught Exception: " . $ex->getMessage() . "\n");
       printf("Response Status Code: " . $ex->getStatusCode() . "\n");
@@ -238,6 +227,7 @@ class SubmitFeedComponent
       printf("XML: " . $ex->getXML() . "\n");
       printf("ResponseHeaderMetadata: " . $ex->getResponseHeaderMetadata() . "\n");
     }
+    return $getFeedSubId_f;
   }
 
   private function invokeGetFeedSubmissionList(
@@ -311,7 +301,6 @@ class SubmitFeedComponent
         }
       } 
       printf("ResponseHeaderMetadata: " . $response->getResponseHeaderMetadata() . "\n");
-      return $checkSubFeedId;
     } catch (MarketplaceWebService_Exception $ex) {
       printf("Caught Exception: " . $ex->getMessage() . "\n");
       printf("Response Status Code: " . $ex->getStatusCode() . "\n");
@@ -321,6 +310,7 @@ class SubmitFeedComponent
       printf("XML: " . $ex->getXML() . "\n");
       printf("ResponseHeaderMetadata: " . $ex->getResponseHeaderMetadata() . "\n");
     }
+    return $checkSubFeedId;
   }
  
   private function invokeGetFeedSubmissionResult(
@@ -357,6 +347,39 @@ class SubmitFeedComponent
       printf("Request ID: " . $ex->getRequestId() . "\n");
       printf("XML: " . $ex->getXML() . "\n");
       printf("ResponseHeaderMetadata: " . $ex->getResponseHeaderMetadata() . "\n");
+      return false;
     }
+    return true;
   }
+
+  private function str_putcsv($data, $delimiter = "\t", $enclosure = '"')
+  {
+    $handle = fopen('php://temp', 'rw');
+    //debug(current($data));
+    fputcsv($handle, array_keys(current($data)), $delimiter, $enclosure);
+    foreach($data as $row) {
+      fputcsv($handle, $row, $delimiter, $enclosure);
+    }
+    rewind($handle);
+    $contents = stream_get_contents($handle);
+    fclose($handle);
+    return $contents;
+  }
+
+  private function readFile($request)
+  {
+    $outBaseDir = $this->path;
+    $dirName    = $outBaseDir . '/csv'; 
+    $res_dir    = opendir($dirName);
+    $dateWord   = date('Ymd');
+    while( $file_name = readdir($res_dir) ){
+      if ( strstr($file_name, $dateWord) and strstr($file_name, $request) ) {
+        $fullName = $dirName . "/" . $file_name;
+        $contents = file_get_contents($fullName);
+      }
+    }
+    closedir($res_dir);
+    return $contents;
+  }
+
 }

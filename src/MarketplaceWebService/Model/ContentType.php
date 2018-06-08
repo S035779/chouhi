@@ -1,4 +1,5 @@
 <?php
+namespace MarketplaceWebService\Model;
 /** 
  *  PHP Version 5
  *
@@ -25,6 +26,8 @@
  *
  * </ul>
  */ 
+
+use MarketplaceWebService\MarketplaceWebService_Model;
 
 /* 
  * The only content type that MWS currently supports is octet-stream

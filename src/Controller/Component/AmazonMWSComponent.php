@@ -21,6 +21,9 @@ class AmazonMWSComponent extends Component
   public const MWS_BASEURL_US     = 'https://mws.amazonservices.com/';
   public const MWS_MARKETPLACE_AU = 'A39IBJ37TRP1C6';
   public const MWS_BASEURL_AU     = 'https://mws.amazonservices.com.au/';
+  public const MWS_CREATE_FEED    = '_POST_FLAT_FILE_LISTINGS_DATA_';
+  public const MWS_ADDDEL_FEED    = '_POST_FLAT_FILE_INVLOADER_DATA_';
+  public const MWS_UPDATE_FEED    = '_POST_FLAT_FILE_PRICEANDQUANTITYONLY_UPDATE_DATA_';
 
   /**
    * Default configuration.

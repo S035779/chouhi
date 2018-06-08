@@ -1,4 +1,5 @@
 <?php
+namespace MarketplaceWebService\Model;
 /** 
  *  PHP Version 5
  *
@@ -15,6 +16,9 @@
  *  Generated: Thu May 07 13:07:36 PDT 2009
  * 
  */
+
+use MarketplaceWebService\MarketplaceWebService_Model;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_IdList;
 
 /**
  *  @see MarketplaceWebService_Model
