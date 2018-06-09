@@ -1,437 +1,487 @@
         <!-- Main contens -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">販売価格設定</h1>
+            <h1 class="h2"><?= __('販売価格設定') ?></h1>
           </div>
 
           <div class="container">
             <div class="row mb-4">
               <div class="col-md-12 order-md-1">
-                <form class="needs-validation" novalidate>
+                <?= $this->Form->create($ship, [
+                  'url' => ['controller' => 'Bootstrap', 'action' => 'calculation']
+                , 'class' => 'needs-validation', 'novalidate' => true
+                ]) ?>
 
-                  <h4 class="mb-3">販売商品</h4>
+                  <h4 class="mb-3"><?= __('販売商品') ?></h4>
 
                   <div class="form-group mb-3">
                     <div class="form-check form-check-inline">
-                      <label for="sellingRadio1">アマゾン商品の販売</label>
+                    <label for="is_fulfillment_selling">
+                      <?= __('アマゾン商品の販売') ?>
+                    </label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input type="radio" value="option1" checked
-                        class="form-check-input"
-                        name="sellingRadios"
-                        id="sellingRadio1">
+                      <?= $this->Form->checkbox('is_fulfillment_selling', [
+                        'required' => false
+                      , 'class'    => 'form-check-input'
+                      , 'id'       => 'is_fulfillment_selling'
+                      ]) ?>
                       <label class="form-check-label"
-                        for="sellingRadio1">販売する</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input type="radio" value="option2"
-                        class="form-check-input"
-                        name="sellingRadios"
-                        id="sellingRadio2">
-                      <label class="form-check-label"
-                        for="sellingRadio2">販売しない</label>
+                        for="is_fulfillment_selling"><?= __('販売する') ?></label>
                     </div>
                   </div>
 
-                  <h4 class="mb-3">在庫数指定</h4>
+                  <h4 class="mb-3"><?= __('在庫数指定') ?></h4>
 
                   <div class="form-group row mb-3">
-                    <label for="quantity-rate"
+                    <label for="pending_quantity_rate"
                       class="col-sm-5 col-form-label">
-                      在庫数　＝　アマゾンでの在庫数</label>
-                    <label for="quantity-rate"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('在庫数　＝　アマゾンでの在庫数') ?></label>
+                    <label for="pending_quantity_rate"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="quantity-rate"
-                        placeholder="100" required>
+                      <?= $this->Form->text('pending_quantity_rate', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'pending_quantity_rate'
+                      , 'placeholder' => '100'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid quantity rate.
                       </div>
                     </div>
-                    <label for="quantity-rate"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="quantity-number"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="pending_quantity_rate"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="pending_quantity"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="quantity-number"
-                        placeholder="0" required>
+                      <?= $this->Form->text('pending_quantity', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'pending_quantity'
+                      , 'placeholder' => '0'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid quantity number.
                       </div>
                     </div>
                   </div>
 
-                  <h4 class="mb-3">価格判定</h4>
+                  <h4 class="mb-3"><?= __('価格判定') ?></h4>
 
                   <div class="form-group row mb-3">
-                    <label for="buyprice1"
+                    <label for="price_criteria_1"
                       class="col-sm-4 col-form-label">
-                      アマゾンの購入額が</label>
+                      <?= __('アマゾンの購入額が') ?></label>
                     <div class="col-sm-4">
-                      <input type="text"
-                        class="form-control"
-                        id="buyprice1"
-                        placeholder="1000" required>
+                      <?= $this->Form->text('price_criteria_1', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'price_criteria_1'
+                      , 'placeholder' => '1000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid buy price.
                       </div>
                     </div>
-                    <label for="buyprice1"
+                    <label for="price_criteria_1"
                       class="col-sm-4 col-form-label">
-                      円以下はパターン１</label>
+                      <?= __('円以下はパターン１') ?></label>
                   </div>
                   <div class="form-group row mb-3">
-                    <label for="buyprice2"
+                    <label for="price_criteria_2"
                       class="col-sm-4 col-form-label">
-                      アマゾンの購入額が</label>
+                      <?= __('アマゾンの購入額が') ?></label>
                     <div class="col-sm-4">
-                      <input type="text"
-                        class="form-control"
-                        id="buyprice2"
-                        placeholder="5000" required>
+                      <?= $this->Form->text('price_criteria_2', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'price_criteria_2'
+                      , 'placeholder' => '5000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid buy price.
                       </div>
                     </div>
-                    <label for="buyprice2"
+                    <label for="price_criteria_2"
                       class="col-sm-4 col-form-label">
-                      円以下はパターン２</label>
+                      <?= __('円以下はパターン２') ?></label>
                   </div>
                   <div class="form-group row mb-3">
-                    <label for="buyprice3"
+                    <label for="price_criteria_3"
                       class="col-sm-4 col-form-label">
-                      アマゾンの購入額が</label>
+                      <?= __('アマゾンの購入額が') ?></label>
                     <div class="col-sm-4">
-                      <input type="text"
-                        class="form-control"
-                        id="buyprice3"
-                        placeholder="10000" required>
+                      <?= $this->Form->text('price_criteria_3', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'price_criteria_3'
+                      , 'placeholder' => '10000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid buy price.
                       </div>
                     </div>
-                    <label for="buyprice3"
+                    <label for="price_criteria_3"
                       class="col-sm-4 col-form-label">
-                      円以下はパターン３</label>
+                      <?= __('円以下はパターン３') ?></label>
                   </div>
                   <div class="form-group row mb-3">
-                    <label for="buyprice4"
+                    <label for="price_criteria_4"
                       class="col-sm-4 col-form-label">
-                      アマゾンの購入額が</label>
+                      <?= __('アマゾンの購入額が') ?></label>
                     <div class="col-sm-4">
-                      <input type="text"
-                        class="form-control"
-                        id="buyprice4"
-                        placeholder="30000" required>
+                      <?= $this->Form->text('price_criteria_4', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'price_criteria_4'
+                      , 'placeholder' => '30000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid buy price.
                       </div>
                     </div>
-                    <label for="buyprice4"
+                    <label for="price_criteria_4"
                       class="col-sm-4 col-form-label">
-                      円以下はパターン４</label>
+                      <?= __('円以下はパターン４') ?></label>
                   </div>
 
-                  <h4 class="mb-3">販売価格</h4>
+                  <h4 class="mb-3"><?= __('販売価格') ?></h4>
 
-                  <h6 class="mb-3">パターン１</h6>
+                  <h6 class="mb-3"><?= __('パターン１') ?></h6>
                   <div class="form-group row mb-3">
-                    <label for="price-rate1"
+                    <label for="sales_rate_1"
                       class="col-sm-5 col-form-label">
-                      販売価格　＝　アマゾンの購入額</label>
-                    <label for="price-rate1"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('販売価格　＝　アマゾンの購入額') ?></label>
+                    <label for="sales_rate_1"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-rate1"
-                        placeholder="140" required>
+                      <?= $this->Form->text('sales_rate_1', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_rate_1'
+                      , 'placeholder' => '140'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price rate.
                       </div>
                     </div>
-                    <label for="price-rate1"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="price-number1"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="sales_rate_1"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="sales_price_1"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-number1"
-                        placeholder="1000" required>
+                      <?= $this->Form->text('sales_price_1', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_price_1'
+                      , 'placeholder' => '1000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label for="delete-rate1"
+                    <label for="delete_rate_1"
                       class="col-sm-5 col-form-label">
-                      削除条件　＝　登録時の購入額</label>
-                    <label for="delete-rate1"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('削除条件　＝　登録時の購入額') ?></label>
+                    <label for="delete_rate_1"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-rate1"
-                        placeholder="110" required>
+                      <?= $this->Form->text('delete_rate_1', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_rate_1'
+                      , 'placeholder' => '110'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid delete rate.
                       </div>
                     </div>
-                    <label for="delete-rate1"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="delete-number1"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="delete_rate_1"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="delete_price_1"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-number1"
-                        placeholder="200" required>
+                      <?= $this->Form->text('delete_price_1', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_price_1'
+                      , 'placeholder' => '200'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
 
-                  <h6 class="mb-3">パターン２</h6>
+                  <h6 class="mb-3"><?= __('パターン２') ?></h6>
                   <div class="form-group row mb-3">
-                    <label for="price-rate2"
+                    <label for="sales_rate_2"
                       class="col-sm-5 col-form-label">
-                      販売価格　＝　アマゾンの購入額</label>
-                    <label for="price-rate2"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('販売価格　＝　アマゾンの購入額') ?></label>
+                    <label for="sales_rate_2"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-rate2"
-                        placeholder="140" required>
+                      <?= $this->Form->text('sales_rate_2', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_rate_2'
+                      , 'placeholder' => '140'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price rate.
                       </div>
                     </div>
-                    <label for="price-rate2"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="price-number2"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="sales_rate_2"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="sales_price_2"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-number2"
-                        placeholder="1000" required>
+                      <?= $this->Form->text('sales_price_2', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_price_2'
+                      , 'placeholder' => '1000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label for="delete-rate2"
+                    <label for="delete_rate_2"
                       class="col-sm-5 col-form-label">
-                      削除条件　＝　登録時の購入額</label>
-                    <label for="delete-rate2"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('削除条件　＝　登録時の購入額') ?></label>
+                    <label for="delete_rate_2"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-rate2"
-                        placeholder="110" required>
+                      <?= $this->Form->text('delete_rate_2', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_rate_2'
+                      , 'placeholder' => '110'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid delete rate.
                       </div>
                     </div>
-                    <label for="delete-rate2"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="delete-number2"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="delete_rate_2"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="delete_price_2"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-number2"
-                        placeholder="600" required>
+                      <?= $this->Form->text('delete_price_2', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_price_2'
+                      , 'placeholder' => '600'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
 
-                  <h6 class="mb-3">パターン３</h6>
+                  <h6 class="mb-3"><?= __('パターン３') ?></h6>
                   <div class="form-group row mb-3">
-                    <label for="price-rate3"
+                    <label for="sales_rate_3"
                       class="col-sm-5 col-form-label">
-                      販売価格　＝　アマゾンの購入額</label>
-                    <label for="price-rate3"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('販売価格　＝　アマゾンの購入額') ?></label>
+                    <label for="sales_rate_3"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-rate3"
-                        placeholder="140" required>
+                      <?= $this->Form->text('sales_rate_3', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_rate_3'
+                      , 'placeholder' => '140'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price rate.
                       </div>
                     </div>
-                    <label for="price-rate3"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="price-number3"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="sales_rate_3"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="sales_price_3"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-number3"
-                        placeholder="1000" required>
+                      <?= $this->Form->text('sales_price_3', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_price_3'
+                      , 'placeholder' => '1000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label for="delete-rate3"
+                    <label for="delete_rate_3"
                       class="col-sm-5 col-form-label">
-                      削除条件　＝　登録時の購入額</label>
-                    <label for="delete-rate3"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('削除条件　＝　登録時の購入額') ?></label>
+                    <label for="delete_rate_3"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-rate3"
-                        placeholder="110" required>
+                      <?= $this->Form->text('delete_rate_3', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_rate_3'
+                      , 'placeholder' => '110'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid delete rate.
                       </div>
                     </div>
-                    <label for="delete-rate3"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="delete-number3"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="delete_rate_3"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="delete_price_3"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-number3"
-                        placeholder="600" required>
+                      <?= $this->Form->text('delete_price_3', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_price_3'
+                      , 'placeholder' => '600'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
 
-                  <h6 class="mb-3">パターン４</h6>
+                  <h6 class="mb-3"><?= __('パターン４') ?></h6>
                   <div class="form-group row mb-3">
-                    <label for="price-rate4"
+                    <label for="sales_rate_4"
                       class="col-sm-5 col-form-label">
-                      販売価格　＝　アマゾンの購入額</label>
-                    <label for="price-rate4"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('販売価格　＝　アマゾンの購入額') ?></label>
+                    <label for="sales_rate_4"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-rate4"
-                        placeholder="140" required>
+                      <?= $this->Form->text('sales_rate_4', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_rate_4'
+                      , 'placeholder' => '140'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price rate.
                       </div>
                     </div>
-                    <label for="price-rate4"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="price-number4"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="sales_rate_4"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="sales_price_4"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-number4"
-                        placeholder="1000" required>
+                      <?= $this->Form->text('sales_price_4', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_price_4'
+                      , 'placeholder' => '1000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label for="delete-rate4"
+                    <label for="delete_rate_4"
                       class="col-sm-5 col-form-label">
-                      削除条件　＝　登録時の購入額</label>
-                    <label for="delete-rate4"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('削除条件　＝　登録時の購入額') ?></label>
+                    <label for="delete_rate_4"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-rate4"
-                        placeholder="110" required>
+                      <?= $this->Form->text('delete_rate_4', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_rate_4'
+                      , 'placeholder' => '110'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid delete rate.
                       </div>
                     </div>
-                    <label for="delete-rate4"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="delete-number4"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="delete_rate_4"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="delete_price_4"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-number4"
-                        placeholder="600" required>
+                      <?= $this->Form->text('delete_price_4', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_price_4'
+                      , 'placeholder' => '600'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
 
-                  <h6 class="mb-3">パターン５</h6>
+                  <h6 class="mb-3"><?= __('パターン５') ?></h6>
                   <div class="form-group row mb-3">
-                    <label for="price-rate5"
+                    <label for="sales_rate_5"
                       class="col-sm-5 col-form-label">
-                      販売価格　＝　アマゾンの購入額</label>
-                    <label for="price-rate5"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('販売価格　＝　アマゾンの購入額') ?></label>
+                    <label for="sales_rate_5"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-rate5"
-                        placeholder="140" required>
+                      <?= $this->Form->text('sales_rate_5', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_rate_5'
+                      , 'placeholder' => '140'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price rate.
                       </div>
                     </div>
-                    <label for="price-rate5"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="price-number5"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="sales_rate_5"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="sales_price_5"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="price-number5"
-                        placeholder="1000" required>
+                      <?= $this->Form->text('sales_price_5', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'sales_price_5'
+                      , 'placeholder' => '1000'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label for="delete-rate5"
+                    <label for="delete_rate_5"
                       class="col-sm-5 col-form-label">
-                      削除条件　＝　登録時の購入額</label>
-                    <label for="delete-rate5"
-                      class="col-sm-1 col-form-label">✕</label>
+                      <?= __('削除条件　＝　登録時の購入額') ?></label>
+                    <label for="delete_rate_5"
+                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-rate5"
-                        placeholder="110" required>
+                      <?= $this->Form->text('delete_rate_5', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_rate_5'
+                      , 'placeholder' => '110'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid delete rate.
                       </div>
                     </div>
-                    <label for="delete-rate5"
-                      class="col-form-label col-sm-1">％</label>
-                    <label for="delete-number5"
-                      class="col-form-label col-sm-1">＋</label>
+                    <label for="delete_rate_5"
+                      class="col-form-label col-sm-1"><?= __('％') ?></label>
+                    <label for="delete_price_5"
+                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
                     <div class="col-sm-2">
-                      <input type="text"
-                        class="form-control"
-                        id="delete-number5"
-                        placeholder="600" required>
+                      <?= $this->Form->text('delete_price_5', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'delete_price_5'
+                      , 'placeholder' => '600'
+                      ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
                       </div>
@@ -439,12 +489,11 @@
                   </div>
 
                   <hr class="mb-4">
-                  <button type="submit"
-                    class="btn btn-primary btn-lg btn-block">
-                    登録する
-                  </button>
-
-                </form>
+                  <?= $this->Form->button(__('登録する'), [
+                    'class' => 'btn btn-primary btn-lg btn-block'
+                  , 'name' => 'calculation'
+                  ]) ?>
+                <?= $this->Form->end() ?>
               </div>
             </div>
           </div>

@@ -22,6 +22,11 @@ bin/cake get_report
 sleep 420
 
 date +"%H:%M:%S"
+echo "+++++++++++ get_matching_product ++++++++++++"
+bin/cake get_matching_product
+sleep 420
+
+date +"%H:%M:%S"
 echo "+++++++++++ submit_feed ++++++++++++"
 bin/cake submit_feed
 sleep 420

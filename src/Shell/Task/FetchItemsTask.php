@@ -401,29 +401,29 @@ class FetchItemsTask extends Shell
     $eol = count($request);
     $idx = 0;
     foreach($request as $_request) {
-      switch($_request['marketplace']) {
-      case 'JP':
+      //switch($_request['marketplace']) {
+      //case 'JP':
         if($this->isKey('JP')) array_push($asins_jp, $_request['asin']);
         if(count($asins_jp) > 10) {
           array_push($response, $this->fetchItem(implode(',', $asins_jp), 'JP'));
           $asins_jp = array();
         }
-        break;
-      case 'AU':
+      //  break;
+      //case 'AU':
         if($this->isKey('AU')) array_push($asins_au, $_request['asin']);
         if(count($asins_au) > 10) {
           array_push($response, $this->fetchItem(implode(',', $asins_au), 'AU'));
           $asins_au = array();
         }
-        break;
-      case 'US':
+      //  break;
+      //case 'US':
         if($this->isKey('US')) array_push($asins_us, $_request['asin']);
         if(count($asins_us) > 10) {
           array_push($response, $this->fetchItem(implode(',', $asins_us), 'US'));
           $asins_us = array();
         }
-        break;
-      }
+      //  break;
+      //}
       if($idx === $eol - 1) {
         if(count($asins_jp) !== 0)
           array_push($response, $this->fetchItem(implode(',', $asins_jp), 'JP'));

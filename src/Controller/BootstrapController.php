@@ -338,7 +338,26 @@ class BootstrapController extends AppController
    */
   public function calculation()
   {
-    $title = 'Price calculation';
-    $this->set(compact('title'));
+    $title = 'Price calculation for AmazonMWS tools';
+    $ships = TableRegistry::get('Ships'); 
+    $ship = $ships->find()->first();
+
+    if ($this->request->is(['patch', 'post', 'put'])) {
+      $request = $this->request->getData();
+      if (isset($this->request->data['calculation'])) {
+        if ($ship) {
+          $entity = $ships->patchEntity($ship, $request);
+        } else {
+          $entity = $ships->newEntity($request);
+        }
+        if ($ships->save($entity)) {
+          $this->Flash->success(__('The price calculation has been saved.'));
+          return $this->redirect(['action' => 'index']);
+        }
+        $this->Common->log_error($entity->errors());
+        $this->Flash->error(__('The price calculation cound not be saved. Please, try again.'));
+      }
+    }
+    $this->set(compact('title', 'ship'));
   }
 }
