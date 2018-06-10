@@ -26,7 +26,8 @@ class AsinsController extends AppController
     parent::beforeFilter($event);
   }
 
-  public function isAuthorized($user) {
+  public function isAuthorized($user) 
+  {
     return true;
   }
 
