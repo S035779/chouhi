@@ -12,23 +12,174 @@
                 , 'class' => 'needs-validation', 'novalidate' => true
                 ]) ?>
 
-                  <h4 class="mb-3"><?= __('販売商品') ?></h4>
+                  <h4 class="mb-3"><?= __('単位設定') ?></h4>
 
-                  <div class="form-group mb-3">
-                    <div class="form-check form-check-inline">
-                    <label for="is_fulfillment_selling">
-                      <?= __('アマゾン商品の販売') ?>
-                    </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <?= $this->Form->checkbox('is_fulfillment_selling', [
-                        'required' => false
-                      , 'class'    => 'form-check-input'
-                      , 'id'       => 'is_fulfillment_selling'
+                  <div class="form-group row mb-3">
+                    <label for="jp_length"
+                      class="col-sm-4 col-form-label">
+                      <?= __('日本 (mm/kg) =') ?></label>
+                    <label for="jp_length"
+                      class="col-sm-1 col-form-label"><?= __('長さ') ?></label>
+                    <div class="col-sm-2">
+                      <?= $this->Form->text('jp_length', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'jp_length'
+                      , 'placeholder' => '1'
                       ]) ?>
-                      <label class="form-check-label"
-                        for="is_fulfillment_selling"><?= __('販売する') ?></label>
+                      <div class="invalid-feedback">
+                        Please enter a valid length value.
+                      </div>
                     </div>
+                    <label for="jp_length"
+                      class="col-form-label col-sm-1"><?= __('mm') ?></label>
+                    <label for="jp_weight"
+                      class="col-form-label col-sm-1"><?= __('重さ') ?></label>
+                    <div class="col-sm-2">
+                      <?= $this->Form->text('jp_weight', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'jp_weight'
+                      , 'placeholder' => '1.0'
+                      ]) ?>
+                      <div class="invalid-feedback">
+                        Please enter a valid weight value.
+                      </div>
+                    </div>
+                    <label for="jp_weight"
+                      class="col-form-label col-sm-1"><?= __('kg') ?></label>
+                  </div>
+
+                  <div class="form-group row mb-3">
+                    <label for="au_length"
+                      class="col-sm-4 col-form-label">
+                      <?= __('オーストラリア (inches/pounds) =') ?></label>
+                    <label for="au_length"
+                      class="col-sm-1 col-form-label"><?= __('長さ') ?></label>
+                    <div class="col-sm-2">
+                      <?= $this->Form->text('au_length', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'au_length'
+                      , 'placeholder' => '1'
+                      ]) ?>
+                      <div class="invalid-feedback">
+                        Please enter a valid length value.
+                      </div>
+                    </div>
+                    <label for="au_length"
+                      class="col-form-label col-sm-1"><?= __('mm') ?></label>
+                    <label for="au_weight"
+                      class="col-form-label col-sm-1"><?= __('重さ') ?></label>
+                    <div class="col-sm-2">
+                      <?= $this->Form->text('au_weight', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'au_weight'
+                      , 'placeholder' => '1.0'
+                      ]) ?>
+                      <div class="invalid-feedback">
+                        Please enter a valid weight value.
+                      </div>
+                    </div>
+                    <label for="au_weight"
+                      class="col-form-label col-sm-1"><?= __('kg') ?></label>
+                  </div>
+
+                  <div class="form-group row mb-3">
+                    <label for="us_length"
+                      class="col-sm-4 col-form-label">
+                      <?= __('アメリカ (inches/pounds) =') ?></label>
+                    <label for="us_length"
+                      class="col-sm-1 col-form-label"><?= __('長さ') ?></label>
+                    <div class="col-sm-2">
+                      <?= $this->Form->text('us_length', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'us_length'
+                      , 'placeholder' => '1'
+                      ]) ?>
+                      <div class="invalid-feedback">
+                        Please enter a valid length value.
+                      </div>
+                    </div>
+                    <label for="us_length"
+                      class="col-form-label col-sm-1"><?= __('mm') ?></label>
+                    <label for="us_weight"
+                      class="col-form-label col-sm-1"><?= __('重さ') ?></label>
+                    <div class="col-sm-2">
+                      <?= $this->Form->text('us_weight', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'us_weight'
+                      , 'placeholder' => '1.0'
+                      ]) ?>
+                      <div class="invalid-feedback">
+                        Please enter a valid weight value.
+                      </div>
+                    </div>
+                    <label for="us_weight"
+                      class="col-form-label col-sm-1"><?= __('kg') ?></label>
+                  </div>
+
+                  <h4 class="mb-3"><?= __('為替設定') ?></h4>
+
+                  <div class="form-group row mb-3">
+                    <label for="jpy_price"
+                      class="col-sm-4 col-form-label">
+                      <?= __('日本円 (JPY) =') ?></label>
+                    <div class="col-sm-4">
+                      <?= $this->Form->text('jpy_price', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'jpy_price'
+                      , 'placeholder' => '1'
+                      ]) ?>
+                      <div class="invalid-feedback">
+                        Please enter a valid jpy price.
+                      </div>
+                    </div>
+                    <label for="jpy_price"
+                      class="col-sm-4 col-form-label">
+                      <?= __('円') ?></label>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label for="aud_price"
+                      class="col-sm-4 col-form-label">
+                      <?= __('オーストラリアドル (AUD) =') ?></label>
+                    <div class="col-sm-4">
+                      <?= $this->Form->text('aud_price', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'aud_price'
+                      , 'placeholder' => '90'
+                      ]) ?>
+                      <div class="invalid-feedback">
+                        Please enter a valid aud price.
+                      </div>
+                    </div>
+                    <label for="aud_price"
+                      class="col-sm-4 col-form-label">
+                      <?= __('円') ?></label>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label for="usd_price"
+                      class="col-sm-4 col-form-label">
+                      <?= __('アメリカドル (USD) =') ?></label>
+                    <div class="col-sm-4">
+                      <?= $this->Form->text('usd_price', [
+                        'required' => true
+                      , 'class'    => 'form-control'
+                      , 'id'       => 'usd_price'
+                      , 'placeholder' => '110'
+                      ]) ?>
+                      <div class="invalid-feedback">
+                        Please enter a valid usd price.
+                      </div>
+                    </div>
+                    <label for="usd_price"
+                      class="col-sm-4 col-form-label">
+                      <?= __('円') ?></label>
                   </div>
 
                   <h4 class="mb-3"><?= __('在庫数指定') ?></h4>
@@ -182,39 +333,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group row mb-3">
-                    <label for="delete_rate_1"
-                      class="col-sm-5 col-form-label">
-                      <?= __('削除条件　＝　登録時の購入額') ?></label>
-                    <label for="delete_rate_1"
-                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_rate_1', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_rate_1'
-                      , 'placeholder' => '110'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid delete rate.
-                      </div>
-                    </div>
-                    <label for="delete_rate_1"
-                      class="col-form-label col-sm-1"><?= __('％') ?></label>
-                    <label for="delete_price_1"
-                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_price_1', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_price_1'
-                      , 'placeholder' => '200'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid price.
-                      </div>
-                    </div>
-                  </div>
 
                   <h6 class="mb-3"><?= __('パターン２') ?></h6>
                   <div class="form-group row mb-3">
@@ -244,39 +362,6 @@
                       , 'class'    => 'form-control'
                       , 'id'       => 'sales_price_2'
                       , 'placeholder' => '1000'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid price.
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label for="delete_rate_2"
-                      class="col-sm-5 col-form-label">
-                      <?= __('削除条件　＝　登録時の購入額') ?></label>
-                    <label for="delete_rate_2"
-                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_rate_2', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_rate_2'
-                      , 'placeholder' => '110'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid delete rate.
-                      </div>
-                    </div>
-                    <label for="delete_rate_2"
-                      class="col-form-label col-sm-1"><?= __('％') ?></label>
-                    <label for="delete_price_2"
-                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_price_2', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_price_2'
-                      , 'placeholder' => '600'
                       ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.
@@ -318,39 +403,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group row mb-3">
-                    <label for="delete_rate_3"
-                      class="col-sm-5 col-form-label">
-                      <?= __('削除条件　＝　登録時の購入額') ?></label>
-                    <label for="delete_rate_3"
-                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_rate_3', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_rate_3'
-                      , 'placeholder' => '110'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid delete rate.
-                      </div>
-                    </div>
-                    <label for="delete_rate_3"
-                      class="col-form-label col-sm-1"><?= __('％') ?></label>
-                    <label for="delete_price_3"
-                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_price_3', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_price_3'
-                      , 'placeholder' => '600'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid price.
-                      </div>
-                    </div>
-                  </div>
 
                   <h6 class="mb-3"><?= __('パターン４') ?></h6>
                   <div class="form-group row mb-3">
@@ -386,39 +438,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group row mb-3">
-                    <label for="delete_rate_4"
-                      class="col-sm-5 col-form-label">
-                      <?= __('削除条件　＝　登録時の購入額') ?></label>
-                    <label for="delete_rate_4"
-                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_rate_4', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_rate_4'
-                      , 'placeholder' => '110'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid delete rate.
-                      </div>
-                    </div>
-                    <label for="delete_rate_4"
-                      class="col-form-label col-sm-1"><?= __('％') ?></label>
-                    <label for="delete_price_4"
-                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_price_4', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_price_4'
-                      , 'placeholder' => '600'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid price.
-                      </div>
-                    </div>
-                  </div>
 
                   <h6 class="mb-3"><?= __('パターン５') ?></h6>
                   <div class="form-group row mb-3">
@@ -448,39 +467,6 @@
                       , 'class'    => 'form-control'
                       , 'id'       => 'sales_price_5'
                       , 'placeholder' => '1000'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid price.
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label for="delete_rate_5"
-                      class="col-sm-5 col-form-label">
-                      <?= __('削除条件　＝　登録時の購入額') ?></label>
-                    <label for="delete_rate_5"
-                      class="col-sm-1 col-form-label"><?= __('✕') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_rate_5', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_rate_5'
-                      , 'placeholder' => '110'
-                      ]) ?>
-                      <div class="invalid-feedback">
-                        Please enter a valid delete rate.
-                      </div>
-                    </div>
-                    <label for="delete_rate_5"
-                      class="col-form-label col-sm-1"><?= __('％') ?></label>
-                    <label for="delete_price_5"
-                      class="col-form-label col-sm-1"><?= __('＋') ?></label>
-                    <div class="col-sm-2">
-                      <?= $this->Form->text('delete_price_5', [
-                        'required' => true
-                      , 'class'    => 'form-control'
-                      , 'id'       => 'delete_price_5'
-                      , 'placeholder' => '600'
                       ]) ?>
                       <div class="invalid-feedback">
                         Please enter a valid price.

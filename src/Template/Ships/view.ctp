@@ -129,44 +129,40 @@
                 <td><?= $this->Number->format($ship->sales_price_5) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Rate 1') ?></th>
-                <td><?= $this->Number->format($ship->delete_rate_1) ?></td>
+                <th scope="row"><?= __('JPY Price') ?></th>
+                <td><?= $this->Number->format($ship->jpy_price) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Rate 2') ?></th>
-                <td><?= $this->Number->format($ship->delete_rate_2) ?></td>
+                <th scope="row"><?= __('JP Length') ?></th>
+                <td><?= $this->Number->format($ship->jp_length) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Rate 3') ?></th>
-                <td><?= $this->Number->format($ship->delete_rate_3) ?></td>
+                <th scope="row"><?= __('JP Weight') ?></th>
+                <td><?= $this->Number->format($ship->jp_weight) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Rate 4') ?></th>
-                <td><?= $this->Number->format($ship->delete_rate_4) ?></td>
+                <th scope="row"><?= __('AUD Price') ?></th>
+                <td><?= $this->Number->format($ship->aud_price) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Rate 5') ?></th>
-                <td><?= $this->Number->format($ship->delete_rate_5) ?></td>
+                <th scope="row"><?= __('AU Length') ?></th>
+                <td><?= $this->Number->format($ship->au_length) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Price 1') ?></th>
-                <td><?= $this->Number->format($ship->delete_price_1) ?></td>
+                <th scope="row"><?= __('AU Weight') ?></th>
+                <td><?= $this->Number->format($ship->au_weight) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Price 2') ?></th>
-                <td><?= $this->Number->format($ship->delete_price_2) ?></td>
+                <th scope="row"><?= __('USD Price') ?></th>
+                <td><?= $this->Number->format($ship->usd_price) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Price 3') ?></th>
-                <td><?= $this->Number->format($ship->delete_price_3) ?></td>
+                <th scope="row"><?= __('US Length') ?></th>
+                <td><?= $this->Number->format($ship->us_length) ?></td>
             </tr>
             <tr>
-                <th scope="row"><?= __('Delete Price 4') ?></th>
-                <td><?= $this->Number->format($ship->delete_price_4) ?></td>
-            </tr>
-            <tr>
-                <th scope="row"><?= __('Delete Price 5') ?></th>
-                <td><?= $this->Number->format($ship->delete_price_5) ?></td>
+                <th scope="row"><?= __('US Weight') ?></th>
+                <td><?= $this->Number->format($ship->us_weight) ?></td>
             </tr>
             <tr>
                 <th scope="row"><?= __('Created') ?></th>
@@ -175,10 +171,6 @@
             <tr>
                 <th scope="row"><?= __('Modified') ?></th>
                 <td><?= h($ship->modified) ?></td>
-            </tr>
-            <tr>
-                <th scope="row"><?= __('Is Fulfillment Selling') ?></th>
-                <td><?= $ship->is_fulfillment_selling ? __('Yes') : __('No'); ?></td>
             </tr>
         </table>
 

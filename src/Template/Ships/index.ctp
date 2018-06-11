@@ -44,7 +44,6 @@
         <thead>
           <tr>
             <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('is_fulfillment_selling') ?></th>
             <th scope="col"><?= $this->Paginator->sort('pending_quantity_rate') ?></th>
             <th scope="col"><?= $this->Paginator->sort('pending_quantity') ?></th>
             <th scope="col"><?= $this->Paginator->sort('price_criteria_1') ?></th>
@@ -61,16 +60,15 @@
             <th scope="col"><?= $this->Paginator->sort('sales_price_3') ?></th>
             <th scope="col"><?= $this->Paginator->sort('sales_price_4') ?></th>
             <th scope="col"><?= $this->Paginator->sort('sales_price_5') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_rate_1') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_rate_2') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_rate_3') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_rate_4') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_rate_5') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_price_1') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_price_2') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_price_3') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_price_4') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('delete_price_5') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('jpy_price') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('jp_length') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('jp_weight') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('aud_price') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('au_length') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('au_weight') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('usd_price') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('us_length') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('us_weight') ?></th>
             <th scope="col"><?= $this->Paginator->sort('created') ?></th>
             <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
             <th scope="col" class="actions"><?= __('Actions') ?></th>
@@ -80,7 +78,6 @@
           <?php foreach ($ships as $ship): ?>
           <tr>
             <td><?= $this->Number->format($ship->id) ?></td>
-            <td><?= h($ship->is_fulfillment_selling) ?></td>
             <td><?= $this->Number->format($ship->pending_quantity_rate) ?></td>
             <td><?= $this->Number->format($ship->pending_quantity) ?></td>
             <td><?= $this->Number->format($ship->price_criteria_1) ?></td>
@@ -97,16 +94,15 @@
             <td><?= $this->Number->format($ship->sales_price_3) ?></td>
             <td><?= $this->Number->format($ship->sales_price_4) ?></td>
             <td><?= $this->Number->format($ship->sales_price_5) ?></td>
-            <td><?= $this->Number->format($ship->delete_rate_1) ?></td>
-            <td><?= $this->Number->format($ship->delete_rate_2) ?></td>
-            <td><?= $this->Number->format($ship->delete_rate_3) ?></td>
-            <td><?= $this->Number->format($ship->delete_rate_4) ?></td>
-            <td><?= $this->Number->format($ship->delete_rate_5) ?></td>
-            <td><?= $this->Number->format($ship->delete_price_1) ?></td>
-            <td><?= $this->Number->format($ship->delete_price_2) ?></td>
-            <td><?= $this->Number->format($ship->delete_price_3) ?></td>
-            <td><?= $this->Number->format($ship->delete_price_4) ?></td>
-            <td><?= $this->Number->format($ship->delete_price_5) ?></td>
+            <td><?= $this->Number->format($ship->jpy_price) ?></td>
+            <td><?= $this->Number->format($ship->jp_length) ?></td>
+            <td><?= $this->Number->format($ship->jp_weight) ?></td>
+            <td><?= $this->Number->format($ship->aud_price) ?></td>
+            <td><?= $this->Number->format($ship->au_length) ?></td>
+            <td><?= $this->Number->format($ship->au_weight) ?></td>
+            <td><?= $this->Number->format($ship->usd_price) ?></td>
+            <td><?= $this->Number->format($ship->us_length) ?></td>
+            <td><?= $this->Number->format($ship->us_weight) ?></td>
             <td><?= h($ship->created) ?></td>
             <td><?= h($ship->modified) ?></td>
             <td class="actions">

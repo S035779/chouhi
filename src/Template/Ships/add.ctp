@@ -45,7 +45,6 @@
         <fieldset>
           <legend><?= __('価格設定登録') ?></legend>
           <?php
-            echo $this->Form->control('is_fulfillment_selling');
             echo $this->Form->control('pending_quantity_rate');
             echo $this->Form->control('pending_quantity');
             echo $this->Form->control('price_criteria_1');
@@ -62,16 +61,15 @@
             echo $this->Form->control('sales_price_3');
             echo $this->Form->control('sales_price_4');
             echo $this->Form->control('sales_price_5');
-            echo $this->Form->control('delete_rate_1');
-            echo $this->Form->control('delete_rate_2');
-            echo $this->Form->control('delete_rate_3');
-            echo $this->Form->control('delete_rate_4');
-            echo $this->Form->control('delete_rate_5');
-            echo $this->Form->control('delete_price_1');
-            echo $this->Form->control('delete_price_2');
-            echo $this->Form->control('delete_price_3');
-            echo $this->Form->control('delete_price_4');
-            echo $this->Form->control('delete_price_5');
+            echo $this->Form->control('jpy_price');
+            echo $this->Form->control('jp_length');
+            echo $this->Form->control('jp_weight');
+            echo $this->Form->control('aud_price');
+            echo $this->Form->control('au_length');
+            echo $this->Form->control('au_weight');
+            echo $this->Form->control('usd_price');
+            echo $this->Form->control('us_length');
+            echo $this->Form->control('us_weight');
           ?>
         </fieldset>
         <?= $this->Form->button(__('Submit')) ?>

@@ -226,6 +226,9 @@ class FetchItemsTask extends Shell
     $keys     = array_keys($header);
     $vals     = array_values($header);
 
+    $ships = TableRegistry::get('Ships');
+    $ship = $ships->find()->first();
+
     $responses = $this->fetchItems($request);
     //debug($responses);
 
@@ -250,42 +253,42 @@ class FetchItemsTask extends Shell
           if($vals[ 4]) $data[$keys[ 4]]
             = isset($item['ItemAttributes']['ItemDimensions']['Height'])
               ? $this->getLocalLength($item['ItemAttributes']['ItemDimensions']['Height']
-              , 'inches')
+                , $ship)
               : 0;
           if($vals[ 5]) $data[$keys[ 5]]
             = isset($item['ItemAttributes']['ItemDimensions']['Length'])
               ? $this->getLocalLength($item['ItemAttributes']['ItemDimensions']['Length']
-                , 'inches')
+                , $ship)
               : 0;
           if($vals[ 6]) $data[$keys[ 6]]
             = isset($item['ItemAttributes']['ItemDimensions']['Weight'])
               ? $this->getLocalWeight($item['ItemAttributes']['ItemDimensions']['Weight']
-              , 'pounds')
+                , $ship)
               : 0;
           if($vals[ 7]) $data[$keys[ 7]]
             = isset($item['ItemAttributes']['ItemDimensions']['Width'])
               ? $this->getLocalLength($item['ItemAttributes']['ItemDimensions']['Width']
-              , 'inches')
+                , $ship)
               : 0;
           if($vals[ 8]) $data[$keys[ 8]]
             = isset($item['ItemAttributes']['PackageDimensions']['Height'])
               ? $this->getLocalLength($item['ItemAttributes']['PackageDimensions']['Height']
-                , 'inches')
+                , $ship)
               : 0;
           if($vals[ 9]) $data[$keys[ 9]]
             = isset($item['ItemAttributes']['PackageDimensions']['Length'])
               ? $this->getLocalLength($item['ItemAttributes']['PackageDimensions']['Length']
-                , 'inches')
+                , $ship)
               : 0;
           if($vals[10]) $data[$keys[10]]
             = isset($item['ItemAttributes']['PackageDimensions']['Weight'])
               ? $this->getLocalWeight($item['ItemAttributes']['PackageDimensions']['Weight']
-                , 'pounds')
+                , $ship)
               : 0;
           if($vals[11]) $data[$keys[11]]
             = isset($item['ItemAttributes']['PackageDimensions']['Width'])
               ? $this->getLocalLength($item['ItemAttributes']['PackageDimensions']['Width']
-                , 'inches')
+                , $ship)
               : 0;
           if($vals[12]) $data[$keys[12]]
             = isset($item['ItemAttributes']['ListPrice']['Amount'])
@@ -513,30 +516,15 @@ class FetchItemsTask extends Shell
     return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
   }
 
-  private function getLocalLength($length, $units) 
+  private function getLocalLength($length, $ship) 
   {
-    $rate = 0;
-    switch($units) {
-    case 'inches':
-      $rate = 25.4;
-      break;
-    default:
-      $rate = 1;
-      break;
-    }
+    $rate = $ship->us_length;
     return (float)($length * $rate / 100);
   }
 
-  private function getLocalWeight($weight, $units)
+  private function getLocalWeight($weight, $ship)
   {
-    $rate = 0;
-    switch($units) {
-    case 'pounds':
-      $rate = 0.45359237;
-      break;
-    default:
-      break;
-    }
+    $rate = $ship->us_weight;
     return (float)($weight * $rate / 100);
   }
 

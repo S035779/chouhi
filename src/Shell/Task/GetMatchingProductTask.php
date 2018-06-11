@@ -230,6 +230,9 @@ class GetMatchingProductTask extends Shell
     $keys     = array_keys($header);
     $vals     = array_values($header);
 
+    $ships = TableRegistry::get('Ships');
+    $ship = $ships->find()->first();
+
     $responses = $this->fetchMatchingProducts($request);
 
     foreach($responses as $response) {
@@ -257,49 +260,57 @@ class GetMatchingProductTask extends Shell
                 = isset($attr['ns2:ItemDimensions']['ns2:Height']['_value'])
                   ? $this->getLocalLength(
                       $attr['ns2:ItemDimensions']['ns2:Height']['_value']
-                    , $attr['ns2:ItemDimensions']['ns2:Height']['@attributes']['Units'])
+                    , $attr['ns2:ItemDimensions']['ns2:Height']['@attributes']['Units']
+                    , $ship)
                   : 0;
               if($vals[ 5]) $data[$keys[ 5]]
                 = isset($attr['ns2:ItemDimensions']['ns2:Length']['_value'])
                   ? $this->getLocalLength(
                       $attr['ns2:ItemDimensions']['ns2:Length']['_value']
-                    , $attr['ns2:ItemDimensions']['ns2:Length']['@attributes']['Units'])
+                    , $attr['ns2:ItemDimensions']['ns2:Length']['@attributes']['Units']
+                    , $ship)
                   : 0;
               if($vals[ 6]) $data[$keys[ 6]]
                 = isset($attr['ns2:ItemDimensions']['ns2:Weight']['_value'])
                   ? $this->getLocalWeight(
                       $attr['ns2:ItemDimensions']['ns2:Weight']['_value']
-                    , $attr['ns2:ItemDimensions']['ns2:Weight']['@attributes']['Units'])
+                    , $attr['ns2:ItemDimensions']['ns2:Weight']['@attributes']['Units']
+                    , $ship)
                   : 0;
               if($vals[ 7]) $data[$keys[ 7]]
                 = isset($attr['ns2:ItemDimensions']['ns2:Width']['_value'])
                   ? $this->getLocalLength(
                       $attr['ns2:ItemDimensions']['ns2:Width']['_value']
-                    , $attr['ns2:ItemDimensions']['ns2:Width']['@attributes']['Units'])
+                    , $attr['ns2:ItemDimensions']['ns2:Width']['@attributes']['Units']
+                    , $ship)
                   : 0;
               if($vals[ 8]) $data[$keys[ 8]]
                 = isset($attr['ns2:PackageDimensions']['ns2:Height']['_value'])
                   ? $this->getLocalLength(
                       $attr['ns2:PackageDimensions']['ns2:Height']['_value']
-                    , $attr['ns2:PackageDimensions']['ns2:Height']['@attributes']['Units'])
+                    , $attr['ns2:PackageDimensions']['ns2:Height']['@attributes']['Units']
+                    , $ship)
                   : 0;
               if($vals[ 9]) $data[$keys[ 9]]
                 = isset($attr['ns2:PackageDimensions']['ns2:Length']['_value'])
                   ? $this->getLocalLength(
                       $attr['ns2:PackageDimensions']['ns2:Length']['_value']
-                    , $attr['ns2:PackageDimensions']['ns2:Length']['@attributes']['Units'])
+                    , $attr['ns2:PackageDimensions']['ns2:Length']['@attributes']['Units']
+                    , $ship)
                   : 0;
               if($vals[10]) $data[$keys[10]]
                 = isset($attr['ns2:PackageDimensions']['ns2:Weight']['_value'])
                   ? $this->getLocalWeight(
                       $attr['ns2:PackageDimensions']['ns2:Weight']['_value']
-                    , $attr['ns2:PackageDimensions']['ns2:Weight']['@attributes']['Units'])
+                    , $attr['ns2:PackageDimensions']['ns2:Weight']['@attributes']['Units']
+                    , $ship)
                   : 0;
               if($vals[11]) $data[$keys[11]]
                 = isset($attr['ns2:PackageDimensions']['ns2:Width']['_value'])
                   ? $this->getLocalLength(
                       $attr['ns2:PackageDimensions']['ns2:Width']['_value']
-                    , $attr['ns2:PackageDimensions']['ns2:Width']['@attributes']['Units'])
+                    , $attr['ns2:PackageDimensions']['ns2:Width']['@attributes']['Units']
+                    , $ship)
                   : 0;
               if($vals[12]) $data[$keys[12]] = 0;
               if($vals[13]) $data[$keys[13]] = 'N/A';
@@ -445,39 +456,33 @@ class GetMatchingProductTask extends Shell
     ]);
   }
 
-  private function getLocalLength($length, $units)
+  private function getLocalLength($length, $units, $ship)
   {
     $rate = 0;
     switch($units) {
     case 'inches':
-      $rate = 25.4;
+      $rate = $ship->us_length;
       break;
     default:
-      $rate = 1;
+      $rate = $ship->jp_length;
       break;
     }
     $result = (float)($length * $rate);
-    //$this->log_debug($length);
-    //$this->log_debug($units);
-    //$this->log_debug($result);
     return $result;
   }
 
-  private function getLocalWeight($weight, $units)
+  private function getLocalWeight($weight, $units, $ship)
   {
     $rate = 0;
     switch($units) {
     case 'pounds':
-      $rate = 0.45359237;
+      $rate = $ship->us_weight;
       break;
     default:
-      $rate = 1;
+      $rate = $ship->jp_weight;
       break;
     }
     $result = (float)($weight * $rate);
-    //$this->log_debug($weight);
-    //$this->log_debug($units);
-    //$this->log_debug($result);
     return $result;
   }
 

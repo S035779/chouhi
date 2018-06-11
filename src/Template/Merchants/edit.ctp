@@ -12,7 +12,7 @@
       <li class="nav-item">
         <?= $this->Form->postLink(
           $this->Html->tag('span', '', ['data-feather' => 'file'])
-          . __(' セラー出品削除 ') 
+          . __(' マーケット出品削除 ') 
         , ['controller' => 'Merchants', 'action' => 'delete', $merchant->id]
         , ['confirm' => __('Are you sure you want to delete # {0}?', $merchant->id)
           , 'escape' => false, 'class' => 'nav-link']
@@ -21,7 +21,7 @@
       <li class="nav-item">
         <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'home'])
-          . __(' セラー出品一覧 ') .
+          . __(' マーケット出品一覧 ') .
           $this->Html->tag('span', '(current)', ['class' => 'sr-only'])
         , ['controller' => 'Merchants', 'action' => 'index']
         , ['escape' => false, 'class' => 'nav-link active']
@@ -30,7 +30,7 @@
       <li class="nav-item">
         <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'file'])
-          . __(' セラー出品追加 ')
+          . __(' マーケット出品追加 ')
         , ['controller' => 'Merchants', 'action' => 'add']
         , ['escape' => false, 'class' => 'nav-link']
         ) ?>
@@ -43,7 +43,7 @@
 <!-- Main contents -->
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><?= __('セラー出品管理マスタ') ?></h1>
+    <h1 class="h2"><?= __('マーケット出品管理マスタ') ?></h1>
   </div>
 
   <div class="cotainer">
@@ -52,7 +52,7 @@
 
         <?= $this->Form->create($merchant) ?>
         <fieldset>
-            <legend><?= __('セラー出品編集') ?></legend>
+            <legend><?= __('マーケット出品編集') ?></legend>
             <?php
                 echo $this->Form->control('item_name');
                 echo $this->Form->control('product_identifier');

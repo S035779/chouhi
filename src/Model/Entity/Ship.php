@@ -50,7 +50,6 @@ class Ship extends Entity
      * @var array
      */
     protected $_accessible = [
-        'is_fulfillment_selling' => true,
         'pending_quantity_rate' => true,
         'pending_quantity' => true,
         'price_criteria_1' => true,
@@ -67,16 +66,16 @@ class Ship extends Entity
         'sales_price_3' => true,
         'sales_price_4' => true,
         'sales_price_5' => true,
-        'delete_rate_1' => true,
-        'delete_rate_2' => true,
-        'delete_rate_3' => true,
-        'delete_rate_4' => true,
-        'delete_rate_5' => true,
-        'delete_price_1' => true,
-        'delete_price_2' => true,
-        'delete_price_3' => true,
-        'delete_price_4' => true,
-        'delete_price_5' => true,
+        'sales_price_5' => true,
+        'jpy_price' => true,
+        'aud_price' => true,
+        'usd_price' => true,
+        'jp_length' => true,
+        'au_length' => true,
+        'us_length' => true,
+        'jp_weight' => true,
+        'au_weight' => true,
+        'us_weight' => true,
         'created' => true,
         'modified' => true
     ];

@@ -52,11 +52,6 @@ class ShipsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->boolean('is_fulfillment_selling')
-            ->requirePresence('is_fulfillment_selling', 'create')
-            ->notEmpty('is_fulfillment_selling');
-
-        $validator
             ->integer('pending_quantity_rate')
             ->requirePresence('pending_quantity_rate', 'create')
             ->notEmpty('pending_quantity_rate');
@@ -137,54 +132,49 @@ class ShipsTable extends Table
             ->notEmpty('sales_price_5');
 
         $validator
-            ->integer('delete_rate_1')
-            ->requirePresence('delete_rate_1', 'create')
-            ->notEmpty('delete_rate_1');
+            ->numeric('jpy_price')
+            ->requirePresence('jpy_price', 'create')
+            ->notEmpty('jpy_price');
 
         $validator
-            ->integer('delete_rate_2')
-            ->requirePresence('delete_rate_2', 'create')
-            ->notEmpty('delete_rate_2');
+            ->numeric('aud_price')
+            ->requirePresence('aud_price', 'create')
+            ->notEmpty('aud_price');
 
         $validator
-            ->integer('delete_rate_3')
-            ->requirePresence('delete_rate_3', 'create')
-            ->notEmpty('delete_rate_3');
+            ->numeric('usd_price')
+            ->requirePresence('usd_price', 'create')
+            ->notEmpty('usd_price');
 
         $validator
-            ->integer('delete_rate_4')
-            ->requirePresence('delete_rate_4', 'create')
-            ->notEmpty('delete_rate_4');
+            ->numeric('jp_length')
+            ->requirePresence('jp_length', 'create')
+            ->notEmpty('jp_length');
 
         $validator
-            ->integer('delete_rate_5')
-            ->requirePresence('delete_rate_5', 'create')
-            ->notEmpty('delete_rate_5');
+            ->numeric('au_length')
+            ->requirePresence('au_length', 'create')
+            ->notEmpty('au_length');
 
         $validator
-            ->numeric('delete_price_1')
-            ->requirePresence('delete_price_1', 'create')
-            ->notEmpty('delete_price_1');
+            ->numeric('us_length')
+            ->requirePresence('us_length', 'create')
+            ->notEmpty('us_length');
 
         $validator
-            ->numeric('delete_price_2')
-            ->requirePresence('delete_price_2', 'create')
-            ->notEmpty('delete_price_2');
+            ->numeric('jp_weight')
+            ->requirePresence('jp_weight', 'create')
+            ->notEmpty('jp_weight');
 
         $validator
-            ->numeric('delete_price_3')
-            ->requirePresence('delete_price_3', 'create')
-            ->notEmpty('delete_price_3');
+            ->numeric('au_weight')
+            ->requirePresence('au_weight', 'create')
+            ->notEmpty('au_weight');
 
         $validator
-            ->numeric('delete_price_4')
-            ->requirePresence('delete_price_4', 'create')
-            ->notEmpty('delete_price_4');
-
-        $validator
-            ->numeric('delete_price_5')
-            ->requirePresence('delete_price_5', 'create')
-            ->notEmpty('delete_price_5');
+            ->numeric('us_weight')
+            ->requirePresence('us_weight', 'create')
+            ->notEmpty('us_weight');
 
         return $validator;
     }

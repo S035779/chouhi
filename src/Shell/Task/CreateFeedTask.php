@@ -248,28 +248,78 @@ class CreateFeedTask extends Shell
   private function fetchItems($request)
   {
     $response = array();
-    Promise\all($this->_fetchItems($request))
+    Promise\all($this->promisedCreateFeeds($request))
+      ->then(function($feeds){
+        return Promise\all($this->promisedSetInternationals($feeds));
+      })
+      ->then(function($feeds){
+        return Promise\all($this->primisedSetSalesPrices($feeds));
+      })
+      ->then(function($feeds){
+        return Promise\all($this->promisedPatchFeeds($feeds));
+      })
       ->done(function($result) use (&$response) {
         $response = $result;
       }, function($error) {
         $this->log_error($error);
       });
+    //debug($response);
     return $response;
   }
 
-  private function _fetchItems($request)
+  private function promisedCreateFeeds($request)
   {
     $response = array();
     foreach($request as $_request) {
-      array_push($response, $this->fetchItem($_request));
+      array_push($response, $this->promisedCreateFeed($_request));
     }
     return $response;
   }
 
-  private function fetchItem($request)
+  private function promisedSetInternationals($request)
+  {
+    $response = array();
+    foreach($request as $_request) {
+      array_push($response, $this->promisedSetInternational($_request));
+    }
+    return $response;
+  }
+
+  private function primisedSetSalesPrices($request)
+  {
+    $response = array();
+    foreach($request as $_request) {
+      array_push($response, $this->promisedSetSalesPrice($_request));
+    }
+    return $response;
+  }
+
+  private function promisedPatchFeeds($request)
+  {
+    $response = array();
+    foreach($request as $_request) {
+      array_push($response, $this->promisedPatchFeed($_request));
+    }
+    return $response;
+  }
+
+  private function promisedCreateFeed($request)
   {
     $deferred = new Promise\Deferred();
-    $this->_fetchItem(function($error, $response) use ($deferred) {
+    $this->createFeed(function($error, $response) use ($deferred) {
+      if($error) {
+        $this->log_error($error);
+        $deferred->reject($error);
+      }
+      $deferred->resolve($response);
+    }, $request);
+    return $deferred->promise();
+  }
+ 
+  private function promisedSetInternational($request)
+  {
+    $deferred = new Promise\Deferred();
+    $this->setInternational(function($error, $response) use ($deferred) {
       if($error) {
         $this->log_error($error);
         $deferred->reject($error);
@@ -279,87 +329,198 @@ class CreateFeedTask extends Shell
     return $deferred->promise();
   }
 
-  private function _fetchItem($callback, $request)
+  private function promisedSetSalesPrice($request)
   {
+    $deferred = new Promise\Deferred();
+    $this->setSalesPrice(function($error, $response) use ($deferred) {
+      if($error) {
+        $this->log_error($error);
+        $deferred->reject($error);
+      }
+      $deferred->resolve($response);
+    }, $request);
+    return $deferred->promise();
+  }
 
-    try {
-      $feeds = $this->createFeed($request);
-      $response = $this->patchFeed($request, $feeds);
-    } catch (\Exception $e) {
-      $callback($e->getMessage(), []);
+  private function promisedPatchFeed($request)
+  {
+    $deferred = new Promise\Deferred();
+    $this->patchFeed(function($error, $response) use ($deferred) {
+      if($error) {
+        $this->log_error($error);
+        $deferred->reject($error);
+      }
+      $deferred->resolve($response);
+    }, $request);
+    return $deferred->promise();
+  }
+
+  private function patchFeed($callback, $request)
+  {
+    $items = TableRegistry::get('Items');
+    $_items = $items->find()->where(['marketplace' => $request['marketplace']])->all();
+
+    $datas = array();
+    foreach($request['getItems'] as $getItem) {
+      $data = array_merge(array(), $getItem);
+      foreach($_items as $item) {
+        if($item->asin === $data['product-id']) {
+          array_push($datas, $data);
+          break;
+        }
+      }
     }
 
     $callback(null, [
-      'getItems'    => $response
+      'getItems'    => $datas
     , 'marketplace' => $request['marketplace']
     , 'seller'      => $request['seller']
     ]);
   }
 
-  private function createFeed($request)
+  private function setInternational($callback, $request)
   {
     $items = TableRegistry::get('Items');
-    $ships = TableRegistry::get('Ships');
-    $items_all = $items->find()
-      ->where(function($exp) use ($request) {
-        return $exp->notEq('marketplace', $request['marketplace']);
-      })
+    $items_us = $items->find()
+      ->where(['marketplace' => 'US'])
       ->all();
-    $ship = $ships->find()->first();
+    $items_own = $items->find()
+      ->where(['marketplace' => $request['marketplace']])
+      ->all();
+
     $datas = array();
-    foreach($items_all as $item) {
-      $shipping_price = $this->getShippingPrice($item['package_height']
-        , $item['package_length'], $item['package_weight'], $item['package_width'], $ships);
-      $item_us = $items->find()
-        ->where(['marketplace' => 'US', 'asin' => $item['asin'], 'ean'  => $item['ean']])
-        ->first();
-      $data['item-name'                 ] = $item_us['title'] ?? $item['title'];
+    foreach($request['getItems'] as $getItem) {
+      $data = array_merge(array(), $getItem);
+      foreach($items_us as $item) {
+        if($item->asin === $data['product-id'] && $item->ean === $data['ean']) {
+          $data['item-name'                 ] = $item['title'];
+          break;
+        }
+      }
+      foreach($items_own as $item) {
+        if($item->asin === $data['product-id']) {
+          $data['item-name'                 ] = $item['title'];
+          break;
+        }
+      }
+      array_push($datas, $data);
+    }
+
+    //debug($datas);
+    $callback(null, [
+      'getItems'    => $datas
+    , 'marketplace' => $request['marketplace']
+    , 'seller'      => $request['seller']
+    ]);
+  }
+
+  private function setSalesPrice($callback, $request) 
+  {
+    $leadtime = 5;
+    $area = $this->getArea($request['marketplace']);
+
+    $ships = TableRegistry::get('Ships');
+    $ship = $ships->find()->first();
+
+    $deliverys = TableRegistry::get('Deliverys');
+
+    $datas = array();
+    foreach($request['getItems'] as $getItem) {
+      $data = array_merge(array(), $getItem);
+      $delivery = $deliverys->find()->where([
+        'length >='       => $data['length']
+      , 'total_length >=' => $data['height'] + $data['length'] + $data['width']
+      , 'weight >='       => $data['weight']
+      , 'duedate <='      => $leadtime
+      , 'area'            => $area
+      ])->first();
+      $delivery_price = $delivery->price;
+      $data['price'                     ] = $this->getSalesPrice(
+        $data['price']
+      , $data['currency']
+      , $request['marketplace']
+      , $delivery_price
+      , $ship
+      );
+      $data['minimum-seller-allow-price'] = $this->getSalesPrice(
+        $data['minimum-seller-allow-price']
+      , $data['currency']
+      , $request['marketplace']
+      , $delivery_price
+      , $ship
+      );
+      $data['maximum-seller-allow-price'] = $this->getSalesPrice(
+        $data['maximum-seller-allow-price']
+      , $data['currency']
+      , $request['marketplace']
+      , $delivery_price
+      , $ship
+      );
+      $data['quantity'                  ] = $this->getQuantity($data['quantity'], $ship);
+      $data['leadtime-to-ship'          ] = $leadtime;
+      array_push($datas, $data);
+    }
+    
+    //debug($datas);
+    $callback(null, [
+      'getItems'    => $datas
+    , 'marketplace' => $request['marketplace']
+    , 'seller'      => $request['seller']
+    ]);
+  }
+
+  private function createFeed($callback, $request)
+  {
+    $items = TableRegistry::get('Items');
+    $items = $items->find()->where(['marketplace' => 'JP'])->all();
+
+    $datas = array();
+    foreach($items as $item) {
+      $data['item-name'                 ] = $item['title'];
       $data['product-id'                ] = $item['asin'];
       $data['product-id-type'           ] = 1;
-      $data['price'                     ] = $this->getSalesPrice($item['lowest_price']
-        , $item['lowest_price_currency'], $request['marketplace'], $shipping, $ship);
-      $data['minimum-seller-allow-price'] = $this->getSalesPrice($item['lowest_price']
-        , $item['lowest_price_currency'], $request['marketplace'], $shipping, $ship);
-      $data['maximum-seller-allow-price'] = $this->getSalesPrice($item['lowest_price']
-        , $item['lowest_price_currency'], $request['marketplace'], $shipping, $ship);
+      $data['price'                     ] = $item['lowest_price'];
+      $data['minimum-seller-allow-price'] = $item['lowest_price'];
+      $data['maximum-seller-allow-price'] = $item['lowest_price'];
+      $data['currency'                  ] = $item['lowest_price_currency'];
       $data['item-condition'            ] = $this->getCondition($item['condition_status']);
-      $data['quantity'                  ] = $this->getQuantity($item['total_new'], $ship);
+      $data['quantity'                  ] = $item['total_new'];
       $data['add-delete'                ] = $this->getAddDel($item['total_new']);
       $data['will-ship-internationally' ] = 'n';
       $data['expedited-shipping'        ] = 'International';
       $data['standard-plus'             ] = 'N';
       $data['item-note'                 ] = 'Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!';
-      $data['leadtime-to-ship'          ] = '5';
       $data['seller-sku'                ] = $this->getSellerSKU($item['asin']
         , $request['marketplace']);
       $data['pending-quantity'          ] = 0;
+      $data['ean'                       ] = $item['ean'];
+      $data['height'                    ] = $item['package_height'];
+      $data['length'                    ] = $item['package_length'];
+      $data['weight'                    ] = $item['package_weight'];
+      $data['width'                     ] = $item['package_width'];
       array_push($datas, $data);
     }
-    return $datas;
+    $callback(null, [
+      'getItems'    => $datas
+    , 'marketplace' => $request['marketplace']
+    , 'seller'      => $request['seller']
+    ]);
   }
 
-  private function patchFeed($request, $feeds)
-  {
-    $items = TableRegistry::get('Items');
-    $datas = array();
-    foreach($feeds as $feed) {
-      $item = $items->find()
-        ->where(['marketplace' => $request['marketplace'], 'asin' => $feed['product-id']])
-        ->first();
-      if($item) {
-        // add product.
-        array_push($datas, $feed);
-      } else {
-        // create product.
-      }
-    }
-    return $datas;
-  }
-
-  private function getShipping($height, $length, $weight, $width, $ships)
+  private function getArea($marketplace)
   { 
-    $shipping = 0;
-    return $shipping;
+    switch($marketplace) {
+    case 'JP':
+      $area = 'ASIA';
+      break;
+    case 'AU':
+      $area = 'OCEANIA';
+      break;
+    case 'US':
+      $area = 'NORTH_AMERICA';
+      break;
+    }
+    return $area;
   }
 
   private function getQuantity($count, $ship)
@@ -374,18 +535,18 @@ class CreateFeedTask extends Shell
     return (int)$count < 1 ? 'd' : 'a';
   }
 
-  private function toJPY($price, $currency)
+  private function toJPY($price, $currency, $ship)
   {
     $rate = 0;
     switch ($currency) {
     case 'JPY':
-      $rate = 1;
+      $rate = $ship->jpy_price;
       break;
     case 'USD':
-      $rate = 109.52;
+      $rate = $ship->usd_price;
       break;
     case 'AUD':
-      $rate = 83.25;
+      $rate = $ship->aud_price;
       break;
     }
     return (float)($price * $rate);
@@ -393,7 +554,7 @@ class CreateFeedTask extends Shell
 
   private function getSalesPrice($price, $currency, $marketplace, $shipping, $ship)
   {
-    $price_jpy = $this->toJPY($price, $currency);
+    $price_jpy = $this->toJPY($price, $currency, $ship);
 
     $isPt1 = $price_jpy < $ship->price_criteria_1;
     $isPt2 = $price_jpy < $ship->price_criteria_2 && $ship->price_criteria_1 < $price_jpy;
@@ -417,13 +578,13 @@ class CreateFeedTask extends Shell
     $rate = 0;
     switch($marketplace) {
     case 'JP':
-      $rate = 1;
+      $rate = $ship->jpy_price;
       break;
     case 'US':
-      $rate = 109.52;
+      $rate = $ship->usd_price;
       break;
     case 'AU':
-      $rate = 83.25;
+      $rate = $ship->aud_price;
       break;
     }
     return (float)($total_price / $rate);
@@ -439,7 +600,7 @@ class CreateFeedTask extends Shell
       $condition = 1;
       break;
     default:
-      $condition = 4;
+      $condition = 11;
       break;
     }
     return $condition;

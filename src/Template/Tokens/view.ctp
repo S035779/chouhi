@@ -9,7 +9,7 @@
   <div class="sidebar-sticky">
 
     <ul class="nav flex-column">
-        <li>
+        <li class="nav-item">
           <?= $this->Html->link(
             $this->Html->tag('span', '', ['data-feather' => 'file'])
             . __(' トークン編集 ')
@@ -17,7 +17,7 @@
           , ['escape' => false, 'class' => 'nav-link']
           ) ?> 
         </li>
-        <li>
+        <li class="nav-item">
           <?= $this->Form->postLink(
             $this->Html->tag('span', '', ['data-feather' => 'file'])
             . __(' トークン削除 ')
@@ -26,7 +26,7 @@
             , 'escape' => false, 'class' => 'nav-link']
           ) ?> 
         </li>
-        <li>
+        <li class="nav-item">
           <?= $this->Html->link(
             $this->Html->tag('span', '', ['data-feather' => 'home'])
             . __(' トークン一覧 ') .
@@ -35,7 +35,7 @@
           , ['escape' => false, 'class' => 'nav-link active']
           ) ?> 
         </li>
-        <li>
+        <li class="nav-item">
           <?= $this->Html->link(
             $this->Html->tag('span', '', ['data-feather' => 'file'])
             . __(' トークン追加 ')
@@ -43,7 +43,7 @@
           , ['escape' => false, 'class' => 'nav-link']
           ) ?> 
         </li>
-        <li>
+        <li class="nav-item">
           <?= $this->Html->link(
             $this->Html->tag('span', '', ['data-feather' => 'home'])
             . __(' セラー一覧 ')
@@ -51,7 +51,7 @@
           , ['escape' => false, 'class' => 'nav-link']
           ) ?> 
         </li>
-        <li>
+        <li class="nav-item">
           <?= $this->Html->link(
             $this->Html->tag('span', '', ['data-feather' => 'file'])
             . __(' セラー追加 ')

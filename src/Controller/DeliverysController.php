@@ -111,6 +111,26 @@ class DeliverysController extends AppController
     $delivery = $this->Deliverys->get($id, [
       'contain' => []
     ]);
+    $methods = array(
+      'SAL'       => 'SAL'     
+    , 'E_PACKET'  => 'e-packet'
+    , 'EMS'       => 'EMS'     
+    );
+    $areas = array(
+      'ASIA'            => 'Asia'          
+    , 'OCEANIA'         => 'Oceania'       
+    , 'NORTH_AMERICA'   => 'North America' 
+    , 'MIDDLE_AMERICA'  => 'Middle America'
+    , 'MIDDLE_EAST'     => 'Middle East'   
+    , 'EUROPE'          => 'Europe'        
+    , 'SOUTH_AMERICA'   => 'South America' 
+    , 'AFRICA'          => 'Africa'        
+    );
+    $duedates = array(
+      '4'   => '2-4 days'
+    , '6'   => '3-6 days'
+    , '14'  => '2 weeks' 
+    );
     if ($this->request->is(['patch', 'post', 'put'])) {
       $delivery = $this->Deliverys->patchEntity($delivery, $this->request->getData());
       if ($this->Deliverys->save($delivery)) {
@@ -120,7 +140,7 @@ class DeliverysController extends AppController
       }
       $this->Flash->error(__('The delivery could not be saved. Please, try again.'));
     }
-    $this->set(compact('delivery'));
+    $this->set(compact('delivery', 'methods', 'areas', 'duedates'));
   }
 
   /**

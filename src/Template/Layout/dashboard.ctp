@@ -72,7 +72,7 @@
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'shopping-cart'])
                   . __(' マーケット出品 ')
-                , ['controller' => 'Bootstrap', 'action' => 'market']
+                , ['controller' => 'Merchants', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
               </li>
@@ -145,16 +145,8 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' セラー出品管理 ')
-                , ['controller' => 'Merchants', 'action' => 'index']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' 送料管理 ')
-                , ['controller' => 'Delivery', 'action' => 'index']
+                  . __(' 配送料管理 ')
+                , ['controller' => 'Deliverys', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
               </li>

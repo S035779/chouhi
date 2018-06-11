@@ -54,13 +54,13 @@
         <fieldset>
             <legend><?= __('配送料編集') ?></legend>
             <?php
-                echo $this->Form->control('method');
-                echo $this->Form->control('area');
+                echo $this->Form->control('method', ['options' => $methods]);
+                echo $this->Form->control('area', ['options' => $areas]);
                 echo $this->Form->control('price');
                 echo $this->Form->control('length');
                 echo $this->Form->control('total_length');
                 echo $this->Form->control('weight');
-                echo $this->Form->control('duedate');
+                echo $this->Form->control('duedate', ['options' => $duedates]);
             ?>
         </fieldset>
         <?= $this->Form->button(__('Submit')) ?>

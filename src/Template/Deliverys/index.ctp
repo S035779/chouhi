@@ -60,11 +60,11 @@
             <td><?= $this->Number->format($delivery->id) ?></td>
             <td><?= h($delivery->method) ?></td>
             <td><?= h($delivery->area) ?></td>
-            <td><?= $this->Number->format($delivery->price) ?></td>
-            <td><?= $this->Number->format($delivery->length) ?></td>
-            <td><?= $this->Number->format($delivery->total_length) ?></td>
-            <td><?= $this->Number->format($delivery->weight) ?></td>
-            <td><?= $this->Number->format($delivery->duedate) ?></td>
+            <td><?= $this->Number->currency($delivery->price, 'JPY') ?></td>
+            <td><?= $this->Number->format($delivery->length, ['after' => 'mm']) ?></td>
+            <td><?= $this->Number->format($delivery->total_length, ['after' => 'mm']) ?></td>
+            <td><?= $this->Number->format($delivery->weight, ['after' => 'kg', 'precision' => 2]) ?></td>
+            <td><?= $this->Number->formatDelta($delivery->duedate, ['after' => 'days']) ?></td>
             <td><?= h($delivery->created) ?></td>
             <td><?= h($delivery->modified) ?></td>
             <td class="actions">
