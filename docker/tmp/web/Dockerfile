@@ -1,4 +1,12 @@
 FROM alpine:3.7
+MAINTAINER M.H Mamoru Hashimoto <you@example.com>
+
+# timezone
+RUN apk add --no-cache tzdata \
+  && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+  && apk del --purge tzdata
+
+EXPOSE 80
 
 RUN set -x && addgroup -g 82 -S www-data && adduser -u 82 -D -S -G www-data www-data
 
@@ -82,6 +90,6 @@ RUN set -eux; runDeps='apr-dev apr-util-dev apr-util-ldap perl'; \
   apk add --virtual .httpd-rundeps $runDeps; apk del .build-deps
 
 COPY httpd-foreground /usr/local/bin/
+RUN chmod +x /usr/local/bin/httpd-foreground
 
-EXPOSE 80
 CMD ["httpd-foreground"]

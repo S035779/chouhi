@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: amazon-mws-tools
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: frontend
+    matchExpressions:
+      - { key: tier, operator: In, values: [frontend] }
+  template:
+    metadata:
+      labels:
+        app: amazon-mws-tools
+        tier: frontend
+    spec:
+      containers:
+        - name: apps
+          image: asia.gcr.io/amazon-mws-tools/amazon-mws-tools/apps:latest
+          env:
+          - name: APPS_DB_HOST
+            value: backend:3306
+          - name: APPS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: password
+          ports:
+            - containerPort: 80
+              name: apps
+          volumeMounts:
+            - name: apps-persistent-storage
+              mountPath: /var/www/html
+      volumes:
+        - name: apps-persistent-storage
+          gcePersistentDisk:
+            pdName: apps-disk
+            fsType: ext4

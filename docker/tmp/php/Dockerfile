@@ -1,10 +1,23 @@
 FROM alpine:3.7
+MAINTAINER M.H Mamoru Hashimot <you@example.com>
+
+# timezone
+RUN apk add --no-cache tzdata \
+  && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+  && apk del --purge tzdata
+
+EXPOSE 9000
 
 ENV PHPIZE_DEPS autoconf dpkg-dev dpkg file g++ gcc libc-dev make pkgconf re2c
+
 RUN apk add --no-cache --virtual .persistent-deps ca-certificates curl tar xz libressl
-RUN set -x && addgroup -g 82 -S www-data && adduser -u 82 -D -S -G www-data www-data
+RUN set -x \
+  && addgroup -g 82 -S www-data && adduser -u 82 -D -S -G www-data www-data
+
 ENV PHP_INI_DIR /usr/local/etc/php
+
 RUN mkdir -p $PHP_INI_DIR/conf.d
+
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
   --disable-cgi
 ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2"
@@ -17,7 +30,8 @@ ENV PHP_URL="https://secure.php.net/get/php-7.2.6.tar.xz/from/this/mirror" \
   PHP_ASC_URL="https://secure.php.net/get/php-7.2.6.tar.xz.asc/from/this/mirror"
 ENV PHP_SHA256="1f004e049788a3effc89ef417f06a6cf704c95ae2a718b2175185f2983381ae7" PHP_MD5=""
 
-RUN set -xe; apk add --no-cache --virtual .fetch-deps gnupg wget ; \
+RUN set -xe; \
+  apk add --no-cache --virtual .fetch-deps gnupg wget ; \
   mkdir -p /usr/src; cd /usr/src; wget -O php.tar.xz "$PHP_URL"; \
   if [ -n "$PHP_SHA256" ]; then \
     echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
@@ -43,8 +57,10 @@ RUN set -xe; apk add --no-cache --virtual .fetch-deps gnupg wget ; \
 
 COPY docker-php-source /usr/local/bin/
 
-RUN set -xe  && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS coreutils curl-dev \
-  libedit-dev libressl-dev libsodium-dev libxml2-dev sqlite-dev \
+RUN set -xe \
+  && chmod +x /usr/local/bin/docker-php-source \
+  && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS coreutils curl-dev \
+    libedit-dev libressl-dev libsodium-dev libxml2-dev sqlite-dev \
   && export CFLAGS="$PHP_CFLAGS" CPPFLAGS="$PHP_CPPFLAGS" LDFLAGS="$PHP_LDFLAGS" \
   && docker-php-source extract \
   && cd /usr/src/php \
@@ -72,13 +88,15 @@ RUN set -xe  && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS coreutils 
 
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
-RUN docker-php-ext-enable sodium
+RUN chmod +x /usr/local/bin/docker-php-ext-* /usr/local/bin/docker-php-entrypoint \
+  && docker-php-ext-enable sodium
 
 ENTRYPOINT ["docker-php-entrypoint"]
 
 WORKDIR /var/www/html
 
-RUN set -ex && cd /usr/local/etc \
+RUN set -ex \
+  && cd /usr/local/etc \
   && if [ -d php-fpm.d ]; then \
       sed 's!=NONE/!=!g' php-fpm.conf.default | tee php-fpm.conf > /dev/null; \
       cp php-fpm.d/www.conf.default php-fpm.d/www.conf; \
@@ -107,5 +125,4 @@ RUN set -ex && cd /usr/local/etc \
     echo 'listen = 9000'; \
   } | tee php-fpm.d/zz-docker.conf
 
-EXPOSE 9000
 CMD ["php-fpm"]

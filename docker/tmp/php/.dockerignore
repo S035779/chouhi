@@ -1,0 +1,4 @@
+.dockerignore
+tmp
+*.yaml
+*.sh

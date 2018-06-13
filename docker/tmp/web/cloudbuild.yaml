@@ -1,4 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  env: ['PROJECT_ROOT=amazon-mws-tools']
   args: ['build', '-t', 'asia.gcr.io/$PROJECT_ID/amazon-mws-tools/apache', '.']
 images: ['asia.gcr.io/$PROJECT_ID/amazon-mws-tools/apache']
