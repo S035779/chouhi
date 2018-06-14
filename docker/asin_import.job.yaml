@@ -1,17 +1,12 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: worker
+  name: asin-import
   labels:
     app: amazon-mws-tools
     tier: worker
 spec:
   schedule: "*/10 * * * *"
-  selector:
-    matchLabels:
-      tier: worker
-    matchExpressions:
-      - { key: tier, operator: In, values: [worker] }
   jobTemplate:
     metadata:
       labels:
@@ -21,9 +16,9 @@ spec:
       template:
         spec:
           containers:
-          - name: asin_importer
+          - name: asin-import
             image: asia.gcr.io/amazon-mws-tools/amazon-mws-tools/apps:latest
             args:
               - /app/chouhi/bin/cake
-              - asin_importer
+              - asin-import
           restartPolicy: OnFailure

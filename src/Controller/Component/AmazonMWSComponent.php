@@ -100,9 +100,6 @@ class AmazonMWSComponent extends Component
     return $amazon->update();
   }
 
-  /**
-   *
-   */
   public function insertAsin($filename, $suspended)
   {
     $header = array(
@@ -181,6 +178,7 @@ class AmazonMWSComponent extends Component
         }
         $data[$_header] = $_body;
       }
+      debug($data);
       array_push($datas, $data);
     }
     flock($org_file, LOCK_UN);

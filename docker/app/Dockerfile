@@ -293,6 +293,7 @@ RUN buildDeps='python build-essential' \
   && rm package-lock.json \
   && yarn install \
   && chown -R app:app /app \
+  && chmod +x /app/chouhi/bin/cake \
   && apt-get purge -y --auto-remove $buildDeps
 
 USER app
