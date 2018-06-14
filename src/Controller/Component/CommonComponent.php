@@ -126,11 +126,6 @@ class CommonComponent extends Component
     return $xml;
   }
 
-  private function encode($str)
-  {
-    return mb_convert_encoding($str, 'utf8', 'sjis-win');
-  }
-
   private function openfile()
   {
     $handleFile = @open('php://temp', 'rw+');
@@ -140,13 +135,13 @@ class CommonComponent extends Component
 
   public function log_error($message)
   {
-    $displayName = '[' . get_class($this) . '] ';
+    $displayName = '[' . __CLASS__ . '] ';
     Log::error($displayName . print_r($message, true), ['scope' => ['apps']]);
   }
 
   public function log_debug($message)
   {
-    $displayName = '[' . get_class($this) . '] ';
+    $displayName = '[' . __CLASS__ . '] ';
     Log::debug($displayName . print_r($message, true), ['scope' => ['apps']]);
   }
 }

@@ -13,12 +13,12 @@ class UploadFilesForm extends Form
       ->add('upload_file', 'isCSV', [
         'provider'  => 'customValidate'
       , 'rule'      => 'isCSV'
-      , 'message'   => 'CSV file only.'
+      , 'message'   => 'CSVファイルのみアップロード可能です'
       ])
       ->add('upload_file', 'limitFileSize', [
         'provider'  => 'customValidate'
       , 'rule'      => 'limitFileSize'
-      , 'message'   => '200 byte limit.'
+      , 'message'   => '200バイト以内にしてください'
       ]);
     return $validator;
   }

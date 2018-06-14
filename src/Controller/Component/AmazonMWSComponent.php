@@ -117,7 +117,7 @@ class AmazonMWSComponent extends Component
       $query->values($data);
     }
     if(!$query->execute()) {
-      $this->error($query->errors());
+      $this->log_error($query->errors());
       return false;
     }
     return true;
@@ -144,7 +144,7 @@ class AmazonMWSComponent extends Component
         $entity = $asins->patchEntity($asin, $data);
       }
       if(!$asins->save($entity)) {
-        $this->error($asins->errors());
+        $this->log_error($asins->errors());
         return false;
       }
     }
@@ -178,7 +178,6 @@ class AmazonMWSComponent extends Component
         }
         $data[$_header] = $_body;
       }
-      debug($data);
       array_push($datas, $data);
     }
     flock($org_file, LOCK_UN);
@@ -186,8 +185,20 @@ class AmazonMWSComponent extends Component
     return $datas;
   }
 
-  public function error($message)
+  private function encode($str)
   {
-    $this->log(print_r($message, true), LOG_DEBUG);
+    return mb_convert_encoding($str, 'utf8', 'sjis-win');
+  }
+
+  public function log_error($message)
+  {
+    $displayName = '[' . __CLASS__ . '] ';
+    Log::error($displayName . print_r($message, true), ['scope' => ['apps']]);
+  }
+
+  public function log_debug($message)
+  {
+    $displayName = '[' . __CLASS__ . '] ';
+    Log::debug($displayName . print_r($message, true), ['scope' => ['apps']]);
   }
 }
