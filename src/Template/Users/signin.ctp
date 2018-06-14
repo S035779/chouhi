@@ -35,10 +35,15 @@
         <label><input type="checkbox"
           value="remember-me"> Remember me</label>
       </div>
-      <button class="btn btn-lg btn-primary btn-block"
-        type="submit">Sign in</button>
-      <p class="mt-5 mb-3 text-muted">
-        &copy;Amazon MWS tools 2018</p>
+      <?= $this->Form->button(__('Sign in'), [
+        'class' => 'btn btn-lg btn-primary btn-block'
+      , 'name' => 'signin'
+      ]) ?>
+      <?= $this->Form->button(__('Sign up'), [
+        'class' => 'btn btn-lg btn-outline-seconday btn-block'
+      , 'name' => 'signup' 
+      ]) ?>
+      <p class="mt-5 mb-3 text-muted">&copy;Amazon MWS tools 2018</p>
     <?= $this->Form->end() ?>
     </div>
   </body>

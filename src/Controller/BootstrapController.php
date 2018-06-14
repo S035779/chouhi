@@ -90,7 +90,6 @@ class BootstrapController extends AppController
             $mws_marketId = $this->AmazonMWS::MWS_MARKETPLACE_US;
             break;
         }
-        //$jobType = 1;
         $params=array();
         $params['AWSAccessKeyId']   = $request['access_key'];
         $params['AWSSecretKeyId']   = $request['secret_key'];

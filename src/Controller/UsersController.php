@@ -34,17 +34,21 @@ class UsersController extends AppController
   {
     $title = 'Sign-in';
     if($this->request->is('post')) {
-      $user = $this->Auth->identify();
-      if($user) {
-        $this->Auth->setUser($user);
-        $this->loadModel('Users');
-        $user_entity = $this->Users->get($user['id']);
-        $user_entity->dirty('modified', true);
-        $this->Users->touch($user_entity, 'Users.signin');
-        $this->Users->save($user_entity);
-        return $this->redirect($this->Auth->redirectUrl());
+      if (isset($this->request->data['signin'])) {
+        $user = $this->Auth->identify();
+        if($user) {
+          $this->Auth->setUser($user);
+          $this->loadModel('Users');
+          $user_entity = $this->Users->get($user['id']);
+          $user_entity->dirty('modified', true);
+          $this->Users->touch($user_entity, 'Users.signin');
+          $this->Users->save($user_entity);
+          return $this->redirect($this->Auth->redirectUrl());
+        }
+        $this->Flash->error(__('Invalid email address or password, try again'));
+      } elseif (isset($this->request->data['signup'])) {
+        return $this->redirect(['controller' => 'Users', 'action' => 'add']);
       }
-      $this->Flash->error(__('Invalid email address or password, try again'));
     }
     $this->set(compact('title'));
   }
@@ -91,12 +95,12 @@ class UsersController extends AppController
   public function add()
   {
     $title = 'Add user';
-    $user = $this->Users->newEntity();
-    if ($this->request->is('post')) {
+    $date = date('Y-m-d H:i:s');
+    $user = $this->Users->newEntity(['created' => $date, 'modified' => $date]);
+    if ($this->request->is(['post'])) {
       $user = $this->Users->patchEntity($user, $this->request->getData());
       if ($this->Users->save($user)) {
         $this->Flash->success(__('The user has been saved.'));
-
         return $this->redirect(['action' => 'index']);
       }
       $this->Flash->error(__('The user could not be saved. Please, try again.'));
@@ -114,14 +118,11 @@ class UsersController extends AppController
   public function edit($id = null)
   {
     $title = 'Edit user';
-    $user = $this->Users->get($id, [
-      'contain' => []
-    ]);
+    $user = $this->Users->get($id, ['contain' => []]);
     if ($this->request->is(['patch', 'post', 'put'])) {
       $user = $this->Users->patchEntity($user, $this->request->getData());
       if ($this->Users->save($user)) {
         $this->Flash->success(__('The user has been saved.'));
-
         return $this->redirect(['action' => 'index']);
       }
       $this->Flash->error(__('The user could not be saved. Please, try again.'));
@@ -145,7 +146,6 @@ class UsersController extends AppController
     } else {
       $this->Flash->error(__('The user could not be deleted. Please, try again.'));
     }
-
     return $this->redirect(['action' => 'index']);
   }
 

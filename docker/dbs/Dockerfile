@@ -1,19 +1,16 @@
 FROM debian:stretch-slim
 MAINTAINER M.H Mamoru Hashimoto <you@example.com>
 
+ENV TZ=Asia/Tokyo
+RUN ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+&& dpkg-reconfigure --frontend noninteractive tzdata
+
 EXPOSE 3306
 
 RUN groupadd -r mysql && useradd -r -g mysql mysql
 
-# debconf non-interactive mode
-ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends gnupg dirmngr \
   && rm -rf /var/lib/apt/lists/*
-
-# timezone
-RUN apt-get install -y tzdata \
-  && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
-  && dpkg-reconfigure --frontend noninteractive tzdata
 
 ENV GOSU_VERSION 1.7
 
