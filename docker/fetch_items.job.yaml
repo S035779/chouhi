@@ -20,5 +20,5 @@ spec:
             image: asia.gcr.io/amazon-mws-tools/amazon-mws-tools/apps:latest
             args:
               - /app/chouhi/bin/cake
-              - fetch-items
+              - fetch_items
           restartPolicy: OnFailure

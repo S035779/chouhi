@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: asin-import
+  name: get-matching-product
   labels:
     app: amazon-mws-tools
     tier: worker
@@ -16,9 +16,9 @@ spec:
       template:
         spec:
           containers:
-          - name: asin-import
+          - name: get-matching-product
             image: asia.gcr.io/amazon-mws-tools/amazon-mws-tools/apps:latest
             args:
               - /app/chouhi/bin/cake
-              - asin_import
+              - get_matching_product
           restartPolicy: OnFailure
