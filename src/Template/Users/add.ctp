@@ -23,7 +23,7 @@
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <?= $this->Html->link(
         env('APP_NAME')
-      , ['controller' => 'Bootstrap', 'action' => 'index']
+      , ['controller' => 'Bootstrap', 'action' => env('APP_TOPPAGE')]
       , ['class' => 'navbar-brand col-sm-3 col-md-2 mr-0']
       ) ?>
       <input class="form-control form-control-dark w-100" type="text"

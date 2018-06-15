@@ -38,7 +38,7 @@ class AppController extends Controller
         , 'authenticate'    => ['Form' =>
             ['fields' => ['username' => 'email']]
           ]
-        , 'loginRedirect'   => ['controller' => 'Bootstrap', 'action' => 'index']
+        , 'loginRedirect'   => ['controller' => 'Bootstrap', 'action' => env('APP_TOPPAGE')]
         , 'logoutRedirect'  => ['controller' => 'Users', 'action' => 'signin']
         , 'loginAction'     => ['controller' => 'Users', 'action' => 'signin']
         , 'authError'       => 'Sign-in required'

@@ -46,14 +46,6 @@
             <ul class="nav flex-column">
               <li class="nav-item">
                 <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'pie-chart'])
-                  . __(' ダッシュボード ')
-                , ['controller' => 'Bootstrap', 'action' => 'index']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file'])
                   . __(' トークン設定 ')
                 , ['controller' => 'Bootstrap', 'action' => 'token']
@@ -70,14 +62,6 @@
               </li>
               <li class="nav-item">
                 <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'shopping-cart'])
-                  . __(' マーケット出品 ')
-                , ['controller' => 'Merchants', 'action' => 'index']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'user'])
                   . __(' ユーザ設定 ')
                 , ['controller' => 'Bootstrap', 'action' => 'setting']
@@ -89,22 +73,6 @@
                   $this->Html->tag('span', '', ['data-feather' => 'bar-chart-2'])
                   . __(' 新規ASIN登録 ')
                 , ['controller' => 'Bootstrap', 'action' => 'registration']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'layers'])
-                  . __(' 禁止ASIN登録 ')
-                , ['controller' => 'Bootstrap', 'action' => 'suspension']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'percent'])
-                  . __(' 販売価格設定 ')
-                , ['controller' => 'Bootstrap', 'action' => 'calculation']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
               </li>
@@ -145,8 +113,8 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' 配送料管理 ')
-                , ['controller' => 'Deliverys', 'action' => 'index']
+                  . __(' 商品検索管理 ')
+                , ['controller' => 'Offers', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
               </li>
