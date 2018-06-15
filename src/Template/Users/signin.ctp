@@ -23,17 +23,25 @@
          alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">
         Please sign in</h1>
-      <label for="email" class="sr-only">
-        Email address</label>
-      <input type="email" id="email" name="email" class="form-control" 
-        placeholder="Email address" required autofocus>
-      <label for="password" 
-        class="sr-only">Password</label>
-      <input type="password" id="password" name="password"
-        class="form-control" placeholder="Password" required>
+      <label for="email" class="sr-only">Email address</label>
+      <?= $this->Form->text('email', [
+        'required' => false
+      , 'class' => 'form-control'
+      , 'placeholder' => 'Email address'
+      , 'id' => 'email'
+      , 'type' => 'email'
+      , 'autofocus' => true 
+      ]) ?>
+      <label for="password" class="sr-only">Password</label>
+      <?= $this->Form->text('password', [
+        'required' => false
+      , 'class' => 'form-control'
+      , 'placeholder' => 'Password'
+      , 'id' => 'password'
+      , 'type' => 'password'
+      ]) ?>
       <div class="checkbox mb-3">
-        <label><input type="checkbox"
-          value="remember-me"> Remember me</label>
+        <label><input type="checkbox" value="remember-me"> Remember me</label>
       </div>
       <?= $this->Form->button(__('Sign in'), [
         'class' => 'btn btn-lg btn-primary btn-block'
@@ -41,7 +49,7 @@
       ]) ?>
       <?= $this->Form->button(__('Sign up'), [
         'class' => 'btn btn-lg btn-outline-seconday btn-block'
-      , 'name' => 'signup' 
+      , 'name' => 'signup'
       ]) ?>
       <p class="mt-5 mb-3 text-muted">&copy;Amazon MWS tools 2018</p>
     <?= $this->Form->end() ?>
