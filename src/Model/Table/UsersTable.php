@@ -77,12 +77,12 @@ class UsersTable extends Table
 
         $validator
             ->integer('role')
-            ->requirePresence('role', 'create')
+            //->requirePresence('role', 'create')
             ->notEmpty('role');
 
         $validator
             ->dateTime('last_login_at')
-            ->requirePresence('last_login_at', 'create')
+            //->requirePresence('last_login_at', 'create')
             ->notEmpty('last_login_at');
 
         return $validator;

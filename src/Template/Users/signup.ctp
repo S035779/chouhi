@@ -16,35 +16,39 @@
   </head>
 
   <body class="text-center">
-    <?= $this->Flash->render() ?>
+    <?= $this->Flash->render(); ?>
     <div class="form-signin">
-      <?= $this->Form->create() ?>
+      <?= $this->Form->create($user, [
+        'url' => ['controller' => 'Users', 'action' => 'signup']
+      , 'class' => 'needs-validation'
+      , 'novalidate' => true
+      ]) ?>
       <img class="mb-4" src="/chouhi/img/bootstrap-solid.svg" alt="" width="72" height="72">
-      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+      <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
+      <?= $this->Form->text('name', [
+        'required' => true
+      , 'class' => 'form-control mb-3'
+      , 'Placeholder' => 'Your name'
+      , 'id' => 'name'
+      , 'type' => 'text'
+      , 'autofocus' => true
+      ]) ?>
       <?= $this->Form->text('email', [
-        'required' => false
+        'required' => true
       , 'class' => 'form-control'
-      , 'placeholder' => 'Email address'
+      , 'Placeholder' => 'Your email'
       , 'id' => 'email'
       , 'type' => 'email'
-      , 'autofocus' => true 
       ]) ?>
       <?= $this->Form->text('password', [
-        'required' => false
+        'required' => true
       , 'class' => 'form-control'
-      , 'placeholder' => 'Password'
+      , 'Placeholder' => 'Your password'
       , 'id' => 'password'
       , 'type' => 'password'
       ]) ?>
-      <div class="checkbox mb-3">
-        <label><input type="checkbox" value="remember-me"> Remember me</label>
-      </div>
-      <?= $this->Form->button(__('Sign in'), [
-        'class' => 'btn btn-lg btn-primary btn-block'
-      , 'name' => 'signin'
-      ]) ?>
-      <?= $this->Form->button(__('Sign up'), [
-        'class' => 'btn btn-lg btn-outline-seconday btn-block'
+      <?= $this->Form->button(__('Sigh up'), [
+        'class' => 'btn btn-lg btn-outline-secondary btn-block'
       , 'name' => 'signup'
       ]) ?>
       <p class="mt-5 mb-3 text-muted">&copy;Amazon MWS tools 2018</p>
