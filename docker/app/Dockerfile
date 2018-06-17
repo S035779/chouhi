@@ -298,6 +298,7 @@ RUN buildDeps='python build-essential' \
 
 USER app
 RUN cd /app/chouhi && composer install
+COPY UIViewTrait.php /app/chouhi/vendor/friendsofcake/bootstrap-ui/src/View
 
 USER root
 WORKDIR /var/www/html
