@@ -292,7 +292,7 @@ class BootstrapController extends AppController
     if($this->request->is('post')) {
       if($fileform->validate($this->request->data)) {
         $tmp_file = $this->request->data['upload_file']['tmp_name'];
-        $new_file = sprintf(ROOT.'\storage\%s'
+        $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
           , $this->request->data['upload_file']['name'] . '_' . time());
         move_uploaded_file($tmp_file, $new_file);
         if($this->AmazonMWS->upsertAsin($new_file, FALSE)) {
@@ -317,7 +317,7 @@ class BootstrapController extends AppController
     if($this->request->is('post')) {
       if($fileform->validate($this->request->data)) {
         $tmp_file = $this->request->data['upload_file']['tmp_name'];
-        $new_file = sprintf(ROOT.'\storage\%s'
+        $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
           , $this->request->data['upload_file']['name'] . '_' . time());
         move_uploaded_file($tmp_file, $new_file);
         if($this->AmazonMWS->upsertAsin($new_file, TRUE)) {
