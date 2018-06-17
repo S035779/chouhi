@@ -144,7 +144,7 @@ class AmazonMWSComponent extends Component
         $entity = $asins->patchEntity($asin, $data);
       }
       if(!$asins->save($entity)) {
-        $this->log_error($asins->errors());
+        $this->log_error($entity->errors());
         return false;
       }
     }
