@@ -4,6 +4,7 @@ namespace App\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\ORM\TableRegistry;
+use Cake\Log\Log;
 use MarketplaceWebServiceProducts\Component\GetMatchingProductForIdComponent;
 use MarketplaceWebServiceSellers\Component\ListMarketplaceParticipationsComponent;
 use MarketplaceWebService\Component\GetReportComponent;
