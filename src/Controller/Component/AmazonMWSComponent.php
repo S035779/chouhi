@@ -9,6 +9,9 @@ use MarketplaceWebServiceProducts\Component\GetMatchingProductForIdComponent;
 use MarketplaceWebServiceSellers\Component\ListMarketplaceParticipationsComponent;
 use MarketplaceWebService\Component\GetReportComponent;
 use MarketplaceWebService\Component\SubmitFeedComponent;
+use Goodby\CSV\Import\Standard\LexerConfig;
+use Goodby\CSV\Import\Standard\Interpreter;
+use Goodby\CSV\Import\Standard\Lexer;
 
 /**
  * AmazonMWS component
@@ -124,67 +127,158 @@ class AmazonMWSComponent extends Component
     return true;
   }
 
-  public function upsertAsin($filename, $suspended)
+  public function upsertAsin($filename, $suspended) 
   {
-    $header = array(
-      'asin' => true
-    , 'marketplace' => true
-    , 'created' => true
-    , 'modified' => true
-    , 'suspended' => true
-    );
+    $config = new LexerConfig();
+    $config
+      ->setDelimiter(",")
+      ->setEnclosure("\"")
+      ->setToCharset('UTF-8')
+      ->setFromCharset('SJIS-WIN')
+    ;
+    $lexer = new Lexer($config);
+    $interpreter = new Interpreter();
+
     $asins = TableRegistry::get('Asins');
-    $datas = $this->setAsin($filename, $header, $suspended);
-    foreach($datas as $data) {
-      $entity = $asins->newEntity($data);
-      $asin = $asins->find()
-        ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
-        ->first();
-      if($asin) {
-        unset($data['created']);
-        $entity = $asins->patchEntity($asin, $data);
+    $line = 0;
+    $interpreter->addObserver(function(array $row) use (&$line, $suspended, $asins) {
+      if($line >= 0) {
+        $data = $this->setAsin($row, $suspended);
+        $entity = $asins->newEntity($data);
+        $asin = $asins->find()
+          ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
+          ->first();
+        if($asin) {
+          unset($data['created']);
+          $entity = $asins->patchEntity($asin, $data);
+        }
+        if(!$asins->save($entity)) {
+          $this->log_error($entity->errors());
+          return false;
+        }
       }
-      if(!$asins->save($entity)) {
-        $this->log_error($entity->errors());
-        return false;
-      }
-    }
+      $line += 1;
+    });
+
+    $lexer->parse($filename, $interpreter);
     return true;
   }
 
-  private function setAsin($filename, $header, $suspended)
+  private function setAsin($row, $suspended) 
   {
-    $datas = array();
-    $datetime = date('Y-m-d H:i:s');
-    $org_file = @fopen($filename, 'rb') or die("File can not opened.\n");
-    flock($org_file, LOCK_SH);
-    while($row = fgetcsv($org_file, 1024, "\t")) {
-      $idx = 0; $_idx = 0;
-      foreach(array_keys($header) as $_header) {
-        if(array_values($header)[$_idx]) {
-          if($_header === 'created' || $_header === 'modified') {
-            $_body = $datetime;
-          } else if($_header === 'suspended' && $suspended === FALSE) {
-            $_body = 0;
-          } else if($_header === 'suspended' && $suspended === TRUE) {
-            $_body = 1;
+    $header = array(
+      'asin' => true
+    , 'description' => false
+    , 'link' => false
+    , 'marketplace' => true
+    , 'suspended' => true
+    , 'created' => true
+    , 'modified' => true
+    );
+    $keys = array_keys($header);
+    $vals = array_values($header);
+    $idx = 0; $_idx = 0;
+    $data = array();
+    foreach($keys as $_header) {
+      if($vals[$_idx]) {
+        switch ($_header) {
+        case 'created':
+        case 'modified':
+          $_body = date('Y-m-d H:i:s');
+          break;
+        case 'suspended':
+          $_body = $suspended ? 1 : 0;
+          break;
+        case 'link':
+          $_header = 'marketplace';
+          if(strpos($row[$idx],self::MWS_BASEURL_JP) === 0) {
+            $_body ='JP'; 
+          } elseif (strpos($row[$idx],self::MWS_BASEURL_US) === 0) {
+            $_body ='US';
+          } elseif (strpos($row[$idx],self::MWS_BASEURL_AU) === 0) {
+            $_body ='AU'; 
           } else {
-            $_body = $this->encode($row[$idx]);
-            $idx += 1;
+            $_body ='JP';
           }
-          $_idx += 1;
-        } else {
-          $_body = 'N/A';
-          $_idx += 1;
+          $idx += 1;
+          break;
+        case 'marketplace':
+          $_body = $row[$idx] ?? 'JP';
+          $idx += 1;
+          break;
+        default:
+          $_body = $this->encode($row[$idx]);
+          $idx += 1;
+          break;
         }
         $data[$_header] = $_body;
       }
-      array_push($datas, $data);
+      $_idx += 1;
     }
-    flock($org_file, LOCK_UN);
-    fclose($org_file);
-    return $datas;
+    return $data;
   }
+
+  //public function upsertAsin($filename, $suspended)
+  //{
+  //  $header = array(
+  //    'asin' => true
+  //  , 'marketplace' => true
+  //  , 'created' => true
+  //  , 'modified' => true
+  //  , 'suspended' => true
+  //  );
+  //  $asins = TableRegistry::get('Asins');
+  //  $datas = $this->setAsin($filename, $header, $suspended);
+  //  foreach($datas as $data) {
+  //    $entity = $asins->newEntity($data);
+  //    $asin = $asins->find()
+  //      ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
+  //      ->first();
+  //    if($asin) {
+  //      unset($data['created']);
+  //      $entity = $asins->patchEntity($asin, $data);
+  //    }
+  //    if(!$asins->save($entity)) {
+  //      $this->log_error($entity->errors());
+  //      return false;
+  //    }
+  //  }
+  //  return true;
+  //}
+
+  //private function setAsin($filename, $header, $suspended)
+  //{
+  //  $datas = array();
+  //  $datetime = date('Y-m-d H:i:s');
+  //  $org_file = @fopen($filename, 'rb') or die("File can not opened.\n");
+  //  flock($org_file, LOCK_SH);
+  //  while($row = fgetcsv($org_file, 1024, "\t")) {
+  //    $idx = 0; $_idx = 0;
+  //    foreach(array_keys($header) as $_header) {
+  //      if(array_values($header)[$_idx]) {
+  //        if($_header === 'created' || $_header === 'modified') {
+  //          $_body = $datetime;
+  //        } else if($_header === 'suspended' && $suspended === FALSE) {
+  //          $_body = 0;
+  //        } else if($_header === 'suspended' && $suspended === TRUE) {
+  //          $_body = 1;
+  //        } else {
+  //          $_body = $this->encode($row[$idx]);
+  //          $idx += 1;
+  //        }
+  //        $_idx += 1;
+  //      } else {
+  //        $_body = 'N/A';
+  //        $_idx += 1;
+  //      }
+  //      $data[$_header] = $_body;
+  //    }
+  //    array_push($datas, $data);
+  //  }
+  //  flock($org_file, LOCK_UN);
+  //  fclose($org_file);
+  //  return $datas;
+  //}
 
   private function encode($str)
   {
