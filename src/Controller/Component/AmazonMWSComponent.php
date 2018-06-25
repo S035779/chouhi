@@ -142,7 +142,7 @@ class AmazonMWSComponent extends Component
     $asins = TableRegistry::get('Asins');
     $line = 0;
     $interpreter->addObserver(function(array $row) use (&$line, $suspended, $asins) {
-      if($line >= 0) {
+      if($line > 0) {
         $data = $this->setAsin($row, $suspended);
         $entity = $asins->newEntity($data);
         $asin = $asins->find()
@@ -168,9 +168,31 @@ class AmazonMWSComponent extends Component
   {
     $header = array(
       'asin' => true
-    , 'description' => false
-    , 'link' => false
-    , 'marketplace' => true
+    , 'brand' => true
+    , 'title' => true
+    ,	'category' => true
+    ,	'description' => true
+    ,	'wordcount' => true
+    ,	'rating' => true
+    ,	'listprice' => true
+    ,	'price' => true
+    ,	'discount' => true
+    ,	'shipping' => true
+    ,	'totalprice' => true
+    ,	'parentasin' => true
+    ,	'childasin' => true
+    ,	'available' => true
+    ,	'fulfilled' => true
+    ,	'thumbnail' => true
+    ,	'url' => true
+    ,	'affiatelink' => true
+    , 'images' => true
+    ,	'ean' => true
+    ,	'upc' => true
+    ,	'salesrank' => true
+    ,	'prime' => true
+    ,	'reviewcount' => true
+    , 'marketplace' => false
     , 'suspended' => true
     , 'created' => true
     , 'modified' => true
@@ -189,7 +211,7 @@ class AmazonMWSComponent extends Component
         case 'suspended':
           $_body = $suspended ? 1 : 0;
           break;
-        case 'link':
+        case 'url':
           $_header = 'marketplace';
           if(strpos($row[$idx],self::MWS_BASEURL_JP) === 0) {
             $_body ='JP'; 

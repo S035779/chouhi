@@ -18,7 +18,7 @@ class UploadFilesForm extends Form
       ->add('upload_file', 'limitFileSize', [
         'provider'  => 'customValidate'
       , 'rule'      => 'limitFileSize'
-      , 'message'   => '200バイト以内にしてください'
+      , 'message'   => '10Mバイト以内にしてください'
       ]);
     return $validator;
   }

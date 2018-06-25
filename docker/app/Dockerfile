@@ -188,6 +188,7 @@ ENV CXXFLAGS "--std=c++0x"
 RUN apt-get update && apt-get install -y --no-install-recommends $BUILD_DEPS $LIB_DEPS \
   && rm -rf /var/lib/apt/lists/* \
   && echo "date.timezone=Asia/Tokyo" >> $PHP_INI_DIR/php.ini \
+  && echo "max_execution_time=0" >> $PHP_INI_DIR/php.ini \
   && docker-php-ext-install zip \
   && cd /tmp && curl -Ls http://download.icu-project.org/files/icu4c/$ICU_RELEASE/icu4c-$(echo $ICU_RELEASE | tr '.' '_')-src.tgz > icu4c-src.tgz \
   && cd /tmp && tar xzf icu4c-src.tgz && cd /tmp/icu/source \
