@@ -23,6 +23,7 @@ class BootstrapController extends AppController
     $this->viewBuilder()->setLayout(env('APP_TEMPLATE'));
     $this->loadComponent('Common');
     $this->loadComponent('AmazonMWS');
+    $this->loadModel('Sellers');
   }
 
   public function beforeFilter(Event $event)
@@ -31,8 +32,23 @@ class BootstrapController extends AppController
   }
 
   public function isAuthorized($user) {
-    $this->user = $user;
-    return true;
+    if(in_array($this->request->getParam('action'), [
+      'token', 'setting', 'calculation'
+    ])) {
+      $this->Common->log_debug('enter the free_area.');
+      return true;
+    }
+
+    if(in_array($this->request->getParam('action'), [
+      'index', 'search', 'market', 'registration', 'suspension'
+    ])) {
+      if($this->Sellers->hasToken($user['email'])) {
+        $this->Common->log_debug('enter the user_area.');
+        return true;
+      }
+    }
+    $this->Common->log_debug('unknown area.');
+    return parent::isAuthorized($user);
   }
 
   /**
@@ -56,7 +72,7 @@ class BootstrapController extends AppController
     $title = 'Token registration for AmazonMWS tools';
     $tokens = TableRegistry::get('Tokens'); 
     $token = $tokens->find()->contain(['Sellers'])
-      ->where(['Sellers.email' => $this->user['email']])
+      ->where(['Sellers.email' => $this->Auth->user('email')])
       ->first();
 
     if ($this->request->is(['patch', 'post', 'put'])) {
@@ -66,7 +82,7 @@ class BootstrapController extends AppController
           $entity = $tokens->patchEntity($token, $request);
         } else {
           $request['suspended'] = 0;
-          $request['seller']['email'] = $this->user['email'];
+          $request['seller']['email'] = $this->Auth->user('email');
           $entity = $tokens->newEntity($request);
         }
         if ($tokens->save($entity)) {
@@ -127,22 +143,11 @@ class BootstrapController extends AppController
     $rise_rate = 0;
     $profit_range = 0;
     $offers = array();
-
     if($this->request->is('post')) {
       $request = $this->request->getData();
-
-      if(!empty($request['period'])) {
-        $avg_hours = intval($request['period']) * 24; 
-      }
-
-      if(!empty($request['rise_rate'])) {
-        $rise_rate = floatval($request['rise_rate']);
-      }
-
-      if(!empty($request['profit_range'])) {
-        $profit_range = intval($request['profit_range']);
-      }
-
+      if(!empty($request['period'       ]))  $avg_hours    = intval(   $request['period'      ]) * 24; 
+      if(!empty($request['rise_rate'    ]))  $rise_rate    = floatval( $request['rise_rate'   ]);
+      if(!empty($request['profit_range' ]))  $profit_range = intval(   $request['profit_range']);
       $_offers = $connection
         ->execute('
           SELECT
@@ -262,7 +267,7 @@ class BootstrapController extends AppController
     $title = 'User setting';
     $users = TableRegistry::get('Users'); 
     $user = $users->find()
-      ->where(['email' => $this->user['email']])
+      ->where(['email' => $this->Auth->user('email')])
       ->first();
 
     if ($this->request->is(['patch', 'post', 'put'])) {

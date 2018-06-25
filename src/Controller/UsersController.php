@@ -18,7 +18,6 @@ class UsersController extends AppController
   {
     parent::initialize();
     $this->viewBuilder()->setLayout('users');
-    $this->loadComponent('Common');
   }
 
   public function beforeFilter(Event $event)

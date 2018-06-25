@@ -45,6 +45,11 @@ class SellersTable extends Table
         ]);
     }
 
+    public function hasToken($email)
+    {
+      return $this->exists(['email' => $email]);
+    }
+
     /**
      * Default validation rules.
      *
