@@ -271,7 +271,7 @@ class BootstrapController extends AppController
         $entity = $users->patchEntity($user, $request);
         if ($users->save($entity)) {
           $this->Flash->success(__('The password has been changed.'));
-          return $this->redirect(['action' => 'index']);
+          return $this->redirect(['action' => 'setting']);
         }
       }
       $this->Common->log_error($entity->errors());
