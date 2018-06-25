@@ -20,7 +20,7 @@ class BootstrapController extends AppController
   public function initialize()
   {
     parent::initialize();
-    $this->viewBuilder()->setLayout(env('APP_TEMPLATE'));
+    $this->viewBuilder()->setLayout('dashboard_'.env('APP_TEMPLATE'));
     $this->loadComponent('Common');
     $this->loadComponent('AmazonMWS');
     $this->loadModel('Sellers');

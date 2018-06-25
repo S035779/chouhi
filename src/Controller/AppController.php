@@ -35,25 +35,28 @@ class AppController extends Controller
         $this->loadComponent('Flash');
         $this->loadComponent('Auth', [
           'authorize'       => ['Controller']
-        , 'authenticate'    => ['Form' =>
-            ['fields' => ['username' => 'email']]
-          ]
-        , 'loginRedirect'   => ['controller' => 'Bootstrap', 'action' => env('APP_TOPPAGE')]
-        , 'logoutRedirect'  => ['controller' => 'Users', 'action' => 'signin']
-        , 'loginAction'     => ['controller' => 'Users', 'action' => 'signin']
+        , 'authenticate'    => ['Form' => ['fields' => ['username' => 'email']]]
+        , 'loginRedirect'   => ['controller' => 'Bootstrap',    'action' => env('APP_TOPPAGE')]
+        , 'logoutRedirect'  => ['controller' => 'Authenticate', 'action' => 'signin']
+        , 'loginAction'     => ['controller' => 'Authenticate', 'action' => 'signin']
         , 'authError'       => 'アクセス権限がありません'
         , 'flash'           => [
-          'params'  => [ 'class' => 'alert alert-danger', 'role' => 'alert' ] 
-        , 'element' => 'flash'
+            'params'  => [ 'class' => 'alert alert-danger', 'role' => 'alert' ]
+          , 'element' => 'flash'
           ]
         ]);
     }
 
     public function isAuthorized($user)
     {
-      if (isset($user['role']) && $user['role'] === 'admin') {
+      if (isset($user['role']) && $user['role'] === 1) {
         return true;
       }
       return false;
+    }
+
+    public function beforeFilter(Event $event) 
+    {
+      $this->Auth->allow(['signin', 'signout', 'signup']);
     }
 }

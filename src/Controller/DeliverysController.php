@@ -28,7 +28,7 @@ class DeliverysController extends AppController
 
   public function isAuthorized($user)
   {
-    return true;
+    return parent::isAuthorized($user);
   }
 
   /**

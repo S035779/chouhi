@@ -34,7 +34,7 @@ $cakeDescription = 'AmazonMWS Tools: the database management tools';
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <?= $this->Html->link(
         env('APP_NAME')
-      , ['controller' => 'Bootstrap', 'action' => env('APP_TOPPAGE')]
+      , ['controller' => 'Management', 'action' => 'index']
       , ['class' => 'navbar-brand col-sm-3 col-md-2 mr-0']
       ) ?>
       <input class="form-control form-control-dark w-100" type="text"
@@ -43,7 +43,7 @@ $cakeDescription = 'AmazonMWS Tools: the database management tools';
         <li class="nav-item text-nowrap">
           <?= $this->Html->link(
             ' Sign out '
-          , ['controller' => 'Users', 'action' => 'signout']
+          , ['controller' => 'Authenticate', 'action' => 'signout']
           , ['class' => 'nav-link']
           ) ?>
         </li>

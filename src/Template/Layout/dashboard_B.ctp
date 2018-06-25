@@ -28,7 +28,7 @@
         <li class="nav-item text-nowrap">
           <?= $this->Html->link(
             __(' Sign out ')
-          , ['controller' => 'Users', 'action' => 'signout']
+          , ['controller' => 'Authenticate', 'action' => 'signout']
           , ['class' => 'nav-link']
           ) ?>
         </li>
@@ -54,6 +54,14 @@
               </li>
               <li class="nav-item">
                 <?= $this->Html->link(
+                  $this->Html->tag('span', '', ['data-feather' => 'bar-chart-2'])
+                  . __(' 新規ASIN登録 ')
+                , ['controller' => 'Bootstrap', 'action' => 'registration']
+                , ['escape' => false, 'class' => 'nav-link']
+                ) ?>
+              </li>
+              <li class="nav-item">
+                <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'search'])
                   . __(' 商品検索 ')
                 , ['controller' => 'Bootstrap', 'action' => 'search']
@@ -65,64 +73,6 @@
                   $this->Html->tag('span', '', ['data-feather' => 'user'])
                   . __(' ユーザ設定 ')
                 , ['controller' => 'Bootstrap', 'action' => 'setting']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'bar-chart-2'])
-                  . __(' 新規ASIN登録 ')
-                , ['controller' => 'Bootstrap', 'action' => 'registration']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-            </ul>
-
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>登録データ管理</span>
-              <a class="d-flex align-items-center text-muted" href="#">
-                <span data-feather="plus-circle"></span>
-              </a>
-            </h6>
-
-            <ul class="nav flex-column mb-2">
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' ASIN管理 ')
-                , ['controller' => 'Asins', 'action' => 'index']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' ユーザ管理 ')
-                , ['controller' => 'Users', 'action' => 'index']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' 商品管理 ')
-                , ['controller' => 'Items', 'action' => 'index']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' 商品検索管理 ')
-                , ['controller' => 'Offers', 'action' => 'index']
-                , ['escape' => false, 'class' => 'nav-link']
-                ) ?>
-              </li>
-              <li class="nav-item">
-                <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'file-text'])
-                  . __(' トークン管理 ')
-                , ['controller' => 'Tokens', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
               </li>

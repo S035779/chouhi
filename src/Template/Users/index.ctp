@@ -4,46 +4,8 @@
  * @var \App\Model\Entity\User[]|\Cake\Collection\CollectionInterface $users
  */
 ?>
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="desctiption" content="bootstrap-4.1.1">
-    <meta name="author" content="Mamoru Hashimoto">
-    <?= $this->Html->meta('icon') ?>
-    <title><?= h($title) ?></title>
-    <!-- Bootstrap CSS -->
-    <?= $this->Html->css([
-      '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'
-    , $this->Elixir->version('css/watchnote.css')
-    ]) ?>
-  </head>
 
-  <body>
-    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <?= $this->Html->link(
-        env('APP_NAME')
-      , ['controller' => 'Bootstrap', 'action' => env('APP_TOPPAGE')]
-      , ['class' => 'navbar-brand col-sm-3 col-md-2 mr-0']
-      ) ?>
-      <input class="form-control form-control-dark w-100" type="text"
-        placeholder="Search" aria-label="Search">
-      <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-          <?= $this->Html->link(
-            ' Sign out '
-          , ['controller' => 'Users', 'action' => 'signout']
-          , ['class' => 'nav-link']
-          ) ?>
-        </li>
-      </ul>
-    </nav>
-    <?= $this->Flash->render() ?>
-
-    <!-- Main menu -->
-    <div class="container-fluid">
-      <div class="row">
-
+        <!-- Main menu -->
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
 
@@ -127,39 +89,3 @@
             </div>
           </div>
         </main>
-
-      </div>
-    </div>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <?= $this->Html->script([
-        '//code.jquery.com/jquery-3.3.1.slim.min.js'
-      , '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'
-      , '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'
-      , '//unpkg.com/feather-icons/dist/feather.min.js'
-      , $this->Elixir->version('js/watchnote.js')
-      ]) ?>
-    <!-- Icons -->
-    <script>feather.replace()</script>
-    <!-- Validation check -->
-    <script>
-    (function() {
-      'use strict';
-      window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms
-          , function(form) {
-          form.addEventListener('submit', function(event) {
-            if(form.checkValidity() === false) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-          }, false);
-        });
-      }, false);
-    })();
-    </script>
-
-  </body>

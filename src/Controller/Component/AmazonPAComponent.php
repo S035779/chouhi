@@ -1,8 +1,8 @@
 <?php
-namespace App\Controller;
+namespace App\Controller\Component;
 
-use App\Controller\AppController;
-use Cake\Event\Event;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Configuration\Country;
 use ApaiIO\Operations\Search;
@@ -13,74 +13,20 @@ use ApaiIO\ResponseTransformer\XmlToArray;
 use ApaiIO\ApaiIO;
 
 /**
- * Sample Controller
+ * AmazonPA component
  */
-class SampleController extends AppController
+class AmazonPAComponent extends Component
 {
 
-  //public $helpers = [
-  //  'Form' => [
-  //    'templates' => 'Templates/form-templates'
-  //  , 'widgets'   => ['datepicker' => ['DatePicker']]
-  //  ]
-  //];
-
-  public function initialize()
-  {
-    parent::initialize();
-    $this->viewBuilder()->setLayout('default');
-    //$this->loadComponent('Common', ['className' => 'MyHoge']);
-    $this->loadComponent('Common');
-    $this->loadComponent('AmazonMWS');
-    $this->access_key       = env('AMZ_PA_ACCESSKEY_JP2', '');
-    $this->secret_key       = env('AMZ_PA_SECRETKEY_JP2', '');
-    $this->associ_tag       = env('AMZ_PA_ASSOCITAG_JP2', '');
-    $this->mws_access_key   = env('AMZ_MWS_ACCESSKEY_JP2', '');
-    $this->mws_secret_key   = env('AMZ_MWS_SECRETKEY_JP2', '');
-    $this->mws_seller_id    = env('AMZ_MWS_SELLER_ID_JP2', '');
-    $this->marketplace_id   = $this->Common::MWS_MARKETPLACE_JP;
-    $this->mws_base_url     = $this->Common::MWS_BASEURL_JP;
-    //echo ("<p>MWS AccessKey" . $this->mws_access_key . "</p>");
-    //echo ("<p>MWS SecretKey" . $this->mws_secret_key . "</p>");
-  }
-
-  public function beforeFilter(Event $event)
-  {
-    parent::beforeFilter($event);
-    //$this->AUth->allow(['']);
-  }
-
-  public function isAuthorized($user) {
-    $this->user = $user;
-    return true;
-  }
-
-  public function getUser() {
-    return $this->user;
-  }
-
-  public function index()
-  {
-    $title = "WatchNote!! Start Page.";
-    //$this->viewBuilder()->getLayout(false);
-    //$this->autoLayout = false;
-    $maxim_en = 'I will prepare and some day my chance will come.';
-    $maxim_jp = '準備しておこう。チャンスはいつか訪れるものだ。';
-    $maxim_person = 'Abraham Lincoln （エイブラハム・リンカーン）';
-    $this->set(compact('title', 'maxim_en', 'maxim_jp', 'maxim_person'));
-
-    //$number = 20;
-    //$ret1 = $this->AmazonMWS->abcd($number);
-    //$ret2 = $this->AmazonMWS->efgh()['name'];
-    //$ret3 = $this->AmazonMWS->plusMethod();
-    //print_r($ret1);
-    //print_r($ret2);
-    //print_r($ret3);
-
-  }
+  /**
+   * Default configuration.
+   *
+   * @var array
+   */
+  protected $_defaultConfig = [];
 
   public function search() {
-    $title = "Amazon Item Search";
+    // Amazon Item Search
     $conf = new GenericConfiguration();
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
@@ -104,11 +50,11 @@ class SampleController extends AppController
     $search->setPage(3);
     $search->setResponseGroup(array('Large', 'Small'));
     $response = $apaiIo->runOperation($search);
-    $this->set(compact('title', 'response'));
+    return $response;
   }
 
   public function similarity() {
-    $title = "Amazon Simple Similarity Lookup";
+    // Amazon Simple Similarity Lookup
     $conf = new GenericConfiguration();
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
@@ -129,11 +75,11 @@ class SampleController extends AppController
     $lookup->setItemId('B01NCXFWIZ');
     $lookup->setResponseGroup(array('Large', 'Small'));
     $response = $apaiIo->runOperation($lookup);
-    $this->set(compact('title', 'response'));
+    return $response;
   }
 
   public function lookup() {
-    $title = "Amazon Simple Lookup";
+    // Amazon Simple Lookup
     $conf = new GenericConfiguration();
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
@@ -154,11 +100,11 @@ class SampleController extends AppController
     $lookup->setItemId('B01NCXFWIZ');
     $lookup->setResponseGroup(array('Large', 'Small'));
     $response = $apaiIo->runOperation($lookup);
-    $this->set(compact('title', 'response'));
+    return $response
   }
 
   public function nodelookup() {
-    $title = "Amazon Browse Node Lookup";
+    // Amazon Browse Node Lookup
     $conf = new GenericConfiguration();
     $client = new \GuzzleHttp\Client();
     $request = new \ApaiIO\Request\GuzzleRequest($client);
@@ -178,11 +124,11 @@ class SampleController extends AppController
     $nodelookup = new BrowseNodeLookup();
     $nodelookup->setNodeId(637872);
     $response = $apaiIo->runOperation($nodelookup);
-    $this->set(compact('title', 'response'));
+    return $response;
   }
 
   public function getmatchingproductforid() {
-    $title = "Amazon Get Matching Product For Id";
+    // Amazon Get Matching Product For Id
     $jobType = 1;
     $params=array();
     $params['AWSAccessKeyId']   = $this->mws_access_key;
@@ -199,7 +145,7 @@ class SampleController extends AppController
     $response = $this->AmazonMWS
         ->fetchMatchingProductForId($params, $baseurl, $this->mws_secret_key, $jobType);
     $this->Flash->success(__('Success: MWS GetMatchingProductForId completed!'));
-    $this->set(compact('title', 'response'));
+    return $response;
   }
 
   public function getlowestofferlistingsforasin()
@@ -226,7 +172,8 @@ class SampleController extends AppController
       }
     }
     $this->Flash->success(__('Success: MWS GetLowestOfferListingForASIN completed!'));
-    $this->set(compact('getLowestPrice'));
+    $this->set(compact(''));
+    return $getLowestPrice;
   }
 
   public function requestreport() {
@@ -250,7 +197,7 @@ class SampleController extends AppController
     } else {
       $this->Flash->error(__('Error: MWS RequestReport can\'t get RequestId.'));
     }
-    $this->set(compact('ReportRequestId'));
+    return $ReportRequestId;
   }
 
   public function getreportrequestlist() {
@@ -278,7 +225,7 @@ class SampleController extends AppController
       $this->Flash
         ->error(__('Error: MWS GetReportRequestList con\'t get ReportProcessingStatus.'));
     }
-    $this->set(compact('GeneratedReportId'));
+    return $GeneratedReportId;
   }
 
   public function getreport() {
@@ -299,7 +246,7 @@ class SampleController extends AppController
     } else {
       $this->Flash->error(__('Error: MWS GetReport con\'t get status.'));
     }
-    $this->set(compact('response'));
+    return $response;
   }
 
   public function submitfeed() {
@@ -324,7 +271,7 @@ class SampleController extends AppController
     } else {
       $this->Flash->error(__('Error: MWS SubmitFeed con\'t get response.'));
     }
-    $this->set(compact('FeedSubmissionId'));
+    return $FeedSubmissionId;
   }
 
 
@@ -351,7 +298,7 @@ class SampleController extends AppController
     } else {
       $this->Flash->error(__('Error: MWS GetFeedSubmissionList con\'t get response.'));
     }
-    $this->set(compact('FeedProcessingStatus'));
+    return $FeedProcessingStatus;
   }
 
   public function getfeedsubmissionresult()
@@ -369,7 +316,7 @@ class SampleController extends AppController
     $response
       = $this->AmazonMWS->upload($params, $this->mws_base_url, $this->mws_secret_key, $jobType);
     $this->Flash->success(__('Success: MWS GetFeedSubmissionResult completed!'));
-    $this->set(compact('response'));
+    return $response;
   }
 
   public function listorders()
@@ -394,6 +341,6 @@ class SampleController extends AppController
       $getOrderId = $getOrderId . $Order->AmazonOrderId . ':';
     }
     $this->Flash->success(__('Success: MWS ListOrders completed!'));
-    $this->set(compact('getOrderId'));
+    return $getOrderId;
   }
 }

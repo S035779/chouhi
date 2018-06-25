@@ -12,7 +12,7 @@
       <li class="nav-item">
         <?= $this->Form->postLink(
           $this->Html->tag('span', '', ['data-feather' => 'file'])
-          . __(' 出品削除 ')
+          . __(' 商品削除 ')
         , ['controller' => 'Offers', 'action' => 'delete', $offer->id]
         , ['confirm' => __('Are you sure you want to delete # {0}?', $offer->id)
           , 'escape' => false, 'class' => 'nav-link']
@@ -21,7 +21,7 @@
       <li class="nav-item">
         <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'home'])
-          . __(' 出品一覧 ') .
+          . __(' 商品一覧 ') .
           $this->Html->tag('span', '(current)', ['class' => 'sr-only'])
           , ['controller' => 'Offers', 'action' => 'index']
           , ['escape' => false, 'class' => 'nav-link active']
@@ -30,7 +30,7 @@
       <li class="nav-item">
         <?= $this->Html->link(
           $this->Html->tag('span', '', ['data-feather' => 'file'])
-          . __(' 出品追加 ')
+          . __(' 商品追加 ')
         , ['controller' => 'Offers', 'action' => 'add']
         , ['escape' => false, 'class' => 'nav-link']
         ) ?>
@@ -43,7 +43,7 @@
 <!-- Main contents -->
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><?= __('出品管理マスタ') ?></h1>
+    <h1 class="h2"><?= __('商品管理マスタ') ?></h1>
   </div>
 
   <div class="container">
@@ -52,7 +52,7 @@
 
         <?= $this->Form->create($offer) ?>
         <fieldset>
-            <legend><?= __('出品編集') ?></legend>
+            <legend><?= __('商品編集') ?></legend>
             <?php
                 echo $this->Form->control('asin');
                 echo $this->Form->control('availability');
