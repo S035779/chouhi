@@ -41,7 +41,7 @@ class AppController extends Controller
         , 'loginRedirect'   => ['controller' => 'Bootstrap', 'action' => env('APP_TOPPAGE')]
         , 'logoutRedirect'  => ['controller' => 'Users', 'action' => 'signin']
         , 'loginAction'     => ['controller' => 'Users', 'action' => 'signin']
-        , 'authError'       => 'Sign-in required'
+        , 'authError'       => 'アクセス権限がありません'
         , 'flash'           => [
           'params'  => [ 'class' => 'alert alert-danger', 'role' => 'alert' ] 
         , 'element' => 'flash'
