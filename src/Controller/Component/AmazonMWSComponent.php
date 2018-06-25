@@ -139,11 +139,21 @@ class AmazonMWSComponent extends Component
     $lexer = new Lexer($config);
     $interpreter = new Interpreter();
 
-    $asins = TableRegistry::get('Asins');
     $line = 0;
+    $asins = TableRegistry::get('Asins');
     $interpreter->addObserver(function(array $row) use (&$line, $suspended, $asins) {
+      $head = count($row) <= 2
+        ? array('asin' => true, 'marketplace' => true
+          , 'suspended' => true, 'created' => true, 'modified' => true)
+        : array('asin' => true, 'brand' => true, 'title' => true, 'category' => true
+          , 'description' => true, 'wordcount' => true, 'rating' => true, 'listprice' => true
+          , 'price' => true, 'discount' => true, 'shipping' => true, 'totalprice' => true
+          , 'parentasin' => true, 'childasin' => true, 'available' => true, 'fulfilled' => true
+          , 'thumbnail' => true,	'url' => true, 'affiatelink' => true, 'images' => true
+          , 'ean' => true, 'upc' => true, 'salesrank' => true, 'prime' => true, 'reviewcount' => true
+          , 'suspended' => true, 'created' => true, 'modified' => true);
       if($line > 0) {
-        $data = $this->setAsin($row, $suspended);
+        $data = $this->setAsin($head, $row, $suspended);
         $entity = $asins->newEntity($data);
         $asin = $asins->find()
           ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
@@ -164,46 +174,15 @@ class AmazonMWSComponent extends Component
     return true;
   }
 
-  private function setAsin($row, $suspended) 
+  private function setAsin($head, $row, $suspended) 
   {
-    $header = array(
-      'asin' => true
-    , 'brand' => true
-    , 'title' => true
-    ,	'category' => true
-    ,	'description' => true
-    ,	'wordcount' => true
-    ,	'rating' => true
-    ,	'listprice' => true
-    ,	'price' => true
-    ,	'discount' => true
-    ,	'shipping' => true
-    ,	'totalprice' => true
-    ,	'parentasin' => true
-    ,	'childasin' => true
-    ,	'available' => true
-    ,	'fulfilled' => true
-    ,	'thumbnail' => true
-    ,	'url' => true
-    ,	'affiatelink' => true
-    , 'images' => true
-    ,	'ean' => true
-    ,	'upc' => true
-    ,	'salesrank' => true
-    ,	'prime' => true
-    ,	'reviewcount' => true
-    , 'marketplace' => false
-    , 'suspended' => true
-    , 'created' => true
-    , 'modified' => true
-    );
-    $keys = array_keys($header);
-    $vals = array_values($header);
+    $keys = array_keys($head);
+    $vals = array_values($head);
     $idx = 0; $_idx = 0;
     $data = array();
-    foreach($keys as $_header) {
+    foreach($keys as $_head) {
       if($vals[$_idx]) {
-        switch ($_header) {
+        switch ($_head) {
         case 'created':
         case 'modified':
           $_body = date('Y-m-d H:i:s');
@@ -212,7 +191,7 @@ class AmazonMWSComponent extends Component
           $_body = $suspended ? 1 : 0;
           break;
         case 'url':
-          $_header = 'marketplace';
+          $_head = 'marketplace';
           if(strpos($row[$idx],self::MWS_BASEURL_JP) === 0) {
             $_body ='JP'; 
           } elseif (strpos($row[$idx],self::MWS_BASEURL_US) === 0) {
@@ -233,7 +212,7 @@ class AmazonMWSComponent extends Component
           $idx += 1;
           break;
         }
-        $data[$_header] = $_body;
+        $data[$_head] = $_body;
       }
       $_idx += 1;
     }

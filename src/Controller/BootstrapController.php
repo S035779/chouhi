@@ -351,7 +351,7 @@ class BootstrapController extends AppController
         }
         if ($ships->save($entity)) {
           $this->Flash->success(__('The price calculation has been saved.'));
-          return $this->redirect(['action' => 'index']);
+          return $this->redirect(['action' => 'calculation']);
         }
         $this->Common->log_error($entity->errors());
         $this->Flash->error(__('The price calculation cound not be saved. Please, try again.'));
