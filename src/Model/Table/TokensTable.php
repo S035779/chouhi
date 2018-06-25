@@ -78,20 +78,17 @@ class TokensTable extends Table
         $validator
             ->scalar('pa_access_key')
             ->maxLength('pa_access_key', 255)
-            ->requirePresence('pa_access_key', 'create')
-            ->notEmpty('pa_access_key');
+            ->AllowEmpty('pa_access_key');
 
         $validator
             ->scalar('pa_secret_key')
             ->maxLength('pa_secret_key', 255)
-            ->requirePresence('pa_secret_key', 'create')
-            ->notEmpty('pa_secret_key');
+            ->AllowEmpty('pa_secret_key');
 
         $validator
             ->scalar('pa_associate_tag')
             ->maxLength('pa_associate_tag', 255)
-            ->requirePresence('pa_associate_tag', 'create')
-            ->notEmpty('pa_associate_tag');
+            ->AllowEmpty('pa_associate_tag');
 
         return $validator;
     }

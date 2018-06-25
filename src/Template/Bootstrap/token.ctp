@@ -67,7 +67,7 @@
                   <div class="mb-3">
                     <label for="pa_access_key"><?= __('PAアクセスキー') ?></label>
                     <?= $this->Form->text('pa_access_key', [
-                      'required'    => true
+                      'required'    => false
                     , 'class'       => 'form-control'
                     , 'placeholder' => 'Your PA Access Key Id'
                     ])?>
@@ -79,7 +79,7 @@
                   <div class="mb-3">
                     <label for="pa_secret_key"><?= __('PAシークレットキー') ?></label>
                     <?= $this->Form->text('pa_secret_key', [
-                      'required'    => true
+                      'required'    => false
                     , 'class'       => 'form-control'
                     , 'placeholder' => 'Your PA Secret Key'
                     ])?>
@@ -91,7 +91,7 @@
                   <div class="mb-3">
                     <label for="pa_associate_tag"><?= __('アソシエイトタグ') ?></label>
                     <?= $this->Form->text('pa_associate_tag', [
-                      'required'    => true
+                      'required'    => false
                     , 'class'       => 'form-control'
                     , 'placeholder' => 'Your Associate Tag'
                     ])?>
