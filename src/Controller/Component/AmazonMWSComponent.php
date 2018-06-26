@@ -134,9 +134,9 @@ class AmazonMWSComponent extends Component
       ->setDelimiter(',')
       ->setEnclosure('"')
       ->setEscape('\\')
-      ->setToCharset('UTF-8')
-      //->setFromCharset('SJIS-win')
       ->setIgnoreHeaderLine(true)
+      //->setToCharset('UTF-8')
+      //->setFromCharset('SJIS-win')
     ;
     $lexer = new Lexer($config);
     $interpreter = new Interpreter();
