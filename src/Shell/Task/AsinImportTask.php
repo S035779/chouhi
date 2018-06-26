@@ -10,6 +10,7 @@ use ApaiIO\Operations\Lookup;
 use ApaiIO\ResponseTransformer\XmlToArray;
 use ApaiIO\ApaiIO;
 use React\Promise;
+use React\EventLoop;
 
 /**
  * AsinImport shell task.
@@ -95,7 +96,7 @@ class AsinImportTask extends Shell
       $query->values($result);
     }
     if(!$query->execute()) {
-      $this->log_error($query->errors());
+      $this->log_error($query->errors(), __FILE__, __LINE__);
       return false;
     }
     return true;
@@ -128,7 +129,7 @@ class AsinImportTask extends Shell
         $entity = $asins->patchEntity($asin, $result);
       }
       if(!$asins->save($entity)) {
-        $this->log_error($entity->errors());
+        $this->log_error($entity->errors(), __FILE__, __LINE__);
         return false;
       }
     }
@@ -146,24 +147,26 @@ class AsinImportTask extends Shell
     //debug($_response);
 
     foreach($_response as $response) {
-      $operation    = $response['fetchAsin']['OperationRequest'];
-      $parameter    = $response['fetchAsin']['Items']['Request'];
-      $_items       = $response['fetchAsin']['Items']['Item'];
-      $items        = array_values($_items) === $_items ? $_items : [$_items];
-      $marketplace  = $response['marketplace'];
-      $data = array();
-      foreach($items as $item) {
-        if($item) {
-          if($vals[0]) $data[$keys[0]] = $item['ASIN'] ?? 'N/A';
-          if($vals[1]) $data[$keys[1]] = $item['ItemAttributes']['EAN']   ?? 'N/A';
-          if($vals[2]) $data[$keys[2]] = $item['ItemAttributes']['ISBN']  ?? 'N/A';
-          if($vals[3]) $data[$keys[3]] = $item['ItemAttributes']['SKU']   ?? 'N/A'; 
-          if($vals[4]) $data[$keys[4]] = $item['ItemAttributes']['UPC']   ?? 'N/A'; 
-          if($vals[5]) $data[$keys[5]] = $marketplace;
-          if($vals[6]) $data[$keys[6]] = $datetime;
-          if($vals[7]) $data[$keys[7]] = $datetime;
-          if($vals[8]) $data[$keys[8]] = 0;
-          array_push($datas, $data);
+      if($response) {
+        $operation    = $response['fetchAsin']['OperationRequest'];
+        $parameter    = $response['fetchAsin']['Items']['Request'];
+        $_items       = $response['fetchAsin']['Items']['Item'];
+        $items        = array_values($_items) === $_items ? $_items : [$_items];
+        $marketplace  = $response['marketplace'];
+        $data = array();
+        foreach($items as $item) {
+          if($item) {
+            if($vals[0]) $data[$keys[0]] = $item['ASIN'] ?? 'N/A';
+            if($vals[1]) $data[$keys[1]] = $item['ItemAttributes']['EAN']   ?? 'N/A';
+            if($vals[2]) $data[$keys[2]] = $item['ItemAttributes']['ISBN']  ?? 'N/A';
+            if($vals[3]) $data[$keys[3]] = $item['ItemAttributes']['SKU']   ?? 'N/A'; 
+            if($vals[4]) $data[$keys[4]] = $item['ItemAttributes']['UPC']   ?? 'N/A'; 
+            if($vals[5]) $data[$keys[5]] = $marketplace;
+            if($vals[6]) $data[$keys[6]] = $datetime;
+            if($vals[7]) $data[$keys[7]] = $datetime;
+            if($vals[8]) $data[$keys[8]] = 0;
+            array_push($datas, $data);
+          }
         }
       }
     }
@@ -178,13 +181,15 @@ class AsinImportTask extends Shell
           //debug($result);
           $response = $result;
         }, function($error) {
-          $this->log_error($error);
+          //debug('exception');
+          $this->log_error($error, __FILE__, __LINE__);
         });
     return $response;
   }
 
   private function _fetchAsins($request) 
   {
+    $loop = EventLoop\Factory::create();
     $response = array();
     $asins_jp = array();
     $asins_au = array();
@@ -196,50 +201,88 @@ class AsinImportTask extends Shell
       switch($_request['marketplace']) {
       case 'JP':
         if($this->isKey('JP')) array_push($asins_jp, $_request['asin']);
-        if(count($asins_jp) > 10) {
-          array_push($response, $this->fetchAsin(implode(',', $asins_jp), 'JP'));
+        if(count($asins_jp) >= 10) {
+          array_push($response, $this->retryAsin(implode(',', $asins_jp), 'JP', $loop));
           $asins_jp = array();
         }
         break;
       case 'AU':
         if($this->isKey('AU')) array_push($asins_au, $_request['asin']);
-        if(count($asins_au) > 10) {
-          array_push($response, $this->fetchAsin(implode(',', $asins_au), 'AU'));
+        if(count($asins_au) >= 10) {
+          array_push($response, $this->retryAsin(implode(',', $asins_au), 'AU', $loop));
           $asins_au = array();
         }
         break;
       case 'US':
         if($this->isKey('US')) array_push($asins_us, $_request['asin']);
-        if(count($asins_us) > 10) {
-          array_push($response, $this->fetchAsin(implode(',', $asins_us), 'US'));
+        if(count($asins_us) >= 10) {
+          array_push($response, $this->retryAsin(implode(',', $asins_us), 'US', $loop));
           $asins_us = array();
         }
         break;
       }
       if($idx === $eol - 1) {
         if(count($asins_jp) !== 0)
-          array_push($response, $this->fetchAsin(implode(',', $asins_jp), 'JP'));
+          array_push($response, $this->retryAsin(implode(',', $asins_jp), 'JP', $loop));
         if(count($asins_au) !== 0) 
-          array_push($response, $this->fetchAsin(implode(',', $asins_au), 'AU'));
+          array_push($response, $this->retryAsin(implode(',', $asins_au), 'AU', $loop));
         if(count($asins_us) !== 0) 
-          array_push($response, $this->fetchAsin(implode(',', $asins_us), 'US'));
+          array_push($response, $this->retryAsin(implode(',', $asins_us), 'US', $loop));
       }
       $idx += 1;
     }
     //debug($response);
+    $loop->run();
     return $response;
   }
 
-  private function fetchAsin($asin, $marketplace)
+  private function retryAsin($asin, $marketplace, $loop)
+  {
+    return $this->retry($loop, function() use ($asin, $marketplace, $loop) {
+        return $this->fetchAsin(['asin' => $asin, 'marketplace' => $marketplace]);
+      })
+      ->otherwise(
+        function($updated) {
+          if($updated) $this->log_error($updated, __FILE__, __LINE__);
+        })
+      ;
+  }
+
+  private function retry($loop, $callback, $interval=3, $maximum=3, $retry=0, $deferred=null) 
+  {
+    $deferred = $deferred ?: new Promise\Deferred();
+    $promise = $callback();
+    $promise
+      ->then(
+        function($value) use ($deferred) {
+          $deferred->resolve($value);
+        },
+        function($reason) use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
+          if($reason) $this->log_error($reason, __FILE__, __LINE__);
+          if($retry++ >= $maximum) return $deferred->reject($reason);
+          $loop->addTimer($interval, function($timer)
+            use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
+            $this->retry($loop, $callback, $interval, $maximum, $retry, $deferred);
+          });
+        })
+      ->otherwise(
+        function($updated) {
+          if($updated) $this->log_error($updated, __FILE__, __LINE__);
+        })
+      ;
+    return $deferred->promise();
+  }
+
+  private function fetchAsin($request)
   {
     $deferred = new Promise\Deferred();
-    $this->_fetchAsin(function($error, $response) use ($deferred){
+    $this->_fetchAsin(function($error, $result) use ($deferred){
       if($error) {
-        $this->log_error($error);
         $deferred->reject($error);
+      } else {
+        $deferred->resolve($result);
       }
-      $deferred->resolve($response);
-    }, $asin, $marketplace);
+    }, $request['asin'], $request['marketplace']);
     return $deferred->promise();
   }
 
@@ -274,7 +317,6 @@ class AsinImportTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
-    sleep(5);
     try {
       $conf
         ->setCountry($country)
@@ -282,23 +324,22 @@ class AsinImportTask extends Shell
         ->setSecretKey($secret_key)
         ->setAssociateTag($associ_tag)
         ->setRequest($request)
-        ->setResponseTransformer(new XmlToArray())
-      ;
-    } catch(\Exception $e) {
+        ->setResponseTransformer(new XmlToArray());
+      $apaiIO = new ApaiIO($conf);
+      $lookup = new Lookup();
+      $lookup->setItemId($asin);
+      $lookup->setCondition('All');
+      $lookup->setMerchantId('All');
+      $lookup->setResponseGroup(array('ItemAttributes'));
+      $response = $apaiIO->runOperation($lookup);
+      print('-');
+    } catch (\Exception $e) {
       print('x');
-      $callback($e->getMessage(), []);
+      return $callback($e->getMessage(), null);
     }
 
-    $apaiIO = new ApaiIO($conf);
-    $lookup = new Lookup();
-    $lookup->setItemId($asin);
-    $lookup->setCondition('All');
-    $lookup->setMerchantId('All');
-    $lookup->setResponseGroup(array('ItemAttributes'));
-
-    print('-');
     $callback(null, [
-      'fetchAsin'   => $apaiIO->runOperation($lookup)
+      'fetchAsin'   => $response
     , 'marketplace' => $marketplace
     ]);
   }
@@ -330,15 +371,15 @@ class AsinImportTask extends Shell
     return $isKey;
   }
 
-  private function log_debug($messate)
+  private function log_debug($message)
   {
     $displayName = '[' . get_class($this) . '] ';
     Log::debug($displayName . print_r($message, true),  ['scope' => ['crons']]);
   }
 
-  private function log_error($messate)
+  private function log_error($message, $file, $line)
   {
     $displayName = '[' . get_class($this) . '] ';
-    Log::error($displayName . print_r($message, true),  ['scope' => ['crons']]);
+    Log::error($displayName . sprintf('%s in %s at %d.', $message, $file, $line) ,  ['scope' => ['crons']]);
   }
 }

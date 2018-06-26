@@ -299,7 +299,7 @@ RUN buildDeps='python build-essential' \
   && apt-get purge -y --auto-remove $buildDeps
 
 USER app
-RUN cd /app/chouhi && composer install
+RUN cd /app/chouhi && composer install && ln -s /var/www/html/storage storage
 COPY UIViewTrait.php /app/chouhi/vendor/friendsofcake/bootstrap-ui/src/View
 
 USER root

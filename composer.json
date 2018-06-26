@@ -17,6 +17,7 @@
         "josegonzalez/dotenv": "3.*",
         "mobiledetect/mobiledetectlib": "2.*",
         "pgbi/cakephp3-soft-delete": "~1.0",
+        "react/event-loop": "^0.5.2",
         "react/promise": "^2.5.1"
     },
     "require-dev": {
