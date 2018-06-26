@@ -3,6 +3,9 @@ namespace App\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\ORM\TableRegistry;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\CommonComponent;
 use Cake\Log\Log;
 use ApaiIO\Configuration\GenericConfiguration;
 use ApaiIO\Configuration\Country;
@@ -35,6 +38,7 @@ class AsinImportTask extends Shell
     , 'secret_key' => env('AMZ_PA_SECRETKEY_US', '')
     , 'associ_tag' => env('AMZ_PA_ASSOCITAG_US', '')
     );
+    $this->Common = new CommonComponent(new ComponentRegistry());
   }
   /**
    * Manage the available sub-commands along with their arguments and help
@@ -96,7 +100,7 @@ class AsinImportTask extends Shell
       $query->values($result);
     }
     if(!$query->execute()) {
-      $this->log_error($query->errors(), __FILE__, __LINE__);
+      $this->Common->log_error($query->errors(), __FILE__, __LINE__, 'crons');
       return false;
     }
     return true;
@@ -129,7 +133,7 @@ class AsinImportTask extends Shell
         $entity = $asins->patchEntity($asin, $result);
       }
       if(!$asins->save($entity)) {
-        $this->log_error($entity->errors(), __FILE__, __LINE__);
+        $this->Common->log_error($entity->errors(), __FILE__, __LINE__, 'crons');
         return false;
       }
     }
@@ -182,7 +186,7 @@ class AsinImportTask extends Shell
           $response = $result;
         }, function($error) {
           //debug('exception');
-          $this->log_error($error, __FILE__, __LINE__);
+          $this->Common->log_error($error, __FILE__, __LINE__, 'crons');
         });
     return $response;
   }
@@ -200,21 +204,21 @@ class AsinImportTask extends Shell
     foreach($request as $_request) {
       switch($_request['marketplace']) {
       case 'JP':
-        if($this->isKey('JP')) array_push($asins_jp, $_request['asin']);
+        if($this->Common->isKey('JP')) array_push($asins_jp, $_request['asin']);
         if(count($asins_jp) >= 10) {
           array_push($response, $this->retryAsin(implode(',', $asins_jp), 'JP', $loop));
           $asins_jp = array();
         }
         break;
       case 'AU':
-        if($this->isKey('AU')) array_push($asins_au, $_request['asin']);
+        if($this->Common->isKey('AU')) array_push($asins_au, $_request['asin']);
         if(count($asins_au) >= 10) {
           array_push($response, $this->retryAsin(implode(',', $asins_au), 'AU', $loop));
           $asins_au = array();
         }
         break;
       case 'US':
-        if($this->isKey('US')) array_push($asins_us, $_request['asin']);
+        if($this->Common->isKey('US')) array_push($asins_us, $_request['asin']);
         if(count($asins_us) >= 10) {
           array_push($response, $this->retryAsin(implode(',', $asins_us), 'US', $loop));
           $asins_us = array();
@@ -238,39 +242,14 @@ class AsinImportTask extends Shell
 
   private function retryAsin($asin, $marketplace, $loop)
   {
-    return $this->retry($loop, function() use ($asin, $marketplace, $loop) {
+    return $this->Common->retry($loop, function() use ($asin, $marketplace, $loop) {
         return $this->fetchAsin(['asin' => $asin, 'marketplace' => $marketplace]);
       })
       ->otherwise(
         function($updated) {
-          if($updated) $this->log_error($updated, __FILE__, __LINE__);
+          if($updated) $this->Common->log_error($updated, __FILE__, __LINE__, 'crons');
         })
       ;
-  }
-
-  private function retry($loop, $callback, $interval=3, $maximum=3, $retry=0, $deferred=null) 
-  {
-    $deferred = $deferred ?: new Promise\Deferred();
-    $promise = $callback();
-    $promise
-      ->then(
-        function($value) use ($deferred) {
-          $deferred->resolve($value);
-        },
-        function($reason) use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
-          if($reason) $this->log_error($reason, __FILE__, __LINE__);
-          if($retry++ >= $maximum) return $deferred->reject($reason);
-          $loop->addTimer($interval, function($timer)
-            use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
-            $this->retry($loop, $callback, $interval, $maximum, $retry, $deferred);
-          });
-        })
-      ->otherwise(
-        function($updated) {
-          if($updated) $this->log_error($updated, __FILE__, __LINE__);
-        })
-      ;
-    return $deferred->promise();
   }
 
   private function fetchAsin($request)
@@ -342,44 +321,5 @@ class AsinImportTask extends Shell
       'fetchAsin'   => $response
     , 'marketplace' => $marketplace
     ]);
-  }
-  
-  private function isKey($marketplace)
-  {
-    $isKey = false;
-    switch($marketplace) {
-    case 'JP':
-      if(   $this->access_keys_jp['access_key'] !== ''
-        &&  $this->access_keys_jp['secret_key'] !== ''
-        &&  $this->access_keys_jp['associ_tag'] !== ''
-      ) $isKey = true;
-      break;
-    case 'AU':
-      if(   $this->access_keys_au['access_key'] !== ''
-        &&  $this->access_keys_au['secret_key'] !== ''
-        &&  $this->access_keys_au['associ_tag'] !== ''
-      ) $isKey = true;
-      break;
-    case 'US':
-      if(   $this->access_keys_us['access_key'] !== ''
-        &&  $this->access_keys_us['secret_key'] !== ''
-        &&  $this->access_keys_us['associ_tag'] !== ''
-      ) $isKey = true;
-      break;
-    }
-    //print_r($isKey . "\n");
-    return $isKey;
-  }
-
-  private function log_debug($message)
-  {
-    $displayName = '[' . get_class($this) . '] ';
-    Log::debug($displayName . print_r($message, true),  ['scope' => ['crons']]);
-  }
-
-  private function log_error($message, $file, $line)
-  {
-    $displayName = '[' . get_class($this) . '] ';
-    Log::error($displayName . sprintf('%s in %s at %d.', $message, $file, $line) ,  ['scope' => ['crons']]);
   }
 }

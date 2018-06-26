@@ -4,8 +4,8 @@ namespace App\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Log\Log;
-//use GuzzleHttp\Psr7;
-//use GuzzleHttp\Exception\TransferException;
+use React\Promise;
+use React\EventLoop;
 
 /**
  * Common component
@@ -19,128 +19,99 @@ class CommonComponent extends Component
    */
   protected $_defaultConfig = [];
 
-  //public function upload($params, $baseurl, $secret_key, $jobType=0)
-  //{
-  //  $query = $this->create_query($params);
-  //  $signature = $this->create_signature($baseurl, $query, $secret_key, $jobType);
-  //  $url = $this->create_url($baseurl, $query, $signature);
-  //  $handle = $this->openfile();
-  //}
-
-  //public function fetch($params, $baseurl, $secret_key, $jobType=0)
-  //{
-  //  $query = $this->create_query($params);
-  //  $signature = $this->create_signature($baseurl, $query, $secret_key, $jobType);
-  //  $url = $this->create_url($baseurl, $query, $signature);
-  //  $client = new \GuzzleHttp\Client();
-  //  try {
-  //    $response = $client->post($url);
-  //  } catch (TransferException $e) {
-  //    echo Psr7\str($e->getRequest());
-  //    if ($e->hasResponse()) {
-  //      echo Psr7\str($e->getResponse());
-  //    }
-  //  }
-  //  return $this->parseXml($response);
-  //}
-
-  //public function getFeedType($jobType)
-  //{
-  //  switch($jobType) {
-  //    case 1:
-  //      return '_POST_FLAT_FILE_INVLOADER_DATA_';
-  //    case 2:
-  //      return '_POST_FLAT_FILE_PRICEANDQUANTITYONLY_UPDATE_DATA_';
-  //    case 3:
-  //      return '_POST_FLAT_FILE_LISTING_DATA_';
-  //  }
-  //}
-
-  //public function getReportType($reportType)
-  //{
-  //  switch($reportType) {
-  //  case 1:
-  //    return '_GET_FLAT_FILE_OPEN_LISTINGS_DATA_';
-  //  }
-  //}
-
-  //public function getPurgeAndReplace($jobType, $allChange) {
-  //  switch($jobType) {
-  //    case 1:
-  //      if ($allChange) {
-  //        return 'true';
-  //      } else {
-  //        return 'false';
-  //      }
-  //    case 2:
-  //      return 'false';
-  //    case 3:
-  //      return 'false';
-  //  }
-  //}
-
-  //private function create_query($params)
-  //{
-  //  ksort($params);
-  //  $query = '';
-  //  foreach ($params as $key => $value) {
-  //    $query .= $key . '=' . $this->urlencode_rfc3986($value) . '&';
-  //  }
-  //  return substr($query, 0, -1);
-  //}
-
-  //private function create_signature($baseurl, $query, $secret_key, $jobType)
-  //{
-  //  $parsed_url = parse_url($baseurl);
-  //  if($jobType == 2) {
-  //    $string_to_sign = 'POST'  . "\n"
-  //      . $parsed_url['host']   . "\n"
-  //      . $parsed_url['path']   . "\n"
-  //      . $query;
-  //  } else {
-  //    $string_to_sign = 'GET'   . "\n" 
-  //      . $parsed_url['host']   . "\n"
-  //      . $parsed_url['path']   . "\n"
-  //      . $query;
-  //  }
-  //  return base64_encode(hash_hmac('sha256', $string_to_sign, $secret_key, true));
-  //}
-
-  //private function create_url($baseurl, $query, $signature) {
-  //  return $baseurl . '?'
-  //    . $query . '&' . 'Signature' . '=' . $this->urlencode_rfc3986($signature);
-  //}
-
-  //private function urlencode_rfc3986($string) {
-  //  return rawurlencode($string);
-  //}
-
-  //private function parseXml($response) {
-  //  $xml = simplexml_load_string($response);
-  //  if(isset($xml->Error->Message)) {
-  //    echo "Error:" . $xml->Error->Message;
-  //  } else if(!$xml) {
-  //    $xml = 'No contents.';
-  //  } 
-  //  return $xml;
-  //}
-
-  //private function openfile()
-  //{
-  //  $handleFile = @open('php://temp', 'rw+');
-  //  fwirte($handleFile);
-  //  return $handleFile;
-  //}
-
-  public function log_error($message)
+  public function retry($loop, $callback, $interval=3, $maximum=3, $retry=0, $deferred=null) 
   {
-    $displayName = '[' . __CLASS__ . '] ';
-    Log::error($displayName . print_r($message, true), ['scope' => ['apps']]);
+    $deferred = $deferred ?: new Promise\Deferred();
+    $promise = $callback();
+    $promise
+      ->then(
+        function($value) use ($deferred) {
+          $deferred->resolve($value);
+        },
+        function($reason) use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
+          if($reason) $this->log_error($reason, __FILE__, __LINE__, 'crons');
+          if($retry++ >= $maximum) return $deferred->reject($reason);
+          $loop->addTimer($interval, function($timer)
+            use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
+            $this->retry($loop, $callback, $interval, $maximum, $retry, $deferred);
+          });
+        })
+      ->otherwise(
+        function($updated) {
+          if($updated) $this->log_error($updated, __FILE__, __LINE__, 'crons');
+        })
+      ;
+    return $deferred->promise();
   }
 
-  public function log_debug($message)
+  public function getTimeStamp($str)
   {
-    $displayName = '[' . __CLASS__ . '] ';
-    Log::debug($displayName . print_r($message, true), ['scope' => ['apps']]);
+    return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
+  }
+
+  public function getLocalLength($length, $ship) 
+  {
+    $rate = $ship->us_length;
+    return (float)($length * $rate / 100);
+  }
+
+  public function getLocalWeight($weight, $ship)
+  {
+    $rate = $ship->us_weight;
+    return (float)($weight * $rate / 100);
+  }
+
+  public function getLocalPrice($price, $currency)
+  {
+    $rate = 0;
+    switch($currency) {
+    case 'AUD':
+    case 'USD':
+      $rate = 0.01;
+      break;
+    default:
+      $rate = 1;
+      break;
+    }
+    return (float)($price * $rate);
+  }
+
+  public function isKey($marketplace)
+  {
+    $isKey = false;
+    switch($marketplace) {
+    case 'JP':
+      if(   $this->access_keys_jp['access_key'] !== ''
+        &&  $this->access_keys_jp['secret_key'] !== ''
+        &&  $this->access_keys_jp['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    case 'AU':
+      if(   $this->access_keys_au['access_key'] !== ''
+        &&  $this->access_keys_au['secret_key'] !== ''
+        &&  $this->access_keys_au['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    case 'US':
+      if(   $this->access_keys_us['access_key'] !== ''
+        &&  $this->access_keys_us['secret_key'] !== ''
+        &&  $this->access_keys_us['associ_tag'] !== ''
+      ) $isKey = true;
+      break;
+    }
+    //print_r($isKey . "\n");
+    return $isKey;
+  }
+
+  public function log_debug($message, $scope="apps")
+  {
+    $displayName = '[' . get_class($this) . '] ';
+    Log::debug($displayName . print_r($message, true),  ['scope' => [$scope]]);
+  }
+
+  public function log_error($message, $file, $line, $scope="apps")
+  {
+    $displayName = '[' . get_class($this) . '] ';
+    Log::error($displayName . sprintf('%s in %s at %d.', $message, $file, $line) ,  ['scope' => [$scope]]);
   }
 }
