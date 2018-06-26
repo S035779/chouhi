@@ -131,17 +131,18 @@ class AmazonMWSComponent extends Component
   {
     $config = new LexerConfig();
     $config
-      ->setDelimiter(",")
-      ->setEnclosure("\"")
+      ->setDelimiter(',')
+      ->setEnclosure('"')
+      ->setEscape('\\')
       ->setToCharset('UTF-8')
-      ->setFromCharset('SJIS-WIN')
+      //->setFromCharset('SJIS-win')
+      ->setIgnoreHeaderLine(true)
     ;
     $lexer = new Lexer($config);
     $interpreter = new Interpreter();
 
-    $line = 0;
     $asins = TableRegistry::get('Asins');
-    $interpreter->addObserver(function(array $row) use (&$line, $suspended, $asins) {
+    $interpreter->addObserver(function(array $row) use ($suspended, $asins) {
       $head = count($row) <= 2
         ? array('asin' => true, 'marketplace' => true
           , 'suspended' => true, 'created' => true, 'modified' => true)
@@ -152,22 +153,19 @@ class AmazonMWSComponent extends Component
           , 'thumbnail' => true,	'url' => true, 'affiatelink' => true, 'images' => true
           , 'ean' => true, 'upc' => true, 'salesrank' => true, 'prime' => true, 'reviewcount' => true
           , 'suspended' => true, 'created' => true, 'modified' => true);
-      if($line > 0) {
-        $data = $this->setAsin($head, $row, $suspended);
-        $entity = $asins->newEntity($data);
-        $asin = $asins->find()
-          ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
-          ->first();
-        if($asin) {
-          unset($data['created']);
-          $entity = $asins->patchEntity($asin, $data);
-        }
-        if(!$asins->save($entity)) {
-          $this->log_error($entity->errors());
-          return false;
-        }
+      $data = $this->setAsin($head, $row, $suspended);
+      $entity = $asins->newEntity($data);
+      $asin = $asins->find()
+        ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
+        ->first();
+      if($asin) {
+        unset($data['created']);
+        $entity = $asins->patchEntity($asin, $data);
       }
-      $line += 1;
+      if(!$asins->save($entity)) {
+        $this->log_error($entity->errors());
+        return false;
+      }
     });
 
     $lexer->parse($filename, $interpreter);

@@ -285,8 +285,10 @@ class AsinImportTask extends Shell
         ->setResponseTransformer(new XmlToArray())
       ;
     } catch(\Exception $e) {
+      print('x');
       $callback($e->getMessage(), []);
     }
+
     $apaiIO = new ApaiIO($conf);
     $lookup = new Lookup();
     $lookup->setItemId($asin);
@@ -294,6 +296,7 @@ class AsinImportTask extends Shell
     $lookup->setMerchantId('All');
     $lookup->setResponseGroup(array('ItemAttributes'));
 
+    print('-');
     $callback(null, [
       'fetchAsin'   => $apaiIO->runOperation($lookup)
     , 'marketplace' => $marketplace
