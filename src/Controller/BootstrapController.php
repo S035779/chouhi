@@ -23,7 +23,9 @@ class BootstrapController extends AppController
     $this->viewBuilder()->setLayout('dashboard_'.env('APP_TEMPLATE'));
     $this->loadComponent('Common');
     $this->loadComponent('AmazonMWS');
+    $this->loadModel('Users');
     $this->loadModel('Sellers');
+    $this->loadModel('Merchants');
   }
 
   public function beforeFilter(Event $event)
@@ -254,7 +256,13 @@ class BootstrapController extends AppController
   public function market()
   {
     $title = 'Amazon market listing';
-    $this->set(compact('title'));
+    $seller = $this->Sellers->find()
+      ->where(['email' => $this->Auth->user('email')])
+      ->first();
+
+    $result = $this->Merchants->find()->where(['seller_identifier' => $seller['seller']]);
+    $merchants = $this->paginate($result);
+    $this->set(compact('title', 'merchants'));
   }
 
   /**
@@ -265,16 +273,15 @@ class BootstrapController extends AppController
   public function setting()
   {
     $title = 'User setting';
-    $users = TableRegistry::get('Users'); 
-    $user = $users->find()
+    $user = $this->Users->find()
       ->where(['email' => $this->Auth->user('email')])
       ->first();
 
     if ($this->request->is(['patch', 'post', 'put'])) {
       $request = $this->request->getData();
       if($user && $request['password'] === $request['confirm_password']) {
-        $entity = $users->patchEntity($user, $request);
-        if ($users->save($entity)) {
+        $entity = $this->Users->patchEntity($user, $request);
+        if ($this->Users->save($entity)) {
           $this->Flash->success(__('The password has been changed.'));
           return $this->redirect(['action' => 'setting']);
         }

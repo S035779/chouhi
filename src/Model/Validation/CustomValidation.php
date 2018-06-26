@@ -31,6 +31,6 @@ class CustomValidation extends Validation
 
   public static function limitFileSize($files)
   {
-    return ($files['size'] < 1000000000);
+    return ($files['size'] < 2000000000);
   }
 }

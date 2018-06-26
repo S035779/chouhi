@@ -1,329 +1,109 @@
         <!-- Main contens -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">マーケット出品</h1>
+            <h1 class="h2"><?= __('マーケット出品') ?></h1>
           </div>
 
-          <h4 class="md-3">出品情報一覧</h4>
-          <nav aria-label="...">
+
+      <div class="container">
+        <div class="row">
+          <h3><?= __('マーケット出品一覧') ?></h3>
+
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('seller_sku') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('product_identifier') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('product-id-type') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('price') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('minimum_seller_allowed_price') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('maximum_seller_allowed_price') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('currency') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('shippintg_amount_1') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('shippintg_amount_2') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('shippintg_amount_3') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('shippintg_amount_4') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('shippintg_amount_5') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('shippintg_amount_6') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('item_condition') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('quantity') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('will_ship_internationally') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('expedited_shipping') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('standard_plus') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('item_note') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('fulfillment_channel') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('product_tax_code') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('leadtime_to_ship') ?></th>
+              </tr>
+              <tr>
+                <th>#</th>
+                <th>商品管理番号</th>
+                <th>商品番号</th>
+                <th>商品番号タイプ</th>
+                <th>商品価格</th>
+                <th>指定最低価格</th>
+                <th>指定最高価格</th>
+                <th>通貨</th>
+                <th>送料1</th>
+                <th>送料2</th>
+                <th>送料3</th>
+                <th>送料4</th>
+                <th>送料5</th>
+                <th>送料6</th>
+                <th>商品状態</th>
+                <th>商品在庫</th>
+                <th>国際発送</th>
+                <th>緊急配送</th>
+                <th>標準配送プラス</th>
+                <th>商品説明</th>
+                <th>FBA利用</th>
+                <th>TAXコード</th>
+                <th>発送リードタイム</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($merchants as $merchant): ?>
+              <tr>
+                <th><?= $this->Number->format($merchant->id) ?></th>
+                <td><?= h($merchant->seller_sku) ?></td>
+                <td><?= h($merchant->product_identifier) ?></td>
+                <td><?= $this->Number->format($merchant->product_id_type) ?></td>
+                <td><?= $this->Number->format($merchant->price) ?></td>
+                <td><?= $this->Number->format($merchant->minimum_seller_allowed_price) ?></td>
+                <td><?= $this->Number->format($merchant->maximum_seller_allowed_price) ?></td>
+                <td><?= h($merchant->currency) ?></td>
+                <td><?= $this->Number->format($merchant->shipping_amount_1) ?></td>
+                <td><?= $this->Number->format($merchant->shipping_amount_2) ?></td>
+                <td><?= $this->Number->format($merchant->shipping_amount_3) ?></td>
+                <td><?= $this->Number->format($merchant->shipping_amount_4) ?></td>
+                <td><?= $this->Number->format($merchant->shipping_amount_5) ?></td>
+                <td><?= $this->Number->format($merchant->shipping_amount_6) ?></td>
+                <td><?= h($merchant->item_condition) ?></td>
+                <td><?= $this->Number->format($merchant->quantity) ?></td>
+                <td><?= $this->Number->format($merchant->will_ship_internationally) ?></td>
+                <td><?= h($merchant->expedited_shipping) ?></td>
+                <td><?= h($merchant->standard_plus) ?></td>
+                <td><?= h($merchant->item_note) ?></td>
+                <td><?= h($merchant->fullfillment_channel) ?></td>
+                <td><?= h($merchant->product_tax_code) ?></td>
+                <td><?= $this->Number->format($merchant->leadtime_to_ship) ?></td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+          <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-              <li class="page-item disabled">
-                <span class="page-link">前へ</span>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">1</a></li>
-              <li class="page-item active">
-                <span class="page-link">
-                  2 
-                  <span class="sr-only">(現位置)</span>
-                </span>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item">
-                <a class="page-link" href="#">次へ</a>
-              </li>
+              <?= $this->Paginator->first(__('最初')) ?>
+              <?= $this->Paginator->prev(__('前へ')) ?>
+              <?= $this->Paginator->numbers() ?>
+              <?= $this->Paginator->next(__('次へ')) ?>
+              <?= $this->Paginator->last(__('最後')) ?>
             </ul>
+            <p><?= $this->Paginator->counter(['format' => __('{{page}}ページ  / {{current}}アイテム,（全{{pages}}ページ / 全{{count}}アイテム）')]) ?> </p>
           </nav>
 
-          <div class="table-responsive">
-            <table class="table table-striped table-sm">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>sku</th>
-                  <th>product-id</th>
-                  <th>product-id-type</th>
-                  <th>price</th>
-                  <th>minimum-seller-allowed-price</th>
-                  <th>maximum-seller-allowed-price</th>
-                  <th>Currency</th>
-                  <th>ShippingAmt</th>
-                  <th>item-condition</th>
-                  <th>quantity</th>
-                  <th>will-ship-internationally</th>
-                  <th>expedited-shipping</th>
-                  <th>standard-plus</th>
-                  <th>item-note</th>
-                  <th>fulfillment-center-id</th>
-                  <th>product-tax-code</th>
-                  <th>leadtime-to-ship</th>
-                </tr>
-                <tr>
-                  <th>#</th>
-                  <th>商品管理番号</th>
-                  <th>商品番号</th>
-                  <th>商品番号タイプ</th>
-                  <th>商品価格</th>
-                  <th>指定最低価格</th>
-                  <th>指定最高価格</th>
-                  <th>通貨</th>
-                  <th>送料</th>
-                  <th>商品状態</th>
-                  <th>商品在庫</th>
-                  <th>国際発送</th>
-                  <th>緊急配送</th>
-                  <th>標準配送プラス</th>
-                  <th>商品説明</th>
-                  <th>FBA利用</th>
-                  <th>TAXコード</th>
-                  <th>発送リードタイム</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th>99</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>98</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>97</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>96</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>95</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>94</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>93</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>92</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>91</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>90</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <th>89</th>
-                  <td>N1401JP-B0010LAJ2M-19000-24000-0US01</td>
-                  <td>B0010LAJ2M</td>
-                  <td>1</td>
-                  <td>249.61</td>
-                  <td></td>
-                  <td></td>
-                  <td>USD</td>
-                  <td>0</td>
-                  <td>11</td>
-                  <td>1</td>
-                  <td>2</td>
-                  <td>International</td>
-                  <td>n</td>
-                  <td>"Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!"</td>
-                  <td></td>
-                  <td></td>
-                  <td>5</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <button type="button" class="btn btn-primary"
-            data-toggle="modal" data-target="#myModal">
-            更新する
-          </button>
-
         </main>
-      </div>
-    </div>
-
-    <!-- The Modal -->
-    <div class="modal fade" id="myModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">送信完了</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-
-          <!-- Modal body -->
-          <div class="modal-body">
-            処理を受け付ました。
-          </div>
-
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          </div>
-
-        </div>
       </div>
     </div>
 
