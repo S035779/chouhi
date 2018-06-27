@@ -27,6 +27,7 @@ use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_Attr
 use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_RelationshipList;
 use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_SalesRankList;
 use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_ResponseMetadata;
+use MarketplaceWebServiceProducts\Model\MarketplaceWebServiceProducts_Model_SalesRankType;
 
 /**
  * MarketplaceWebServiceProducts_Model - base class for all model classes
