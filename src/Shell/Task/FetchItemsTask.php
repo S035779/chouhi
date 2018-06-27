@@ -537,8 +537,6 @@ class FetchItemsTask extends Shell
       return $callback($e->getMessage(), null);
     }
 
-    //debug($response);
-
     $callback(null, [
       'fetchItem'   => $response 
     , 'marketplace' => $marketplace
