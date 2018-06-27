@@ -6,8 +6,10 @@ use Cake\ORM\TableRegistry;
 use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\CommonComponent;
 use App\Controller\Component\AmazonMWSComponent;
 use React\Promise;
+use React\EventLoop;
 
 /**
  * CreateFeed shell task.
@@ -17,6 +19,7 @@ class CreateFeedTask extends Shell
   public function initialize()
   {
     $this->AmazonMWS = new AmazonMWSComponent(new ComponentRegistry());
+    $this->Common = new CommonComponent(new ComponentRegistry());
   }
 
   /**
@@ -149,7 +152,7 @@ class CreateFeedTask extends Shell
         $entity = $merchants->patchEntity($merchant, $_result);
       }
       if(!$merchants->save($entity)) {
-        $this->log_error($entity->errors());
+        $this->Common->log_debug($entity->errors(), 'crons');
         return false;
       }
     }
@@ -253,65 +256,113 @@ class CreateFeedTask extends Shell
         return Promise\all($this->promisedSetInternationals($feeds));
       })
       ->then(function($feeds){
-        return Promise\all($this->primisedSetSalesPrices($feeds));
+        return Promise\all($this->promisedSetSalesPrices($feeds));
       })
       ->then(function($feeds){
         return Promise\all($this->promisedPatchFeeds($feeds));
       })
       ->done(function($result) use (&$response) {
+        //debug($result);
         $response = $result;
       }, function($error) {
-        $this->log_error($error);
+        $this->Common->log_error($error, __FILE__, __LINE__, 'crons');
       });
-    //debug($response);
     return $response;
   }
 
   private function promisedCreateFeeds($request)
   {
+    $loop = EventLoop\Factory::create();
     $response = array();
     foreach($request as $_request) {
-      array_push($response, $this->promisedCreateFeed($_request));
+      array_push($response, $this->retryCreateFeed($_request, $loop));
     }
+    $loop->run();
     return $response;
   }
 
   private function promisedSetInternationals($request)
   {
+    $loop = EventLoop\Factory::create();
     $response = array();
     foreach($request as $_request) {
-      array_push($response, $this->promisedSetInternational($_request));
+      array_push($response, $this->retrySetInternational($_request, $loop));
     }
+    $loop->run();
     return $response;
   }
 
-  private function primisedSetSalesPrices($request)
+  private function promisedSetSalesPrices($request)
   {
+    $loop = EventLoop\Factory::create();
     $response = array();
     foreach($request as $_request) {
-      array_push($response, $this->promisedSetSalesPrice($_request));
+      array_push($response, $this->retrySetSalesPrice($_request, $loop));
     }
+    $loop->run();
     return $response;
   }
 
   private function promisedPatchFeeds($request)
   {
+    $loop = EventLoop\Factory::create();
     $response = array();
     foreach($request as $_request) {
-      array_push($response, $this->promisedPatchFeed($_request));
+      array_push($response, $this->retryPatchFeed($_request, $loop));
     }
+    $loop->run();
     return $response;
+  }
+
+  private function retryCreateFeed($request, $loop)
+  { 
+    return $this->Common->retry($loop, function() use ($request, $loop) {
+        return $this->promisedCreateFeed($request);
+      })
+      ->otherwise(function($updated) {
+        if($updated) $this->Common->log_error($updated, __FILE__, __LINE__, 'crons');
+      });
+  }
+
+  private function retrySetInternational($request, $loop)
+  {
+    return $this->Common->retry($loop, function() use ($request, $loop) {
+        return $this->promisedSetInternational($request);
+      })
+      ->otherwise(function($updated) {
+        if($updated) $this->Common->log_error($updated, __FILE__, __LINE__, 'crons');
+      });
+  }
+
+  private function retrySetSalesPrice($request, $loop) 
+  {
+    return $this->Common->retry($loop, function() use ($request, $loop) {
+        return $this->promisedSetSalesPrice($request);
+      })
+      ->otherwise(function($updated) {
+        if($updated) $this->Common->log_error($updated, __FILE__, __LINE__, 'crons');
+      });
+  }
+
+  private function retryPatchFeed($request,$loop)
+  {
+    return $this->Common->retry($loop, function() use ($request, $loop) {
+        return $this->promisedPatchFeed($request);
+      })
+      ->otherwise(function($updated) {
+        if($updated) $this->Common->log_error($updated, __FILE__, __LINE__, 'crons');
+      });
   }
 
   private function promisedCreateFeed($request)
   {
     $deferred = new Promise\Deferred();
-    $this->createFeed(function($error, $response) use ($deferred) {
+    $this->createFeed(function($error, $result) use ($deferred) {
       if($error) {
-        $this->log_error($error);
         $deferred->reject($error);
+      } else {
+        $deferred->resolve($result);
       }
-      $deferred->resolve($response);
     }, $request);
     return $deferred->promise();
   }
@@ -319,12 +370,12 @@ class CreateFeedTask extends Shell
   private function promisedSetInternational($request)
   {
     $deferred = new Promise\Deferred();
-    $this->setInternational(function($error, $response) use ($deferred) {
+    $this->setInternational(function($error, $result) use ($deferred) {
       if($error) {
-        $this->log_error($error);
         $deferred->reject($error);
+      } else {
+        $deferred->resolve($result);
       }
-      $deferred->resolve($response);
     }, $request);
     return $deferred->promise();
   }
@@ -332,12 +383,12 @@ class CreateFeedTask extends Shell
   private function promisedSetSalesPrice($request)
   {
     $deferred = new Promise\Deferred();
-    $this->setSalesPrice(function($error, $response) use ($deferred) {
+    $this->setSalesPrice(function($error, $result) use ($deferred) {
       if($error) {
-        $this->log_error($error);
         $deferred->reject($error);
+      } else { 
+        $deferred->resolve($result);
       }
-      $deferred->resolve($response);
     }, $request);
     return $deferred->promise();
   }
@@ -345,32 +396,47 @@ class CreateFeedTask extends Shell
   private function promisedPatchFeed($request)
   {
     $deferred = new Promise\Deferred();
-    $this->patchFeed(function($error, $response) use ($deferred) {
+    $this->patchFeed(function($error, $result) use ($deferred) {
       if($error) {
-        $this->log_error($error);
         $deferred->reject($error);
+      } else { 
+        $deferred->resolve($result);
       }
-      $deferred->resolve($response);
     }, $request);
     return $deferred->promise();
   }
 
-  private function patchFeed($callback, $request)
+  private function createFeed($callback, $request)
   {
     $items = TableRegistry::get('Items');
-    $_items = $items->find()->where(['marketplace' => $request['marketplace']])->all();
-
+    $items = $items->find()->where(['marketplace' => 'JP'])->all();
     $datas = array();
-    foreach($request['getItems'] as $getItem) {
-      $data = array_merge(array(), $getItem);
-      foreach($_items as $item) {
-        if($item->asin === $data['product-id']) {
-          array_push($datas, $data);
-          break;
-        }
-      }
+    foreach($items as $item) {
+      $data['item-name'                 ] = $item['title'];
+      $data['product-id'                ] = $item['asin'];
+      $data['product-id-type'           ] = 1;
+      $data['price'                     ] = $item['lowest_price'];
+      $data['minimum-seller-allow-price'] = $item['lowest_price'];
+      $data['maximum-seller-allow-price'] = $item['lowest_price'];
+      $data['currency'                  ] = $item['lowest_price_currency'];
+      $data['item-condition'            ] = $this->Common->getCondition($item['condition_status']);
+      $data['quantity'                  ] = $item['total_new'];
+      $data['add-delete'                ] = $this->Common->getAddDel($item['total_new']);
+      $data['will-ship-internationally' ] = 'n';
+      $data['expedited-shipping'        ] = 'International';
+      $data['standard-plus'             ] = 'N';
+      $data['item-note'                 ] = 'Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!';
+      $data['seller-sku'                ] = $this->Common->getSellerSKU($item['asin']
+        , $request['marketplace']);
+      $data['pending-quantity'          ] = 0;
+      $data['ean'                       ] = $item['ean'];
+      $data['height'                    ] = $item['package_height'];
+      $data['length'                    ] = $item['package_length'];
+      $data['weight'                    ] = $item['package_weight'];
+      $data['width'                     ] = $item['package_width'];
+      array_push($datas, $data);
     }
-
+    print('-');
     $callback(null, [
       'getItems'    => $datas
     , 'marketplace' => $request['marketplace']
@@ -387,7 +453,6 @@ class CreateFeedTask extends Shell
     $items_own = $items->find()
       ->where(['marketplace' => $request['marketplace']])
       ->all();
-
     $datas = array();
     foreach($request['getItems'] as $getItem) {
       $data = array_merge(array(), $getItem);
@@ -405,8 +470,8 @@ class CreateFeedTask extends Shell
       }
       array_push($datas, $data);
     }
-
     //debug($datas);
+    print('-');
     $callback(null, [
       'getItems'    => $datas
     , 'marketplace' => $request['marketplace']
@@ -417,13 +482,10 @@ class CreateFeedTask extends Shell
   private function setSalesPrice($callback, $request) 
   {
     $leadtime = 5;
-    $area = $this->getArea($request['marketplace']);
-
+    $area = $this->Common->getArea($request['marketplace']);
     $ships = TableRegistry::get('Ships');
     $ship = $ships->find()->first();
-
     $deliverys = TableRegistry::get('Deliverys');
-
     $datas = array();
     foreach($request['getItems'] as $getItem) {
       $data = array_merge(array(), $getItem);
@@ -435,33 +497,33 @@ class CreateFeedTask extends Shell
       , 'area'            => $area
       ])->first();
       $delivery_price = $delivery->price;
-      $data['price'                     ] = $this->getSalesPrice(
+      $data['price'                     ] = $this->Common->getSalesPrice(
         $data['price']
       , $data['currency']
       , $request['marketplace']
       , $delivery_price
       , $ship
       );
-      $data['minimum-seller-allow-price'] = $this->getSalesPrice(
+      $data['minimum-seller-allow-price'] = $this->Common->getSalesPrice(
         $data['minimum-seller-allow-price']
       , $data['currency']
       , $request['marketplace']
       , $delivery_price
       , $ship
       );
-      $data['maximum-seller-allow-price'] = $this->getSalesPrice(
+      $data['maximum-seller-allow-price'] = $this->Common->getSalesPrice(
         $data['maximum-seller-allow-price']
       , $data['currency']
       , $request['marketplace']
       , $delivery_price
       , $ship
       );
-      $data['quantity'                  ] = $this->getQuantity($data['quantity'], $ship);
+      $data['quantity'                  ] = $this->Common->getQuantity($data['quantity'], $ship);
       $data['leadtime-to-ship'          ] = $leadtime;
       array_push($datas, $data);
     }
-    
     //debug($datas);
+    print('-');
     $callback(null, [
       'getItems'    => $datas
     , 'marketplace' => $request['marketplace']
@@ -469,157 +531,26 @@ class CreateFeedTask extends Shell
     ]);
   }
 
-  private function createFeed($callback, $request)
+  private function patchFeed($callback, $request)
   {
     $items = TableRegistry::get('Items');
-    $items = $items->find()->where(['marketplace' => 'JP'])->all();
-
+    $_items = $items->find()
+      ->where(['marketplace' => $request['marketplace']])->all();
     $datas = array();
-    foreach($items as $item) {
-      $data['item-name'                 ] = $item['title'];
-      $data['product-id'                ] = $item['asin'];
-      $data['product-id-type'           ] = 1;
-      $data['price'                     ] = $item['lowest_price'];
-      $data['minimum-seller-allow-price'] = $item['lowest_price'];
-      $data['maximum-seller-allow-price'] = $item['lowest_price'];
-      $data['currency'                  ] = $item['lowest_price_currency'];
-      $data['item-condition'            ] = $this->getCondition($item['condition_status']);
-      $data['quantity'                  ] = $item['total_new'];
-      $data['add-delete'                ] = $this->getAddDel($item['total_new']);
-      $data['will-ship-internationally' ] = 'n';
-      $data['expedited-shipping'        ] = 'International';
-      $data['standard-plus'             ] = 'N';
-      $data['item-note'                 ] = 'Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!';
-      $data['seller-sku'                ] = $this->getSellerSKU($item['asin']
-        , $request['marketplace']);
-      $data['pending-quantity'          ] = 0;
-      $data['ean'                       ] = $item['ean'];
-      $data['height'                    ] = $item['package_height'];
-      $data['length'                    ] = $item['package_length'];
-      $data['weight'                    ] = $item['package_weight'];
-      $data['width'                     ] = $item['package_width'];
-      array_push($datas, $data);
+    foreach($request['getItems'] as $getItem) {
+      $data = array_merge(array(), $getItem);
+      foreach($_items as $item) {
+        if($item->asin === $data['product-id']) {
+          array_push($datas, $data);
+          break;
+        }
+      }
     }
+    print('-');
     $callback(null, [
       'getItems'    => $datas
     , 'marketplace' => $request['marketplace']
     , 'seller'      => $request['seller']
     ]);
-  }
-
-  private function getArea($marketplace)
-  { 
-    switch($marketplace) {
-    case 'JP':
-      $area = 'ASIA';
-      break;
-    case 'AU':
-      $area = 'OCEANIA';
-      break;
-    case 'US':
-      $area = 'NORTH_AMERICA';
-      break;
-    }
-    return $area;
-  }
-
-  private function getQuantity($count, $ship)
-  {
-    $rate  = (int)$ship->pending_quantity_rate / 100;
-    $added = (int)$ship->pending_quantity;
-    return (int)$count * $rate + $added;
-  }
-
-  private function getAddDel($count)
-  {
-    return (int)$count < 1 ? 'd' : 'a';
-  }
-
-  private function toJPY($price, $currency, $ship)
-  {
-    $rate = 0;
-    switch ($currency) {
-    case 'JPY':
-      $rate = $ship->jpy_price;
-      break;
-    case 'USD':
-      $rate = $ship->usd_price;
-      break;
-    case 'AUD':
-      $rate = $ship->aud_price;
-      break;
-    }
-    return (float)($price * $rate);
-  }
-
-  private function getSalesPrice($price, $currency, $marketplace, $shipping, $ship)
-  {
-    $price_jpy = $this->toJPY($price, $currency, $ship);
-
-    $isPt1 = $price_jpy < $ship->price_criteria_1;
-    $isPt2 = $price_jpy < $ship->price_criteria_2 && $ship->price_criteria_1 < $price_jpy;
-    $isPt3 = $price_jpy < $ship->price_criteria_3 && $ship->price_criteria_2 < $price_jpy;
-    $isPt4 = $price_jpy < $ship->price_criteria_4 && $ship->price_criteria_3 < $price_jpy;
-
-    if($isPt1) {
-      $sales_price = $price_jpy * (int)$ship->sales_rate_1 / 100 + $ship->sales_price_1;
-    } else if($isPt2) {
-      $sales_price = $price_jpy * (int)$ship->sales_rate_2 / 100 + $ship->sales_price_2;
-    } else if($isPt3) {
-      $sales_price = $price_jpy * (int)$ship->sales_rate_3 / 100 + $ship->sales_price_3;
-    } else if($isPt4) {
-      $sales_price = $price_jpy * (int)$ship->sales_rate_4 / 100 + $ship->sales_price_4;
-    } else {
-      $sales_price = $price_jpy * (int)$ship->sales_rate_5 / 100 + $ship->sales_price_5;
-    }
- 
-    $total_price = $sales_price + $shipping;
-
-    $rate = 0;
-    switch($marketplace) {
-    case 'JP':
-      $rate = $ship->jpy_price;
-      break;
-    case 'US':
-      $rate = $ship->usd_price;
-      break;
-    case 'AU':
-      $rate = $ship->aud_price;
-      break;
-    }
-    return (float)($total_price / $rate);
-  }
-
-  private function getCondition($status) 
-  {
-    switch($status) {
-    case 'New':
-      $condition = 11;
-      break;
-    case 'Used':
-      $condition = 1;
-      break;
-    default:
-      $condition = 11;
-      break;
-    }
-    return $condition;
-  }
-
-  private function getSellerSKU($asin, $marketplace)
-  {
-    return 'WN001JP-' .  $asin . '-0' . $marketplace . '01';
-  }
-
-  private function log_debug($message)
-  {
-    $displayName = '[' . __CLASS__ . '] ';
-    Log::debug($displayName . print_r($message, true), ['scope' => ['crons']]);
-  }
-
-  private function log_error($message)
-  {
-    $displayName = '[' . __CLASS__ . '] ';
-    Log::error($displayName . print_r($message, true), ['scope' => ['crons']]);
   }
 }
