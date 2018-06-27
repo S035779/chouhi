@@ -6,8 +6,10 @@ use Cake\ORM\TableRegistry;
 use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\CommonComponent;
 use App\Controller\Component\AmazonMWSComponent;
 use React\Promise;
+use React\EventLoop;
 
 /**
  * GetReport shell task.
@@ -18,6 +20,7 @@ class GetReportTask extends Shell
   public function initialize()
   {
     $this->AmazonMWS = new AmazonMWSComponent(new ComponentRegistry());
+    $this->Common = new CommonComponent(new ComponentRegistry());
   }
 
   /**
@@ -142,7 +145,7 @@ class GetReportTask extends Shell
       $query->values($_result);
     }
     if(!$query->execute()) {
-      $this->log_error($query->errors());
+      $this->Common->log_debug($query->errors(), 'crons');
       return false;
     }
     return true;
@@ -238,7 +241,7 @@ class GetReportTask extends Shell
         //debug($entity);
       }
       if(!$merchants->save($entity)) {
-        $this->log_error($entity->errors());
+        $this->Common->log_debug($entity->errors(), 'crons');
         return false;
       }
     }
@@ -309,7 +312,7 @@ class GetReportTask extends Shell
           if($vals[43]) $data[$keys[43]] = $merchant['item-description'          ] ?? 'N/A';
           if($vals[44]) $data[$keys[44]] = $merchant['listing-id'                ] ?? 'N/A';
           if($vals[45]) $data[$keys[45]] = isset($merchant['open-date'])
-            ? $this->getTimeStamp($merchant['open-date'], $_response['marketplace'])
+            ? $this->Common->getTimeStamp2($merchant['open-date'], $_response['marketplace'])
             : $deftime;
           if($vals[46]) $data[$keys[46]] = $merchant['image-url'                 ] ?? 'N/A';
           if($vals[47]) $data[$keys[47]] = $merchant['item-is-marketplace'       ] ?? 'N/A';
@@ -338,39 +341,48 @@ class GetReportTask extends Shell
 
   private function fetchMerchants($request) 
   {
-    //debug($request);
-    $response = [];
+    $response = array();
     Promise\all($this->_fetchMerchants($request))
       ->done(function($result) use (&$response) {
         //debug($result);
         $response = $result;
       }, function($error) {
-        //debug($error);
-        $this->log_error($error);
+        $this->Common->log_error($error, __FILE__, __LINE__, 'crons');
       });
-    //debug($response);
     return $response;
   }
   
   private function _fetchMerchants($request) 
   {
+    $loop = EventLoop\Factory::create();
     $response = array();
     foreach($request as $_request) {
       //debug($_request);
-      array_push($response, $this->fetchMerchant($_request));
+      array_push($response, $this->retryMerchant($_request, $loop));
     }
+    $loop->run();
     return $response;
+  }
+
+  private function retryMerchant($request, $loop) 
+  {
+    return $this->Common->retry($loop, function() use ($request, $loop) {
+      return $this->fetchMerchant($request);
+    })
+    ->otherwise(function($updated) {
+      if($updated) $this->Common->log_error($updated, __FILE__, __LINE__, 'crons');
+    });
   }
 
   private function fetchMerchant($request) 
   {
     $deferred = new Promise\Deferred();
-    $this->_fetchMerchant(function($error, $response) use ($deferred) {
+    $this->_fetchMerchant(function($error, $result) use ($deferred) {
       if($error) {
-        $this->log_error($error);
         $deferred->reject($error);
+      } else {
+        $deferred->resolve($result);
       }
-      $deferred->resolve($response);
     }, $request);
     return $deferred->promise();
   }
@@ -399,7 +411,6 @@ class GetReportTask extends Shell
       $country   = $this->AmazonMWS::MWS_BASEURL_JP;
       break;
     }
-    sleep(5);
     try {
       $response = $this->AmazonMWS->GetReport([
         'Marketplace'     => $market_id
@@ -408,8 +419,10 @@ class GetReportTask extends Shell
       , 'AWSAccessKeyId'  => $access_key
       , 'BaseURL'         => $country
       ]);
+      print('-');
     } catch (\Exception $e) {
-      $callback($e->getMessage(), []);
+      print('x');
+      return $callback($e->getMessage(), []);
     }
 
     $callback(null, [
@@ -417,32 +430,5 @@ class GetReportTask extends Shell
     , 'marketplace' => $request['marketplace']
     , 'seller'      => $request['seller']
     ]);
-  }
-  
-  private function getTimeStamp ($date, $marketplace)
-  {
-    $format = 'd/m/Y H:i:s T';
-    switch($marketplace) {
-    case 'JP':
-      $format = 'Y/m/d H:i:s T';
-      break;
-    case 'AU':
-    case 'US':
-      $format = 'd/m/Y H:i:s T';
-      break;
-    }
-    return \DateTime::createFromFormat($format, $date)->format('Y/m/d H:i:s');
-  }
-
-  private function log_debug($message) 
-  {
-    $displayName = '[' . __CLASS__ . '] ';
-    Log::debug($displayName . print_r($message, true), ['scope' => ['crons']]);
-  }
-
-  private function log_error($message) 
-  {
-    $displayName = '[' . __CLASS__ . '] ';
-    Log::error($displayName . print_r($message, true), ['scope' => ['crons']]);
   }
 }

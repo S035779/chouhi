@@ -71,6 +71,21 @@ class CommonComponent extends Component
     return (float)($price * $rate);
   }
 
+  public function getTimeStamp2 ($date, $marketplace)
+  {
+    $format = 'd/m/Y H:i:s T';
+    switch($marketplace) {
+    case 'JP':
+      $format = 'Y/m/d H:i:s T';
+      break;
+    case 'AU':
+    case 'US':
+      $format = 'd/m/Y H:i:s T';
+      break;
+    }
+    return \DateTime::createFromFormat($format, $date)->format('Y/m/d H:i:s');
+  }
+
   public function getLocalLength2($length, $units, $ship)
   {
     $rate = 0;
