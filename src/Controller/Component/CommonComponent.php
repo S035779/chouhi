@@ -35,12 +35,7 @@ class CommonComponent extends Component
             use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
             $this->retry($loop, $callback, $interval, $maximum, $retry, $deferred);
           });
-        })
-      ->otherwise(
-        function($updated) {
-          if($updated) $this->log_error($updated, __FILE__, __LINE__, 'crons');
-        })
-      ;
+        });
     return $deferred->promise();
   }
 
@@ -74,6 +69,36 @@ class CommonComponent extends Component
       break;
     }
     return (float)($price * $rate);
+  }
+
+  public function getLocalLength2($length, $units, $ship)
+  {
+    $rate = 0;
+    switch($units) {
+    case 'inches':
+      $rate = $ship->us_length;
+      break;
+    default:
+      $rate = $ship->jp_length;
+      break;
+    }
+    $result = (float)($length * $rate);
+    return $result;
+  }
+
+  public function getLocalWeight2($weight, $units, $ship)
+  {
+    $rate = 0;
+    switch($units) {
+    case 'pounds':
+      $rate = $ship->us_weight;
+      break;
+    default:
+      $rate = $ship->jp_weight;
+      break;
+    }
+    $result = (float)($weight * $rate);
+    return $result;
   }
 
   public function isKey($marketplace)
