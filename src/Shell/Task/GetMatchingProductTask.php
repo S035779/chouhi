@@ -390,7 +390,7 @@ class GetMatchingProductTask extends Shell
         , 'seller'      => $_request['seller']
         , 'marketplace' => $_request['marketplace']
         ], $loop));
-        if($_ids['ean']) {
+        if($_ids['ean'] && $_ids['ean'] !== 'N/A') {
           array_push($response, $this->retryMatchingProduct([
             'id' => $_ids['ean'],  'id_type' => 'EAN'
           , 'access_key'  => $_request['access_key']

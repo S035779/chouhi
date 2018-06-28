@@ -247,6 +247,16 @@ class CommonComponent extends Component
     return $isKey;
   }
 
+  public function isStr($str) 
+  {
+    return $str === 'N/A' || $str === null ? null : $str;
+  }
+  
+  public function isNum($num)
+  {
+    return $num === 0 || $num === null ? 0 : $num;
+  }
+
   public function log_debug($message, $scope="apps")
   {
     $displayName = '[' . get_class($this) . '] ';

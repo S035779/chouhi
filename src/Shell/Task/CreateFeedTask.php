@@ -425,7 +425,7 @@ class CreateFeedTask extends Shell
       $data['will-ship-internationally' ] = 'n';
       $data['expedited-shipping'        ] = 'International';
       $data['standard-plus'             ] = 'N';
-      $data['item-note'                 ] = 'Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. STANDARD SHIPPING ( by SAL ) - no tracking &amp; not insured ( 12 - 22 business days). EXPEDITED SHIPPING( EMS )- tracking &amp; insured ( 4 - 11 business days). We always make our BEST EFFORT to make your happy! Feel free to access our shop. Thank you!';
+      $data['item-note'                 ] = 'Welcome to our shop. BRAND NEW, NO FAKE items. Ships from Japan. Expeditiously and Very Carefully packed. Thank you!';
       $data['seller-sku'                ] = $this->Common->getSellerSKU($item['asin']
         , $request['marketplace']);
       $data['pending-quantity'          ] = 0;

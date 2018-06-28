@@ -200,38 +200,42 @@ class AsinImportTask extends Shell
     $asins_us = array();
     $eol = count($request);
     $idx = 0;
+    $max_count = 10;
     //debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {
       case 'JP':
         if($this->Common->isKey('JP')) array_push($asins_jp, $_request['asin']);
-        if(count($asins_jp) >= 10) {
+        if(count($asins_jp) >= $max_count) {
           array_push($response, $this->retryAsin(implode(',', $asins_jp), 'JP', $loop));
           $asins_jp = array();
         }
         break;
       case 'AU':
         if($this->Common->isKey('AU')) array_push($asins_au, $_request['asin']);
-        if(count($asins_au) >= 10) {
+        if(count($asins_au) >= $max_count) {
           array_push($response, $this->retryAsin(implode(',', $asins_au), 'AU', $loop));
           $asins_au = array();
         }
         break;
       case 'US':
         if($this->Common->isKey('US')) array_push($asins_us, $_request['asin']);
-        if(count($asins_us) >= 10) {
+        if(count($asins_us) >= $max_count) {
           array_push($response, $this->retryAsin(implode(',', $asins_us), 'US', $loop));
           $asins_us = array();
         }
         break;
       }
       if($idx === $eol - 1) {
-        if(count($asins_jp) !== 0)
+        if(count($asins_jp) !== 0) {
           array_push($response, $this->retryAsin(implode(',', $asins_jp), 'JP', $loop));
-        if(count($asins_au) !== 0) 
+        }
+        if(count($asins_au) !== 0) {
           array_push($response, $this->retryAsin(implode(',', $asins_au), 'AU', $loop));
-        if(count($asins_us) !== 0) 
+        }
+        if(count($asins_us) !== 0) {
           array_push($response, $this->retryAsin(implode(',', $asins_us), 'US', $loop));
+        }
       }
       $idx += 1;
     }

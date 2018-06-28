@@ -110,79 +110,69 @@ class SubmitFeedTask extends Shell
     switch($feedType) {
     case $this->AmazonMWS::MWS_ADDDEL_FEED:
       $feed = array(
-        'sku'                          => $this->isStr($merchant['seller_sku'                ])
-      , 'product-id'                   => $this->isStr($merchant['product_identifier'        ])
-      , 'product-id-type'              => $this->isStr($merchant['product_id_type'           ])
-      , 'price'                        => $this->isNum($merchant['price'                     ])
-      , 'minimum-seller-allowed-price' => $this->isNum($merchant['minimum_seller_allow_price'])
-      , 'maximum-seller-allowed-price' => $this->isNum($merchant['maximum_seller_allow_price'])
-      , 'item-condition'               => $this->isStr($merchant['item_condition'            ])
-      , 'quantity'                     => $this->isNum($merchant['quantity'                  ])
-      , 'add-delete'                   => $this->isStr($merchant['add_delete'                ])
-      , 'will-ship-internationally'    => $this->isStr($merchant['will_ship_internationally' ])
-      , 'expedited-shipping'           => $this->isStr($merchant['expedited_shipping'        ])
-      , 'standard-plus'                => $this->isStr($merchant['standard_plus'             ])
-      , 'item-note'                    => $this->isStr($merchant['item_note'                 ])
-      , 'fulfillment-center-id'        => $this->isStr($merchant['fullfillment_channel'      ])
-      , 'product-tax-code'             => $this->isStr($merchant['product_tax_code'          ])
-      , 'leadtime-to-ship'             => $this->isNum($merchant['leadtime_to_ship'          ])
+        'sku'                          => $this->Common->isStr($merchant['seller_sku'                ])
+      , 'product-id'                   => $this->Common->isStr($merchant['product_identifier'        ])
+      , 'product-id-type'              => $this->Common->isStr($merchant['product_id_type'           ])
+      , 'price'                        => $this->Common->isNum($merchant['price'                     ])
+      , 'minimum-seller-allowed-price' => $this->Common->isNum($merchant['minimum_seller_allow_price'])
+      , 'maximum-seller-allowed-price' => $this->Common->isNum($merchant['maximum_seller_allow_price'])
+      , 'item-condition'               => $this->Common->isStr($merchant['item_condition'            ])
+      , 'quantity'                     => $this->Common->isNum($merchant['quantity'                  ])
+      , 'add-delete'                   => $this->Common->isStr($merchant['add_delete'                ])
+      , 'will-ship-internationally'    => $this->Common->isStr($merchant['will_ship_internationally' ])
+      , 'expedited-shipping'           => $this->Common->isStr($merchant['expedited_shipping'        ])
+      , 'standard-plus'                => $this->Common->isStr($merchant['standard_plus'             ])
+      , 'item-note'                    => $this->Common->isStr($merchant['item_note'                 ])
+      , 'fulfillment-center-id'        => $this->Common->isStr($merchant['fullfillment_channel'      ])
+      , 'product-tax-code'             => $this->Common->isStr($merchant['product_tax_code'          ])
+      , 'leadtime-to-ship'             => $this->Common->isNum($merchant['leadtime_to_ship'          ])
       );
       break;
     case $this->AmazonMWS::MWS_UPDATE_FEED:
       $feed = array(
-        'sku'                          => $this->isStr($merchant['seller_sku'                ])
-      , 'price'                        => $this->isNum($merchant['price'                     ])
-      , 'minimum-seller-allowed-price' => $this->isNum($merchant['minimum_seller_allow_price'])
-      , 'maximum-seller-allowed-price' => $this->isNum($merchant['maximum_seller_allow_price'])
-      , 'quantity'                     => $this->isNum($merchant['quantity'                  ])
-      , 'leadtime-to-ship'             => $this->isNum($merchant['leadtime_to_ship'          ])
+        'sku'                          => $this->Common->isStr($merchant['seller_sku'                ])
+      , 'price'                        => $this->Common->isNum($merchant['price'                     ])
+      , 'minimum-seller-allowed-price' => $this->Common->isNum($merchant['minimum_seller_allow_price'])
+      , 'maximum-seller-allowed-price' => $this->Common->isNum($merchant['maximum_seller_allow_price'])
+      , 'quantity'                     => $this->Common->isNum($merchant['quantity'                  ])
+      , 'leadtime-to-ship'             => $this->Common->isNum($merchant['leadtime_to_ship'          ])
       );
       break;
     case $this->AmazonMWS::MWS_CREATE_FEED:
       $feed = array(
-        'sku'                          => $this->isStr($merchant['seller_sku'                ])
-      , 'Currency'                     => $this->isStr($merchant['currency'                  ])
-      , 'ShipOption1'                  => $this->isStr($merchant['shipping_option_1'         ])
-      , 'ShippingAmt1'                 => $this->isStr($merchant['shipping_amount_1'         ])
-      , 'Type1'                        => $this->isStr($merchant['type_1'                    ])
-      , 'IsShippingRestricted1'        => $this->isStr($merchant['is_shipping_restricted_1'  ])
-      , 'ShipOption2'                  => $this->isStr($merchant['shipping_option_2'         ])
-      , 'ShippingAmt2'                 => $this->isStr($merchant['shipping_amount_2'         ])
-      , 'Type2'                        => $this->isStr($merchant['type_2'                    ])
-      , 'IsShippingRestricted2'        => $this->isStr($merchant['is_shipping_restricted_2'  ])
-      , 'ShipOption3'                  => $this->isStr($merchant['shipping_option_3'         ])
-      , 'ShippingAmt3'                 => $this->isStr($merchant['shipping_amount_3'         ])
-      , 'Type3'                        => $this->isStr($merchant['type_3'                    ])
-      , 'IsShippingRestricted3'        => $this->isStr($merchant['is_shipping_restricted_3'  ])
-      , 'ShipOption4'                  => $this->isStr($merchant['shipping_option_4'         ])
-      , 'ShippingAmt4'                 => $this->isStr($merchant['shipping_amount_4'         ])
-      , 'Type4'                        => $this->isStr($merchant['type_4'                    ])
-      , 'IsShippingRestricted4'        => $this->isStr($merchant['is_shipping_restricted_4'  ])
-      , 'ShipOption5'                  => $this->isStr($merchant['shipping_option_5'         ])
-      , 'ShippingAmt5'                 => $this->isStr($merchant['shipping_amount_5'         ])
-      , 'Type5'                        => $this->isStr($merchant['type_5'                    ])
-      , 'IsShippingRestricted5'        => $this->isStr($merchant['is_shipping_restricted_5'  ])
-      , 'ShipOption6'                  => $this->isStr($merchant['shipping_option_6'         ])
-      , 'ShippingAmt6'                 => $this->isStr($merchant['shipping_amount_6'         ])
-      , 'Type6'                        => $this->isStr($merchant['type_6'                    ])
-      , 'IsShippingRestricted6'        => $this->isStr($merchant['is_shipping_restricted_6'  ])
-      , 'UpdateDelete'                 => $this->isStr($merchant['update_delete'             ])
+        'sku'                          => $this->Common->isStr($merchant['seller_sku'                ])
+      , 'Currency'                     => $this->Common->isStr($merchant['currency'                  ])
+      , 'ShipOption1'                  => $this->Common->isStr($merchant['shipping_option_1'         ])
+      , 'ShippingAmt1'                 => $this->Common->isStr($merchant['shipping_amount_1'         ])
+      , 'Type1'                        => $this->Common->isStr($merchant['type_1'                    ])
+      , 'IsShippingRestricted1'        => $this->Common->isStr($merchant['is_shipping_restricted_1'  ])
+      , 'ShipOption2'                  => $this->Common->isStr($merchant['shipping_option_2'         ])
+      , 'ShippingAmt2'                 => $this->Common->isStr($merchant['shipping_amount_2'         ])
+      , 'Type2'                        => $this->Common->isStr($merchant['type_2'                    ])
+      , 'IsShippingRestricted2'        => $this->Common->isStr($merchant['is_shipping_restricted_2'  ])
+      , 'ShipOption3'                  => $this->Common->isStr($merchant['shipping_option_3'         ])
+      , 'ShippingAmt3'                 => $this->Common->isStr($merchant['shipping_amount_3'         ])
+      , 'Type3'                        => $this->Common->isStr($merchant['type_3'                    ])
+      , 'IsShippingRestricted3'        => $this->Common->isStr($merchant['is_shipping_restricted_3'  ])
+      , 'ShipOption4'                  => $this->Common->isStr($merchant['shipping_option_4'         ])
+      , 'ShippingAmt4'                 => $this->Common->isStr($merchant['shipping_amount_4'         ])
+      , 'Type4'                        => $this->Common->isStr($merchant['type_4'                    ])
+      , 'IsShippingRestricted4'        => $this->Common->isStr($merchant['is_shipping_restricted_4'  ])
+      , 'ShipOption5'                  => $this->Common->isStr($merchant['shipping_option_5'         ])
+      , 'ShippingAmt5'                 => $this->Common->isStr($merchant['shipping_amount_5'         ])
+      , 'Type5'                        => $this->Common->isStr($merchant['type_5'                    ])
+      , 'IsShippingRestricted5'        => $this->Common->isStr($merchant['is_shipping_restricted_5'  ])
+      , 'ShipOption6'                  => $this->Common->isStr($merchant['shipping_option_6'         ])
+      , 'ShippingAmt6'                 => $this->Common->isStr($merchant['shipping_amount_6'         ])
+      , 'Type6'                        => $this->Common->isStr($merchant['type_6'                    ])
+      , 'IsShippingRestricted6'        => $this->Common->isStr($merchant['is_shipping_restricted_6'  ])
+      , 'UpdateDelete'                 => $this->Common->isStr($merchant['update_delete'             ])
       );
       break;
     }
     return array('feedType' => $feedType, 'feed' => $feed);
   }
   
-  private function isStr($str) 
-  {
-    return $str === 'N/A' || $str === null ? null : $str;
-  }
-  
-  private function isNum($num)
-  {
-    return $num === 0 || $num === null ? 0 : $num;
-  }
-
   private function upsertMerchant($request) 
   {
     $header = array(                           //                New Upd Etc
@@ -279,33 +269,41 @@ class SubmitFeedTask extends Shell
 
   private function setMerchants($header, $request) 
   {
-    //debug($request);
     $datas = array();
     $datetime = date('Y-m-d H:i:s');
-    $deftime  = date('Y-m-d H:i:s', 0);
     $keys     = array_keys($header);
     $vals     = array_values($header);
 
-    $response = $this->submitMerchants($request);
+    $_response = $this->submitMerchants($request);
     //debug($response);
 
-    foreach($response as $_response) {
-      $merchants = $_response['submitFeed'];
-      $_merchants  = array_values($merchants) === $merchants ? $merchants : [$merchants];
-      $data = array();
-      foreach($_merchants as $merchant) {
-        if($merchant) {
-          if($vals[ 8]) $data[$keys[ 8]] = $merchant['add-delete'                ] ?? 'N/A';
-          if($vals[16]) $data[$keys[16]] = $_response['seller_sku'               ] ?? 'N/A';
-          if($vals[42]) $data[$keys[42]] = $merchant['update-delete'             ] ?? 'N/A';
-          if($vals[60]) $data[$keys[60]] = $_response['seller'];
-          if($vals[61]) $data[$keys[61]] = $_response['marketplace'];
-          if($vals[62]) $data[$keys[62]] = $datetime;
-          if($vals[63]) $data[$keys[63]] = $datetime;
-          array_push($datas, $data);
+    foreach($_response as $response) {
+      if($response) {
+        $merchants   = $response['submitFeed'];
+        $_merchants  = array_values($merchants) === $merchants ? $merchants : [$merchants];
+        $marketplace = $response['marketplace'];
+        $data = array();
+        foreach($_merchants as $merchant) {
+          if($merchant) {
+            $feeds  = $merchant['feeds'];
+            $_feeds = array_values($feeds) === $feeds ? $feeds : [$feeds];
+            foreach($_feeds as $feed) {
+              if($feed) {
+                if($vals[ 8]) $data[$keys[ 8]] = $merchant['add-delete']    ?? 'N/A';
+                if($vals[16]) $data[$keys[16]] = $feed['sku']               ?? 'N/A';
+                if($vals[42]) $data[$keys[42]] = $merchant['update-delete'] ?? 'N/A';
+                if($vals[60]) $data[$keys[60]] = $response['seller'];
+                if($vals[61]) $data[$keys[61]] = $marketplace;
+                if($vals[62]) $data[$keys[62]] = $datetime;
+                if($vals[63]) $data[$keys[63]] = $datetime;
+                array_push($datas, $data);
+              }
+            }
+          }
         }
       }
     }
+    //debug($datas);
     return $datas;
   }
 
@@ -325,30 +323,75 @@ class SubmitFeedTask extends Shell
   private function _submitMerchants($request) 
   {
     $loop = EventLoop\Factory::create();
-    $response = array();
+    $response     = array();
+    $feeds_create = array();
+    $feeds_adddel = array();
+    $feeds_update = array();
+    $eol = count($request);
+    $max_count = 50;
+    //debug($request);
     foreach($request as $_request) {
+      $feedSets = $_request['feedSets'];
+      $config   = $_request['config'];
       if($_request) {
-        foreach($_request['feedSets'] as $feedSet) {
-          //debug($feedSet);
-          array_push($response, $this->retryMerchant($_request['config'], $feedSet, $loop));
+        $idx = 0;
+        foreach($feedSets as $feedSet) {
+          $feedType = $feedSet['feedType'];
+          $feed     = $feedSet['feed'];
+          switch($feedType) {
+            case $this->AmazonMWS::MWS_CREATE_FEED:
+              array_push($feeds_create, $feed);
+              if(count($feeds_create) >= $max_count) {
+                array_push($response, $this->retryMerchant($config, $feeds_create, $feedType, $loop));
+                $feeds_create = array();
+              }
+              break;
+            case $this->AmazonMWS::MWS_ADDDEL_FEED:
+              array_push($feeds_adddel, $feed);
+              if(count($feeds_adddel) >= $max_count) {
+                array_push($response, $this->retryMerchant($config, $feeds_adddel, $feedType, $loop));
+                $feeds_adddel = array();
+              }
+              break;
+            case $this->AmazonMWS::MWS_UPDATE_FEED:
+              array_push($feeds_update, $feed);
+              if(count($feeds_update) >= $max_count) {
+                array_push($response, $this->retryMerchant($config, $feeds_update, $feedType, $loop));
+                $feeds_update = array();
+              }
+              break;
+          }
+          if($idx === $eol - 1) {
+            if(count($feeds_create) !== 0) {
+              array_push($response, $this->retryMerchant($config, $feeds_create, $feedType, $loop));
+            } 
+            if(count($feeds_adddel) !== 0) {
+              array_push($response, $this->retryMerchant($config, $feeds_adddel, $feedType, $loop));
+            } 
+            if(count($feeds_update) !== 0) {
+              array_push($response, $this->retryMerchant($config, $feeds_update, $feedType, $loop));
+            }
+          }
+          $idx += 1;
         }
       }
     }
     $loop->run();
+    //debug($response);
     return $response;
   }
 
-  private function retryMerchant($config, $feedSet, $loop) 
+  private function retryMerchant($config, $feeds, $feedType, $loop) 
   {
-    return $this->Common->retry($loop, function() use ($config, $feedSet, $loop) {
-        return $this->submitMerchant($config, $feedSet);
+    return $this->Common->retry($loop, function() use ($config, $feeds, $feedType, $loop) {
+        return $this->submitMerchant($config, $feeds, $feedType);
       })
       ->otherwise(function($updated) {
         if($updated) $this->Common->log_error($updated, __FILE__, __LINE__, 'crons');
       });
   }
 
-  private function submitMerchant($config, $feedSet)
+  private function submitMerchant($config, $feeds, $feedType)
   {
     $deferred = new Promise\Deferred();
     $this->_submitMerchant(function($error, $result) use ($deferred) {
@@ -357,19 +400,16 @@ class SubmitFeedTask extends Shell
       } else { 
         $deferred->resolve($result);
       }
-    }, $config, $feedSet);
+    }, $config, $feeds, $feedType);
     return $deferred->promise();
   }
 
-  private function _submitMerchant($callback, $config, $feedSet)
+  private function _submitMerchant($callback, $config, $feeds, $feedType)
   {
-    $response = array();
     $access_key   = $config['access_key'];
     $secret_key   = $config['secret_key'];
     $seller       = $config['seller'];
     $marketplace  = $config['marketplace'];
-    $data         = $feedSet['feed'];
-    $seller_sku   = $feedSet['feed']['sku'];
     switch($marketplace) {
     case 'JP':
       $market_id = $this->AmazonMWS::MWS_MARKETPLACE_JP;
@@ -389,7 +429,7 @@ class SubmitFeedTask extends Shell
       break;
     }
     try {
-      switch($feedSet['feedType']) {
+      switch($feedType) {
       case $this->AmazonMWS::MWS_CREATE_FEED:
         $response = $this->AmazonMWS->create([
           'Marketplace'     => $market_id
@@ -397,8 +437,11 @@ class SubmitFeedTask extends Shell
         , 'AWSSecretKeyId'  => $secret_key
         , 'AWSAccessKeyId'  => $access_key
         , 'BaseURL'         => $country
-        , 'Data'            => array($data)
-        ]) ? ['update-delete' => 'Success'] : ['update-delete' => 'Failure'];
+        , 'Data'            => $feeds
+        ])
+        ? ['update-delete' => 'OK', 'feeds'       => $feeds] 
+        : ['update-delete' => 'NG', 'feeds'       => $feeds];
+    
         break;
       case $this->AmazonMWS::MWS_ADDDEL_FEED:
         $response = $this->AmazonMWS->adddel([
@@ -407,8 +450,10 @@ class SubmitFeedTask extends Shell
         , 'AWSSecretKeyId'  => $secret_key
         , 'AWSAccessKeyId'  => $access_key
         , 'BaseURL'         => $country
-        , 'Data'            => array($data)
-        ]) ? ['add-delete' => 'Success'] : ['add-delete' => 'Failure'];
+        , 'Data'            => $feeds
+        ]) 
+        ? ['add-delete' => 'OK', 'feeds'       => $feeds] 
+        : ['add-delete' => 'NG', 'feeds'       => $feeds];
         break;
       case $this->AmazonMWS::MWS_UPDATE_FEED:
         $response = $this->AmazonMWS->update([
@@ -417,8 +462,10 @@ class SubmitFeedTask extends Shell
         , 'AWSSecretKeyId'  => $secret_key
         , 'AWSAccessKeyId'  => $access_key
         , 'BaseURL'         => $country
-        , 'Data'            => array($data)
-        ]) ? ['add-delete' => 'Success'] : ['add-delete' => 'Failure'];
+        , 'Data'            => $feeds
+        ]) 
+        ? ['add-delete' => 'OK', 'feeds'       => $feeds] 
+        : ['add-delete' => 'NG', 'feeds'       => $feeds];
         break;
       }
       print('-');
@@ -426,12 +473,11 @@ class SubmitFeedTask extends Shell
       print('x');
       return $callback($e->getMessage(), null);
     }
-    //debug($response);
+
     $callback(null, [
-      'submitFeed'          => $response
-    , 'marketplace'         => $marketplace
-    , 'seller'              => $seller
-    , 'seller_sku'          => $seller_sku
+      'submitFeed'  => $response
+    , 'marketplace' => $marketplace
+    , 'seller'      => $seller
     ]);
   }
 }
