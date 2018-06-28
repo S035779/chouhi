@@ -2,12 +2,14 @@
 namespace App\Shell\Task;
 
 use Cake\Console\Shell;
-use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
+use Cake\Log\Log;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\CommonComponent;
 use App\Controller\Component\AmazonMWSComponent;
 use React\Promise;
+use React\EventLoop;
 
 /**
  * SubmitFeed shell task.
@@ -17,6 +19,7 @@ class SubmitFeedTask extends Shell
   public function initialize()
   {
     $this->AmazonMWS = new AmazonMWSComponent(new ComponentRegistry()); 
+    $this->Common = new CommonComponent(new ComponentRegistry());
   }
 
   /**
@@ -267,7 +270,7 @@ class SubmitFeedTask extends Shell
         $entity = $merchants->patchEntity($merchant, $_result);
       }
       if(!$merchants->save($entity)) {
-        $this->log_error($entity->errors());
+        $this->Common->log_debug($entity->errors(), 'crons');
         return false;
       }
     }
@@ -311,35 +314,49 @@ class SubmitFeedTask extends Shell
     $response = array();
     Promise\all($this->_submitMerchants($request))
       ->done(function($result) use (&$response) {
-        $response = $result;
         //debug($result);
+        $response = $result;
       }, function ($error) {
-        $this->log_error($error);
+        $this->log_error($error, __FILE__, __LINE__, 'crons');
       });
     return $response;
   } 
 
   private function _submitMerchants($request) 
   {
+    $loop = EventLoop\Factory::create();
     $response = array();
     foreach($request as $_request) {
-      foreach($_request['feedSets'] as $feedSet) {
-        //debug($feedSet);
-        array_push($response, $this->submitMerchant($_request['config'], $feedSet));
+      if(_request) {
+        foreach($_request['feedSets'] as $feedSet) {
+          //debug($feedSet);
+          array_push($response, $this->retryMerchant($_request['config'], $feedSet, $loop));
+        }
       }
     }
+    $loop->run();
     return $response;
+  }
+
+  private function retryMerchant($config, $feedSet, $loop) 
+  {
+    return $this->Common->retry($loop, function() use ($config, $feedSet, $loop) {
+        return $this->submitMerchant($config, $feedSet);
+      })
+      ->otherwise(function($updated) {
+        if($updated) $this->Common->log_error($updated, __FILE__, __LINE__, 'crons');
+      });
   }
 
   private function submitMerchant($config, $feedSet)
   {
     $deferred = new Promise\Deferred();
-    $this->_submitMerchant(function($error, $response) use ($deferred) {
+    $this->_submitMerchant(function($error, $result) use ($deferred) {
       if($error) {
-        $this->log_error($error);
         $deferred->reject($error);
+      } else { 
+        $deferred->resolve($result);
       }
-      $deferred->resolve($response);
     }, $config, $feedSet);
     return $deferred->promise();
   }
@@ -371,7 +388,6 @@ class SubmitFeedTask extends Shell
       $country   = $this->AmazonMWS::MWS_BASEURL_JP;
       break;
     }
-    sleep(5);
     try {
       switch($feedSet['feedType']) {
       case $this->AmazonMWS::MWS_CREATE_FEED:
@@ -405,8 +421,10 @@ class SubmitFeedTask extends Shell
         ]) ? ['add-delete' => 'Success'] : ['add-delete' => 'Failure'];
         break;
       }
+      print('-');
     } catch (\Exception $e) {
-      $callback($e->getMessage(), []);
+      print('x');
+      return $callback($e->getMessage(), null);
     }
     //debug($response);
     $callback(null, [
@@ -415,17 +433,5 @@ class SubmitFeedTask extends Shell
     , 'seller'              => $seller
     , 'seller_sku'          => $seller_sku
     ]);
-  }
-
-  private function log_debug($message) 
-  {
-    $displayName = '[' . __CLASS__ . '] ';
-    Log::debug($displayName . print_r($message, true), ['scope' => ['crons']]);
-  }
-
-  private function log_error($message) 
-  {
-    $displayName = '[' . __CLASS__ . '] ';
-    Log::error($displayName . print_r($message, true), ['scope' => ['crons']]);
   }
 }
