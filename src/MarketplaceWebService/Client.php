@@ -36,6 +36,7 @@ use MarketplaceWebService\Model\MarketplaceWebService_Model_GetFeedSubmissionLis
 use MarketplaceWebService\Model\MarketplaceWebService_Model_GetFeedSubmissionListResponse;
 use MarketplaceWebService\Model\MarketplaceWebService_Model_GetFeedSubmissionResultRequest;
 use MarketplaceWebService\Model\MarketplaceWebService_Model_GetFeedSubmissionResultResponse;
+use MarketplaceWebService\Model\MarketplaceWebService_Model_ErrorResponse;
 
 define('CONVERTED_PARAMETERS_KEY', 'PARAMETERS');
 define('CONVERTED_HEADERS_KEY', 'HEADERS');
