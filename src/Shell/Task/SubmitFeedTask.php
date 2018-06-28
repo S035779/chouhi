@@ -327,7 +327,7 @@ class SubmitFeedTask extends Shell
     $loop = EventLoop\Factory::create();
     $response = array();
     foreach($request as $_request) {
-      if(_request) {
+      if($_request) {
         foreach($_request['feedSets'] as $feedSet) {
           //debug($feedSet);
           array_push($response, $this->retryMerchant($_request['config'], $feedSet, $loop));
