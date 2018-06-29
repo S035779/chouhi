@@ -19,20 +19,24 @@ class CommonComponent extends Component
    */
   protected $_defaultConfig = [];
 
-  public function retry($loop, $callback, $interval=3, $maximum=3, $retry=0, $deferred=null) 
+  public function retry($loop, $callback, $interval=3, $maximum=5, $retry=0, $deferred=null) 
   {
     $deferred = $deferred ?: new Promise\Deferred();
     $promise = $callback();
     $promise
       ->then(
         function($value) use ($deferred) {
+          print('-');
           $deferred->resolve($value);
         },
         function($reason) use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
-          if($reason) $this->log_error($reason, __FILE__, __LINE__, 'crons');
-          if($retry++ >= $maximum) return $deferred->reject($reason);
+          if($retry++ >= $maximum) {
+            print('x');
+            return $deferred->reject($reason);
+          }
           $loop->addTimer($interval, function($timer)
             use ($loop, $callback, $interval, $maximum, $retry, $deferred) {
+            print($retry);
             $this->retry($loop, $callback, $interval, $maximum, $retry, $deferred);
           });
         });

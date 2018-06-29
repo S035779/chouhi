@@ -468,9 +468,7 @@ class SubmitFeedTask extends Shell
         : ['add-delete' => 'NG', 'feeds'       => $feeds];
         break;
       }
-      print('-');
     } catch (\Exception $e) {
-      print('x');
       return $callback($e->getMessage(), null);
     }
 

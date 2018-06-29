@@ -463,9 +463,7 @@ class GetMatchingProductTask extends Shell
       , 'IdType'          => $request['id_type']
       , 'Id'              => $request['id']
       ]);
-      print('-');
     } catch (\Exception $e) {
-      print('x');
       return $callback($e->getMessage(), null);
     }
 

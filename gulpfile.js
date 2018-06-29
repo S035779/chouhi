@@ -38,15 +38,22 @@ elixir(mix => {
     .styles([
       '../build/css/bootstrap-datepicker3.css'
     , '../build/css/dashboard.css'
-    , '../build/css/common.css'],         'webroot/css/watchnote.css' )
+    , '../build/css/common.css'
+    ], 'webroot/css/watchnote.css' )
     .styles([
       '../build/css/signin.css'
-    , '../build/css/common.css'],         'webroot/css/signin.css'    )
+    , '../build/css/common.css'
+    ], 'webroot/css/signin.css'    )
     .scripts([
       'bootstrap-datepicker.min.js'
     , 'bootstrap-datepicker.ja.min.js'
-    , 'holder.min.js'],                   'webroot/js/watchnote.js'   )
-    .version(['css/watchnote.css', 'css/signin.css', 'js/watchnote.js'])
+    , 'holder.min.js'
+    ], 'webroot/js/watchnote.js'   )
+    .version([
+      'css/watchnote.css'
+    , 'css/signin.css'
+    , 'js/watchnote.js'
+    ])
     //.browserSync({ proxy: 'localhost' })
   ;
 });
