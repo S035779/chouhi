@@ -436,7 +436,6 @@ class CreateFeedTask extends Shell
       $data['width'                     ] = $item['package_width'];
       array_push($datas, $data);
     }
-    print('-');
     $callback(null, [
       'getItems'    => $datas
     , 'marketplace' => $request['marketplace']
@@ -470,8 +469,6 @@ class CreateFeedTask extends Shell
       }
       array_push($datas, $data);
     }
-    //debug($datas);
-    print('-');
     $callback(null, [
       'getItems'    => $datas
     , 'marketplace' => $request['marketplace']
@@ -522,8 +519,6 @@ class CreateFeedTask extends Shell
       $data['leadtime-to-ship'          ] = $leadtime;
       array_push($datas, $data);
     }
-    //debug($datas);
-    print('-');
     $callback(null, [
       'getItems'    => $datas
     , 'marketplace' => $request['marketplace']
@@ -546,7 +541,6 @@ class CreateFeedTask extends Shell
         }
       }
     }
-    print('-');
     $callback(null, [
       'getItems'    => $datas
     , 'marketplace' => $request['marketplace']

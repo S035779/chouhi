@@ -419,9 +419,7 @@ class GetReportTask extends Shell
       , 'AWSAccessKeyId'  => $access_key
       , 'BaseURL'         => $country
       ]);
-      print('-');
     } catch (\Exception $e) {
-      print('x');
       return $callback($e->getMessage(), []);
     }
 

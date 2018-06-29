@@ -300,6 +300,7 @@ class AsinImportTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
+    sleep(1);
     try {
       $conf
         ->setCountry($country)
@@ -315,9 +316,7 @@ class AsinImportTask extends Shell
       $lookup->setMerchantId('All');
       $lookup->setResponseGroup(array('ItemAttributes'));
       $response = $apaiIO->runOperation($lookup);
-      print('-');
     } catch (\Exception $e) {
-      print('x');
       return $callback($e->getMessage(), null);
     }
 

@@ -105,24 +105,25 @@ class FetchOfferItemsTask extends Shell
     $items  = TableRegistry::get('Items');
 
     $results  = $this->setOffers($header, $request);
+    //debug(count($results));
 
     foreach($results as $result) {
-      //print_r($result);
       $item = $items->find()
         ->where([
           'asin'        => $result['Headers']['asin']
         , 'marketplace' => $result['Headers']['marketplace']])
         ->first();
+      //debug($item);
       if($item) {
         $result['Results']['item']['asin']        = $result['Headers']['asin'];
         $result['Results']['item']['marketplace'] = $result['Headers']['marketplace'];
         $result['Results']['item_id']             = $item->id;
         $entity = $offers->newEntity($result['Results']);
-      }
-      //print_r($entity);
-      if(!$offers->save($entity)) {
-        $this->Common->log_debug($entity->errors(), 'crons');
-        return false;
+        if(!$offers->save($entity)) {
+          //debug($result['Results']);
+          $this->Common->log_debug($entity->errors(), 'crons');
+          return false;
+        }
       }
     }
 
@@ -158,6 +159,7 @@ class FetchOfferItemsTask extends Shell
     $items  = TableRegistry::get('Items');
 
     $results  = $this->setOffers($header, $request);
+    //debug($result);
 
     foreach($results as $result) {
       $item = $items->find()
@@ -180,10 +182,10 @@ class FetchOfferItemsTask extends Shell
           $result['Results']['item_id']             = $item->id;
           $entity = $offers->newEntity($result['Results']);
         }
-      }
-      if(!$offers->save($entity)) {
-        $this->Common->log_error($entity->errors(), __FILE__, __LINE__, 'crons');
-        return false;
+        if(!$offers->save($entity)) {
+          $this->Common->log_error($entity->errors(), __FILE__, __LINE__, 'crons');
+          return false;
+        }
       }
     }
 
@@ -194,103 +196,87 @@ class FetchOfferItemsTask extends Shell
   { 
     $datas = array();
     $datetime = date('Y-m-d H:i:s');
-    $deftime  = date('Y-m-d H:i:s', 0);
     $keys     = array_keys($header);
     $vals     = array_values($header);
 
     $_response = $this->fetchOffers($request);
-
     //debug($_response);
+
     foreach($_response as $response) {
       if($response) {
         $operation = $response['fetchOffer']['OperationRequest'];
         $parameter = $response['fetchOffer']['Items']['Request'];
-        if(isset($response['fetchOffer']['Items']['Request']['Errors']['Error'])) {
-          $Errors = $response['fetchOffer']['Items']['Request']['Errors']['Error'];
-        }
-        if(isset($response['fetchOffer']['Items']['Item'])) {
-          $_items    = $response['fetchOffer']['Items']['Item'];
-          $items     = $_items ?? array_values($_items) === $_items ? $_items : [$_items];
-        }
+        $_items = isset($response['fetchOffer']['Items']['Item']) 
+          ? $response['fetchOffer']['Items']['Item'] : [];
+        $items = array_values($_items) === $_items ? $_items : [$_items];
         $idx = 0;
+        //debug($items);
         foreach($items as $item) {
-          //debug($item);
-          if($item && !isset($Errors[$idx])) {
+          if($item) {
             $asin         = $item['ASIN'] ?? 'N/A';
             $new          = $item['OfferSummary']['TotalNew'] ?? 0;
             $used         = $item['OfferSummary']['TotalUsed'] ?? 0;
             $collectible  = $item['OfferSummary']['TotalCollectible'] ?? 0;
             $refurbished  = $item['OfferSummary']['TotalRefurbished'] ?? 0;
-            $salesRanking = $item['SalesRank'] ?? 'N/A';
-            $lowestPrice  = $item['OfferSummary']['LowestNewPrice']['Amount'] ?? 0;
+            $_offers = isset($item['Offers']['Offer']) ? $item['Offers']['Offer'] : [];
+            $offers  = array_values($_offers) === $_offers ? $_offers : [$_offers];
+            $salesRanking = $item['SalesRank'] ?? 0;
+            $_lowestPrice = $item['OfferSummary']['LowestNewPrice']['Amount'] ?? 0;
             $lowestPriceCurrency = $item['OfferSummary']['LowestNewPrice']['CurrencyCode'] ?? 'N/A';
+            $lowestPrice
+              = isset($_lowestPrice) ? $this->Common->getLocalPrice($_lowestPrice, $lowestPriceCurrency) : 0;
             $total        = $item['Offers']['TotalOffers'] ?? 0;
-            if(isset($item['Offers']['Offer'])) {
-              if(array_values($item['Offers']['Offer']) === $item['Offers']['Offer']) {
-                $offers = $item['Offers']['Offer'];
-              } else {
-                $offers = [$item['Offers']['Offer']];
-              }
-            } else {
-              $offers = [];
-            }
-            $data = array();
+            //debug($offers);
             foreach($offers as $offer) {
-              //print_r($offer);
-              $metadata = array(
-                'operation'   => $operation
-              , 'parameter'   => $parameter
-              , 'asin'        => $asin
-              , 'marketplace' => $response['marketplace']
-              , 'totalNew'    => $new
-              , 'totalUsed'   => $used
-              , 'totalCollectible' => $collectible
-              , 'totalRefurbished' => $refurbished
-              , 'totalOffers' => $total
-              , 'salesRanking' => $salesRanking
-              , 'lowestPrice' => $lowestPrice
-              , 'lowestPriceCurrency' => $lowestPriceCurrency
-              );
-              if($vals[ 0]) $data[$keys[ 0]] = $asin                                  ?? 'N/A';
-              if($vals[ 1]) $data[$keys[ 1]] = $offer['OfferListing']['Availability'] ?? 'N/A';
-              if($vals[ 2]) $data[$keys[ 2]]
-                = $offer['Seller']['AverageFeedbackRating']                           ?? 0;
-              if($vals[ 3]) $data[$keys[ 3]] = $offer['OfferAttributes']['Condition'] ?? 'N/A';
-              if($vals[ 4]) $data[$keys[ 4]]
-                = $offer['OfferAttributes']['ConditionNote']                          ?? 'N/A';
-              if($vals[ 5]) $data[$keys[ 5]] = $offer['OfferAttributes']['Country']   ?? 'N/A';
-              if($vals[ 6]) $data[$keys[ 6]] = $offer['OfferListing']['ExchangeId']   ?? 'N/A';
-              if($vals[ 7]) $data[$keys[ 7]]
-                = $offer['OfferListing']['IsEligibleForSuperSaverShipping']           ?? 0;
-              if($vals[ 8]) $data[$keys[ 8]]
-                = $offer['OfferListing']['OfferListingId']                            ?? 'N/A';
-              if($vals[ 9]) $data[$keys[ 9]] = isset($offer['OfferListing']['Price']['Amount'])
-                ? $this->Common->getLocalPrice(
-                    $offer['OfferListing']['Price']['Amount']
-                  , $offer['OfferListing']['Price']['CurrencyCode']
-                  )
-                : 0;
-              if($vals[10]) $data[$keys[10]]
-                = $offer['OfferListing']['Price']['CurrencyCode']                     ?? 'N/A';
-              if($vals[11]) $data[$keys[11]] = $offer['OfferAttributes']['State']     ?? 'N/A';
-              if($vals[12]) $data[$keys[12]] = $offer['Seller']['SellerId']           ?? 'N/A';
-              if($vals[13]) $data[$keys[13]] 
-                = $offer['OfferAttributes']['SubCondition']                           ?? 'N/A';
-              if($vals[14]) $data[$keys[14]] = $offer['Seller']['TotalFeedback']      ?? 0;
-              if($vals[15]) $data[$keys[15]] = $salesRanking                          ?? 0;
-              if($vals[16]) $data[$keys[16]] = isset($lowestPrice)
-                ? $this->Common->getLocalPrice($lowestPrice, $lowestPriceCurrency) : 0;
-              if($vals[17]) $data[$keys[17]] = $lowestPriceCurrency                   ?? 'N/A';
-              if($vals[18]) $data[$keys[18]] = $datetime;
-              if($vals[19]) $data[$keys[19]] = $datetime;
-              array_push($datas, array('Headers' => $metadata, 'Results' => $data));
+              if($offer) {
+                $metadata = array(
+                  'operation'   => $operation
+                , 'parameter'   => $parameter
+                , 'asin'        => $asin
+                , 'marketplace' => $response['marketplace']
+                , 'totalNew'    => $new
+                , 'totalUsed'   => $used
+                , 'totalCollectible' => $collectible
+                , 'totalRefurbished' => $refurbished
+                , 'totalOffers' => $total
+                , 'salesRanking' => $salesRanking
+                , 'lowestPrice' => $lowestPrice
+                , 'lowestPriceCurrency' => $lowestPriceCurrency
+                );
+                $data = array();
+                if($vals[ 0]) $data[$keys[ 0]] = $asin ?? 'N/A';
+                if($vals[ 1]) $data[$keys[ 1]] = $offer['OfferListing']['Availability'] ?? 'N/A';
+                if($vals[ 2]) $data[$keys[ 2]] = $offer['Seller']['AverageFeedbackRating']?? 0;
+                if($vals[ 3]) $data[$keys[ 3]] = $offer['OfferAttributes']['Condition'] ?? 'N/A';
+                if($vals[ 4]) $data[$keys[ 4]] = $offer['OfferAttributes']['ConditionNote']?? 'N/A';
+                if($vals[ 5]) $data[$keys[ 5]] = $offer['OfferAttributes']['Country'] ?? 'N/A';
+                if($vals[ 6]) $data[$keys[ 6]] = $offer['OfferListing']['ExchangeId'] ?? 'N/A';
+                if($vals[ 7]) $data[$keys[ 7]] =
+                  $offer['OfferListing']['IsEligibleForSuperSaverShipping'] ?? 0;
+                if($vals[ 8]) $data[$keys[ 8]] = $offer['OfferListing']['OfferListingId'] ?? 'N/A';
+                if($vals[ 9]) $data[$keys[ 9]] = isset($offer['OfferListing']['Price']['Amount'])
+                  ? $this->Common->getLocalPrice($offer['OfferListing']['Price']['Amount']
+                    , $offer['OfferListing']['Price']['CurrencyCode'])
+                  : 0;
+                if($vals[10]) $data[$keys[10]] = $offer['OfferListing']['Price']['CurrencyCode'] ?? 'N/A';
+                if($vals[11]) $data[$keys[11]] = $offer['OfferAttributes']['State'] ?? 'N/A';
+                if($vals[12]) $data[$keys[12]] = $offer['Seller']['SellerId'] ?? 'N/A';
+                if($vals[13]) $data[$keys[13]] = $offer['OfferAttributes']['SubCondition'] ?? 'N/A';
+                if($vals[14]) $data[$keys[14]] = $offer['Seller']['TotalFeedback'] ?? 0;
+                if($vals[15]) $data[$keys[15]] = $salesRanking;
+                if($vals[16]) $data[$keys[16]] = $lowestPrice;
+                if($vals[17]) $data[$keys[17]] = $lowestPriceCurrency;
+                if($vals[18]) $data[$keys[18]] = $datetime;
+                if($vals[19]) $data[$keys[19]] = $datetime;
+                array_push($datas, array('Headers' => $metadata, 'Results' => $data));
+              }
             }
           }
           $idx++;
         }
       }
     }
-    //print_r($datas);
+    //debug($datas);
     return $datas;
   }
 
@@ -316,41 +302,46 @@ class FetchOfferItemsTask extends Shell
     $asins_us = array();
     $eol = count($request);
     $idx = 0;
+    $max_count = 10;
     //debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {
       case 'JP':
         if($this->Common->isKey('JP')) array_push($asins_jp, $_request['asin']);
-        if(count($asins_jp) >= 10) {
+        if(count($asins_jp) >= $max_count) {
           array_push($response, $this->retryOffer(implode(',', $asins_jp), 'JP', $loop));
           $asins_jp = array();
         }
         break;
       case 'AU':
         if($this->Common->isKey('AU')) array_push($asins_au, $_request['asin']);
-        if(count($asins_au) >= 10) {
+        if(count($asins_au) >= $max_count) {
           array_push($response, $this->retryOffer(implode(',', $asins_au), 'AU', $loop));
           $asins_au = array();
         }
         break;
       case 'US':
         if($this->Common->isKey('US')) array_push($asins_us, $_request['asin']);
-        if(count($asins_us) >= 10) {
+        if(count($asins_us) >= $max_count) {
           array_push($response, $this->retryOffer(implode(',', $asins_us), 'US', $loop));
           $asins_us = array();
         }
         break;
       }
       if($idx === $eol - 1) {
-        if(count($asins_jp) !== 0)
-          array_push($response, $this->retryOffer(implode(',', $asins_jp), 'JP', $loop));
-        if(count($asins_au) !== 0)
+        if(count($asins_jp) !== 0) {
+         array_push($response, $this->retryOffer(implode(',', $asins_jp), 'JP', $loop));
+        }
+        if(count($asins_au) !== 0) {
           array_push($response, $this->retryOffer(implode(',', $asins_au), 'AU', $loop));
-        if(count($asins_us) !== 0)
+        }
+        if(count($asins_us) !== 0) {
           array_push($response, $this->retryOffer(implode(',', $asins_us), 'US', $loop));
+        }
       }
       $idx += 1;
     }
+    //debug($response);
     $loop->run();
     return $response;
   }
@@ -411,6 +402,7 @@ class FetchOfferItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
+    sleep(5);
     try {
       $conf
         ->setCountry($country)
@@ -423,16 +415,14 @@ class FetchOfferItemsTask extends Shell
       $apaiIO = new ApaiIO($conf);
       $lookup = new Lookup();
       $lookup->setItemId($asin);
-      $lookup->setResponseGroup(array('OfferFull', 'SalesRank'));
       $lookup->setCondition('New');
       $lookup->setMerchantId('All');
+      $lookup->setResponseGroup(array('OfferFull', 'SalesRank'));
       $response = $apaiIO->runOperation($lookup);
-      print('-');
     } catch (\Exception $e) {
-      print('x');
       return $callback($e->getMessage(), null);
     }
-
+    //debug($response);
     $callback(null, [
       'fetchOffer'  => $response
     , 'marketplace' => $marketplace

@@ -513,6 +513,7 @@ class FetchItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
+    sleep(3);
     try {
       $conf
         ->setCountry($country)
@@ -531,9 +532,7 @@ class FetchItemsTask extends Shell
         'Images', 'ItemAttributes', 'OfferListings', 'OfferSummary', 'SalesRank', 'Reviews'
       ));
       $response = $apaiIO->runOperation($lookup);
-      print('-');
     } catch (\Exception $e) {
-      print('x');
       return $callback($e->getMessage(), null);
     }
 
