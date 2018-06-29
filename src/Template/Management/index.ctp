@@ -5,7 +5,11 @@
             <p class="lead">このページは管理者ページです。</p>
             <hr class="my-4">
             <p>サービスページヘ進む場合は以下のボタンを押下してください。</p>
-            <a class="btn btn-primary btn-lg" href="#" role="button">サービスページ</a>
+            <?= $this->Html->Link(__('サービスページ')
+            , ['controller' => 'Bootstrap', 'action' => 'token']
+            , ['escape' => false, 'class' => 'btn btn-primary btn-lg', 'role'  => 'button']
+            ) ?>
+          </div>
           </div>
         </main>
 
