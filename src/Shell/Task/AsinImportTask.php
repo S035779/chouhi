@@ -105,7 +105,7 @@ class AsinImportTask extends Shell
       $query->values($result);
     }
     if(!$query->execute()) {
-      $this->Common->log_error($query->errors(), __FILE__, __LINE__, 'crons');
+      $this->Common->log_debug($query->errors(), 'crons');
       return false;
     }
     return true;
@@ -138,7 +138,7 @@ class AsinImportTask extends Shell
         $entity = $asins->patchEntity($asin, $result);
       }
       if(!$asins->save($entity)) {
-        $this->Common->log_error($entity->errors(), __FILE__, __LINE__, 'crons');
+        $this->Common->log_debug($entity->errors(), 'crons');
         return false;
       }
     }
@@ -148,7 +148,7 @@ class AsinImportTask extends Shell
   private function setAsins($header, $request)
   {
     $datas = array();
-    $datetime = date('Y-m-d H:m:i');
+    $datetime = date('Y-m-d H:i:s', time());
     $keys     = array_keys($header);
     $vals     = array_values($header);
 
@@ -191,7 +191,7 @@ class AsinImportTask extends Shell
           //debug($result);
           $response = $result;
         }, function($error) {
-          debug('exception');
+          //debug('exception');
           $this->Common->log_error($error, __FILE__, __LINE__, 'crons');
         });
     return $response;

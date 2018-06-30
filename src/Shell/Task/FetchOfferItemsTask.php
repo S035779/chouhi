@@ -188,7 +188,7 @@ class FetchOfferItemsTask extends Shell
           $entity = $offers->newEntity($result['Results']);
         }
         if(!$offers->save($entity)) {
-          $this->Common->log_error($entity->errors(), __FILE__, __LINE__, 'crons');
+          $this->Common->log_debug($entity->errors(), 'crons');
           return false;
         }
       }

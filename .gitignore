@@ -43,3 +43,5 @@ nbproject/*
 # NodeJs
 .env
 node_modules
+
+*.lock

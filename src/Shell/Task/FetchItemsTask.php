@@ -145,7 +145,7 @@ class FetchItemsTask extends Shell
       $query->values($result);
     }
     if(!$query->execute()) {
-      $this->Common->log_error($query->errors(), __FILE__, __LINE__, 'crons');
+      $this->Common->log_debug($query->errors(), 'crons');
       return false;
     }
 
@@ -221,7 +221,7 @@ class FetchItemsTask extends Shell
       }
       //print_r($entity);
       if(!$items->save($entity)) {
-        $this->Common->log_error($entity->errors(), __FILE__, __LINE__, 'crons');
+        $this->Common->log_debug($entity->errors(), 'crons');
         return false;
       }
     }
