@@ -159,7 +159,8 @@ class AsinImportTask extends Shell
       if($response) {
         $operation    = $response['fetchAsin']['OperationRequest'];
         $parameter    = $response['fetchAsin']['Items']['Request'];
-        $_items       = $response['fetchAsin']['Items']['Item'];
+        $_items       = isset($response['fetchAsin']['Items']['Item'])
+          ? $response['fetchAsin']['Items']['Item'] : [];
         $items        = array_values($_items) === $_items ? $_items : [$_items];
         $marketplace  = $response['marketplace'];
         $data = array();
@@ -305,7 +306,7 @@ class AsinImportTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
-    sleep(1);
+    sleep(2);
     try {
       $conf
         ->setCountry($country)
