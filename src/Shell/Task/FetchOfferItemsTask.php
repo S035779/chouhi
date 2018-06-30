@@ -407,7 +407,7 @@ class FetchOfferItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
-    sleep(5);
+    sleep(3);
     try {
       $conf
         ->setCountry($country)
