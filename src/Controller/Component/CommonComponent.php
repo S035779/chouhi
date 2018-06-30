@@ -19,7 +19,7 @@ class CommonComponent extends Component
    */
   protected $_defaultConfig = [];
 
-  public function retry($loop, $callback, $interval=3, $maximum=3, $retry=0, $deferred=null) 
+  public function retry($loop, $callback, $interval=3, $maximum=5, $retry=0, $deferred=null) 
   {
     $deferred = $deferred ?: new Promise\Deferred();
     $promise = $callback();

@@ -68,7 +68,7 @@ class FetchItemsTask extends Shell
     $asins = TableRegistry::get('Asins');
     $datas = $asins
       ->find()
-      ->where(['suspended' => false])
+      ->where(['OR' => ['suspended' => false, 'modified >' => new \DateTime('-10 days')]])
       ->order(['modified' => 'ASC'])
       ->limit(1000)
     ;
@@ -518,7 +518,7 @@ class FetchItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
-    sleep(3);
+    sleep(2);
     try {
       $conf
         ->setCountry($country)

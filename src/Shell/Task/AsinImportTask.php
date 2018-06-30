@@ -68,7 +68,8 @@ class AsinImportTask extends Shell
     $asins = TableRegistry::get('Asins');
     $datas = $asins
       ->find()
-      ->where(['OR' => ['suspended' => false, 'modified >=' => new \DateTime('-10 days')]])
+      ->where(['OR' => ['suspended' => false, 'modified >' => new \DateTime('-10 days')]])
+      ->where(function($exp) { return $exp->isNotNull('ean'); })
       ->order(['modified' => 'ASC'])
       ->limit(1000)
     ;
