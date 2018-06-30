@@ -70,7 +70,7 @@ class AsinImportTask extends Shell
       ->find()
       ->where(['suspended' => false])
       ->order(['modified' => 'ASC'])
-      ->limit(1000)
+      ->limit(100)
     ;
     $request = array();
     foreach($datas as $data) {
@@ -206,7 +206,7 @@ class AsinImportTask extends Shell
     $asins_us = array();
     $eol = count($request);
     $idx = 0;
-    $max_count = 10;
+    $max_count = 1;
     //debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {

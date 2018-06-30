@@ -68,6 +68,7 @@ class FetchOfferItemsTask extends Shell
     $datas = $asins
       ->find()
       ->where(['suspended' => false])
+      ->where(function($exp) { return $exp->isNotNull('ean'); })
       ->order(['modified' => 'ASC'])
       ->limit(1000)
     ;
