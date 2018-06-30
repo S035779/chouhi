@@ -423,7 +423,7 @@ class FetchItemsTask extends Shell
     $asins_au = array();
     $asins_us = array();
     $eol = count($request);
-    $max_count = 1;
+    $max_count = 10;
     $idx = 0;
     foreach($request as $_request) {
       //switch($_request['marketplace']) {

@@ -206,7 +206,7 @@ class AsinImportTask extends Shell
     $asins_us = array();
     $eol = count($request);
     $idx = 0;
-    $max_count = 1;
+    $max_count = 10;
     //debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {
