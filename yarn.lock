@@ -422,6 +422,21 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
+<<<<<<< HEAD
+boom@4.x.x:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/boom/-/boom-4.3.1.tgz#4f8a3005cb4a7e3889f749030fd25b96e01d2e31"
+  dependencies:
+    hoek "4.x.x"
+
+boom@5.x.x:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/boom/-/boom-5.2.0.tgz#5dd9da6ee3a5f302077436290cb717d3f4a54e02"
+  dependencies:
+    hoek "4.x.x"
+
+=======
+>>>>>>> 1a564decb75562525c33666b3f771737d49f9f40
 bootstrap-sass@3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
@@ -2938,7 +2953,11 @@ lodash.uniq@^4.3.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
+<<<<<<< HEAD
+lodash@4.17.10, lodash@^4.0.0, lodash@^4.15.0, lodash@~4.17.4:
+=======
 lodash@4.17.10, lodash@^4.0.0, lodash@^4.15.0, lodash@~4.17.10:
+>>>>>>> 1a564decb75562525c33666b3f771737d49f9f40
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
