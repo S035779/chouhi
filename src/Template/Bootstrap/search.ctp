@@ -60,9 +60,8 @@
                 </form>
                 <?= $this->Form->end() ?>
 
-                <?php foreach ($offers as $offer): ?>
                 <h4 class="mb-3">検索結果</h4>
-
+                <?php foreach ($offers as $offer): ?>
                 <div class="card mb-3">
                   <div class="card-header"><?= h($offer['title']) ?></div>
                   <div class="card-body p-2">
