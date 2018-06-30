@@ -68,7 +68,7 @@ class FetchItemsTask extends Shell
     $asins = TableRegistry::get('Asins');
     $datas = $asins
       ->find()
-      ->where(['OR' => ['suspended' => false, 'modified >' => new \DateTime('-10 days')]])
+      ->where(['suspended' => false])
       ->order(['modified' => 'ASC'])
       ->limit(1000)
     ;

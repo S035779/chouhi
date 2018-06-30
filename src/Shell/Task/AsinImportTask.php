@@ -68,8 +68,7 @@ class AsinImportTask extends Shell
     $asins = TableRegistry::get('Asins');
     $datas = $asins
       ->find()
-      ->where(['OR' => ['suspended' => false, 'modified >' => new \DateTime('-10 days')]])
-      ->where(function($exp) { return $exp->isNotNull('ean'); })
+      ->where(['suspended' => false])
       ->order(['modified' => 'ASC'])
       ->limit(1000)
     ;
@@ -192,7 +191,7 @@ class AsinImportTask extends Shell
           //debug($result);
           $response = $result;
         }, function($error) {
-          //debug('exception');
+          debug('exception');
           $this->Common->log_error($error, __FILE__, __LINE__, 'crons');
         });
     return $response;
