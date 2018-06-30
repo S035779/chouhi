@@ -66,7 +66,12 @@ class AsinImportTask extends Shell
   private function execAsinImport() 
   {
     $asins = TableRegistry::get('Asins');
-    $datas = $asins->find()->where(['suspended' => false]);
+    $datas = $asins
+      ->find()
+      ->where(['suspended' => false])
+      ->order(['modified' => 'ASC'])
+      ->limit(1000)
+    ;
     $request = array();
     foreach($datas as $data) {
       array_push($request, ['asin' => $data->asin, 'marketplace' => $data->marketplace]);
