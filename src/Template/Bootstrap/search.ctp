@@ -1,5 +1,5 @@
         <!-- Main contens -->
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" id="search">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 class="h2"><?= __('商品検索') ?></h1>
           </div>
@@ -20,6 +20,7 @@
                       'required' => true
                     , 'class' => 'form-control'
                     , 'placeholder' => 'Input the target period'
+                    , 'id' => 'period'
                     ]) ?>
                     <div class="invalid-feedback">
                       Please enter a valid target period.
@@ -32,6 +33,7 @@
                       'required' => true
                     , 'class' => 'form-control'
                     , 'placeholder' => 'Input price rise rate'
+                    , 'id' => 'rise_rate'
                     ]) ?>
                     <div class="invalid-feedback">
                       Please enter a valid price rise rate.
@@ -44,6 +46,7 @@
                       'required' => true
                     , 'class' => 'form-control'
                     , 'placeholder' => 'Input profit range'
+                    , 'id' => 'profit_range'
                     ]) ?>
                     <div class="invalid-feedback">
                       Please enter a valid profit range.
@@ -55,6 +58,7 @@
                   <div class="mb-3">
                     <?= $this->Form->button(__('検索'), [
                       'class' => 'btn btn-primary btn-lg btn-block'
+                    , 'id' => 'submit'
                     ]) ?>
                   </div>
                 </form>
@@ -201,6 +205,7 @@
       , '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'
       , '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'
       , '//unpkg.com/feather-icons/dist/feather.min.js'
+      , '//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.js'
       , $this->Elixir->version('js/watchnote.js')
       ]) ?>
     <!-- Icons -->
@@ -234,4 +239,58 @@
       , content: function() { return $($(this).data('content-id')).html(); }
       });
     });
+    </script>
+    <!-- Validate & Spinner -->
+    <script>
+    (function() {
+      'use strict';
+      var opts = {
+        lines: 13,
+        length: 28,
+        width: 14,
+        radius: 42,
+        scale: 1,
+        corners: 1,
+        color: '#000',
+        opacity: .25,
+        rotate: 0,
+        direction: 1,
+        speed: 1,
+        trail: 60,
+        fps: 20,
+        zIndex: 2e9,
+        className: 'spinner',
+        top: '50%',
+        left: '50%',
+        shadow: false,
+        hwaccel: false,
+        position: 'absolute'
+      };
+      var spin_target = document.getElementById('search');
+      var spin_submit = document.getElementById('submit');
+      var period = document.getElementById('period');
+      var rise_rate = document.getElementById('rise_rate');
+      var profit_range = document.getElementById('profit_range');
+      var spinner = new Spinner(opts);
+
+      spin_submit.addEventListener('click', function () {
+        if(period !== '' && rise_rate !== '' && profit_range !== '') spinner.spin(spin_target);
+      }, false);
+
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if(form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+              spinner.stop();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+        spinner.stop();
+      }, false);
+
+    })();
     </script>

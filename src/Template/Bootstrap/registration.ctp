@@ -61,23 +61,25 @@
       'use strict';
       var opts = {
         lines: 13,
-        length: 33,
-        width: 11,
-        radius: 16,
+        length: 28,
+        width: 14,
+        radius: 42,
+        scale: 1,
         corners: 1,
-        rotate: 74,
-        direction: 1,
         color: '#000',
-        speed: 1.5,
-        trail: 71,
-        shadow: true,
-        hwaccel: true,
-        className: 'spinner',
-        zIndex: 2e9,
-        top: '50%',
-        left: '30%',
         opacity: .25,
-        fps: 20
+        rotate: 0,
+        direction: 1,
+        speed: 1,
+        trail: 60,
+        fps: 20,
+        zIndex: 2e9,
+        className: 'spinner',
+        top: '50%',
+        left: '50%',
+        shadow: false,
+        hwaccel: false,
+        position: 'absolute'
       };
       var spin_target = document.getElementById('registration');
       var spin_submit = document.getElementById('submit');
