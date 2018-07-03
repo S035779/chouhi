@@ -31,7 +31,6 @@ class CreateFeedTask extends Shell
   public function getOptionParser()
   {
     $parser = parent::getOptionParser();
-
     return $parser;
   }
 
@@ -42,7 +41,11 @@ class CreateFeedTask extends Shell
    */
   public function main()
   {
-    $this->execCreateFeed();
+    debug("first:" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    $result = $this->execCreateFeed();
+    debug("peak :" . memory_get_peak_usage(true)  / (1024 * 1024) . " MB");
+    debug("last :" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    return $result;
   }
 
   private function execCreateFeed()

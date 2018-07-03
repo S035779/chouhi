@@ -60,7 +60,11 @@ class FetchItemsTask extends Shell
    */
   public function main()
   {
-    $this->execItemLookup();
+    debug("first:" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    $result = $this->execItemLookup();
+    debug("peak :" . memory_get_peak_usage(true)  / (1024 * 1024) . " MB");
+    debug("last :" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    return $result;
   }
 
 
@@ -249,13 +253,13 @@ class FetchItemsTask extends Shell
         $marketplace  = $response['marketplace'];
         $operation    = $response['fetchItem']['OperationRequest'];
         $parameter    = $response['fetchItem']['Items']['Request'];
-        if(isset($response['fetchItem']['Items']['Request']['Errors']['Error'])) {
-          $Errors = $response['fetchItem']['Items']['Request']['Errors']['Error'];
-        }
-        if(isset($response['fetchItem']['Items']['Item'])) {
-          $_items = $response['fetchItem']['Items']['Item'];
-          $items  = $_items ?? (array_values($_items) === $_items ? $_items : [$_items]);
-        }
+        $Errors       = isset($response['fetchItem']['Items']['Request']['Errors']['Error'])
+          ? $response['fetchItem']['Items']['Request']['Errors']['Error']
+          : [];
+        $_items = isset($response['fetchItem']['Items']['Item'])
+          ? $response['fetchItem']['Items']['Item']
+          : [];
+        $items  = $_items ?? (array_values($_items) === $_items ? $_items : [$_items]);
         $data = array();
         $idx = 0;
         foreach($items as $item) {

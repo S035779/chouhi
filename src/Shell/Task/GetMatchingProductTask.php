@@ -31,7 +31,6 @@ class GetMatchingProductTask extends Shell
   public function getOptionParser()
   {
     $parser = parent::getOptionParser();
-
     return $parser;
   }
 
@@ -42,8 +41,12 @@ class GetMatchingProductTask extends Shell
    */
   public function main()
   {
+    debug("first:" . memory_get_usage(true)       / (1024 * 1024) . " MB");
     $this->ids = $this->setAsins();
-    $this->execGetMatchingProduct();
+    $result = $this->execGetMatchingProduct();
+    debug("peak :" . memory_get_peak_usage(true)  / (1024 * 1024) . " MB");
+    debug("last :" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    return $result;
   }
 
   private function setAsins()

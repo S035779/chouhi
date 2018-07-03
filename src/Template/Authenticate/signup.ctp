@@ -19,7 +19,7 @@
     <?= $this->Flash->render(); ?>
     <div class="form-signin">
       <?= $this->Form->create($user, [
-        'url' => ['controller' => 'Users', 'action' => 'signup']
+        'url' => ['controller' => 'Authenticate', 'action' => 'signup']
       , 'class' => 'needs-validation'
       , 'novalidate' => true
       ]) ?>

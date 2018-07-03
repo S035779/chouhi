@@ -59,7 +59,11 @@ class FetchOfferItemsTask extends Shell
    */
   public function main()
   {
-    $this->execOfferItemLookup();
+    debug("first:" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    $result = $this->execOfferItemLookup();
+    debug("peak :" . memory_get_peak_usage(true)  / (1024 * 1024) . " MB");
+    debug("last :" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    return $result;
   }
 
   private function execOfferItemLookup()

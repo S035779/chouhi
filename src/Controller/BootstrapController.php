@@ -151,88 +151,71 @@ class BootstrapController extends AppController
       if(!empty($request['rise_rate'    ]))  $rise_rate    = floatval( $request['rise_rate'   ]);
       if(!empty($request['profit_range' ]))  $profit_range = intval(   $request['profit_range']);
       $_offers = $connection
-        ->execute('
-          SELECT
-            time1                                   as created,
-            Offers1.asin                            as asin,
+        ->execute('SELECT
+            time1                                   AS created,
+            Offers1.asin                            AS asin,
             COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END) 
-                                                    as time_event_count,
-            Offers1.items_id                        as id,
-            Offers1.items_title                     as title,
-            Offers1.items_detail_page_url           as detail_page_url,
-            Offers1.items_total_new                 as total_new,
-            Offers1.items_total_used                as total_used,
-            Offers1.items_customer_reviews_url      as customer_reviews_url,
-            avg(Offers1.sales_ranking)              as average_sales_ranking,
-            Offers1.items_product_group             as product_group,
-            Offers1.items_sales_ranking             as sales_ranking,
-            Offers1.items_lowest_price              as lowest_price,
-            Offers1.items_lowest_price_currency     as lowest_price_currency,
-            avg(Offers1.lowest_price)               as average_lowest_price,
-            Offers1.items_lowest_price_currency     as average_lowest_price_currency,
-            Offers1.items_original_release_date_at  as original_release_date_at,
-            Offers1.items_release_date_at           as release_date_at,
-            Offers1.items_publication_date_at       as publication_date_at,
-            Offers1.items_large_image_url           as large_image_url, 
-            (
-              (select lowest_price from offers 
-                where created = max(Offers1.created) and asin = Offers1.asin ) /
-              (select lowest_price from offers 
-                where created = min(Offers1.created) and asin = Offers1.asin ) * 100 - 100
-            ) as rise_rate,
-            (
-              (select lowest_price from offers 
-                where created = max(Offers1.created) and asin = Offers1.asin ) -
-              (select lowest_price from offers 
-                where created = min(Offers1.created) and asin = Offers1.asin )
-            ) as profit_range
+                                                    AS time_event_count,
+            Offers1.items_id                        AS id,
+            Offers1.items_title                     AS title,
+            Offers1.items_detail_page_url           AS detail_page_url,
+            Offers1.items_total_new                 AS total_new,
+            Offers1.items_total_used                AS total_used,
+            Offers1.items_customer_reviews_url      AS customer_reviews_url,
+            AVG(Offers1.sales_ranking)              AS average_sales_ranking,
+            Offers1.items_product_group             AS product_group,
+            Offers1.items_sales_ranking             AS sales_ranking,
+            Offers1.items_lowest_price              AS lowest_price,
+            Offers1.items_lowest_price_currency     AS lowest_price_currency,
+            AVG(Offers1.lowest_price)               AS average_lowest_price,
+            Offers1.items_lowest_price_currency     AS average_lowest_price_currency,
+            Offers1.items_original_release_date_at  AS original_release_date_at,
+            Offers1.items_release_date_at           AS release_date_at,
+            Offers1.items_publication_date_at       AS publication_date_at,
+            Offers1.items_large_image_url           AS large_image_url, 
+            ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin ) /
+              (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin ) *
+                100 - 100 )                         AS rise_rate,
+            ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin ) -
+              (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin ) 
+                )                                   AS profit_range
           FROM 
-            (
-              (
-                SELECT
-                  timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) 
-                    hour) AS time1,
-                  timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n)
-                    + series_numbers.number % :n hour) AS time2
-                FROM 
-                  (
-                    SELECT @num := 0 AS number
-                    UNION ALL
-                    SELECT @num := @num + 1 FROM information_schema.COLUMNS
-                    LIMIT ' . $bck_hours . '
-                  ) AS series_numbers
-              ) AS date_map
-              LEFT JOIN 
-                (
-                  SELECT 
-                    items.id                       as items_id,
-                    items.title                    as items_title,
-                    offers.asin                    as asin,
-                    items.detail_page_url          as items_detail_page_url,
-                    items.total_new                as items_total_new,
-                    items.total_used               as items_total_used,
-                    items.customer_reviews_url     as items_customer_reviews_url,
-                    offers.sales_ranking           as sales_ranking,
-                    items.product_group            as items_product_group,
-                    items.sales_ranking            as items_sales_ranking,   
-                    items.lowest_price             as items_lowest_price,
-                    items.lowest_price_currency    as items_lowest_price_currency,
-                    offers.lowest_price            as lowest_price,
-                    offers.lowest_price_currency   as lowest_price_currency,
-                    items.original_release_date_at as items_original_release_date_at,
-                    items.release_date_at          as items_release_date_at,
-                    items.publication_date_at      as items_publication_date_at,
-                    items.large_image_url          as items_large_image_url,
-                    offers.created                 as created
-                  FROM offers
-                  inner join items 
-                  on items.id = offers.item_id
-                ) AS Offers1
-              ON 
-                Offers1.created between date_map.time2 and date_map.time2 + interval 1 hour
-            )
+            ((SELECT 
+              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) hour
+                ) AS time1,
+              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) + series_numbers.number % :n hour
+                ) AS time2
+            FROM 
+              (SELECT @num := 0 AS number UNION ALL 
+                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours . '
+                ) AS series_numbers) AS date_map
+            LEFT JOIN 
+              (SELECT 
+                items.id                       AS items_id,
+                items.title                    AS items_title,
+                offers.asin                    AS asin,
+                items.detail_page_url          AS items_detail_page_url,
+                items.total_new                AS items_total_new,
+                items.total_used               AS items_total_used,
+                items.customer_reviews_url     AS items_customer_reviews_url,
+                offers.sales_ranking           AS sales_ranking,
+                items.product_group            AS items_product_group,
+                items.sales_ranking            AS items_sales_ranking,   
+                items.lowest_price             AS items_lowest_price,
+                items.lowest_price_currency    AS items_lowest_price_currency,
+                offers.lowest_price            AS lowest_price,
+                offers.lowest_price_currency   AS lowest_price_currency,
+                items.original_release_date_at AS items_original_release_date_at,
+                items.release_date_at          AS items_release_date_at,
+                items.publication_date_at      AS items_publication_date_at,
+                items.large_image_url          AS items_large_image_url,
+                offers.created                 AS created
+              FROM offers
+              INNER JOIN items 
+              ON items.id = offers.item_id ) AS Offers1 
+            ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
           GROUP BY time1, Offers1.asin, Offers1.items_id
-          order by time1 desc;', ['n' => $avg_hours])
+          ORDER BY time1 DESC;', ['n' => $avg_hours])
         ->fetchAll('assoc');
 
       foreach($_offers as $offer) {
