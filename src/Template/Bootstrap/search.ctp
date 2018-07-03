@@ -70,7 +70,7 @@
                   <div class="card-header"><?= h($offer['title']) ?></div>
                   <div class="card-body p-2">
                     <div class="card-group">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                       <div class="card">
                       <img class="card-img-top" src="//dyn.keepa.com/pricehistory.png?cAmazon=0f5702&cNew=77ce43&cUsed=f26e3c&cFont=31393d&cBackground=ffffff&amazon=1&new=1&used=1&range=90&salesrank=1&domain=co.jp&width=512&height=480&asin=<?= h($offer['asin']) ?>"
                         alt="<?= h($offer['title']) ?>">
@@ -80,17 +80,17 @@
                             <a role="button" class="btn btn-primary w-100"
                               href="//www.mnrate.com/item/aid/<?= h($offer['asin']) ?>" 
                               target="_blank">
-                              <?= __('MO') ?>
+                              <?= __('ﾓﾉ') ?>
                             </a>
                             <a role="button" class="btn btn-primary w-100" 
                               href="//sellercentral.amazon.co.jp/hz/fba/profitabilitycalculator/index?lang=ja_JP" 
                               target="_blank">
-                              <?= __('FB') ?>
+                              <?= __('ｼﾐｭ') ?>
                             </a>
                             <a role="button" class="btn btn-primary w-100" 
                               href="<?= h($offer['detail_page_url']) ?>" 
                               target="_blank">
-                              <?= __('AM') ?>
+                              <?= __('ｱﾏ') ?>
                             </a>
                             <button type="button" class="btn btn-primary w-100"
                               data-toggle="popover"
@@ -133,7 +133,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                       <div class="card">
                       <ul class="list-group list-group-flush">
                         <li class="list-group-item"><?= 
