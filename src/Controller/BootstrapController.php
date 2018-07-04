@@ -149,7 +149,8 @@ class BootstrapController extends AppController
       if(!empty($request['rise_rate'    ]))  $rise_rate    = floatval( $request['rise_rate'   ]);
       if(!empty($request['profit_range' ]))  $profit_range = intval(   $request['profit_range']);
       $_offers = $connection
-        ->execute('SELECT
+        ->execute('
+          SELECT
             time1                                   AS created,
             Offers1.asin                            AS asin,
             COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END) 
@@ -171,46 +172,45 @@ class BootstrapController extends AppController
             Offers1.items_release_date_at           AS release_date_at,
             Offers1.items_publication_date_at       AS publication_date_at,
             Offers1.items_large_image_url           AS large_image_url, 
-            ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin ) /
-              (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin ) *
-                100 - 100 )                         AS rise_rate,
-            ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin ) -
-              (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin ) 
-                )                                   AS profit_range
+            ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin) /
+             (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin) *
+              100 - 100)                            AS rise_rate,
+            ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin) -
+             ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin) +
+              (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin)
+              / 2))                                  AS profit_range
           FROM 
             ((SELECT 
-              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) hour
-                ) AS time1,
-              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) + series_numbers.number % :n hour
-                ) AS time2
+              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) hour)
+                                                    AS time1,
+              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) + series_numbers.number % :n hour)
+                                                    AS time2
             FROM 
               (SELECT @num := 0 AS number UNION ALL 
-                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours . '
-                ) AS series_numbers) AS date_map
+                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours . ') 
+                  AS series_numbers)                AS date_map
             LEFT JOIN 
               (SELECT 
-                items.id                       AS items_id,
-                items.title                    AS items_title,
-                offers.asin                    AS asin,
-                items.detail_page_url          AS items_detail_page_url,
-                items.total_new                AS items_total_new,
-                items.total_used               AS items_total_used,
-                items.customer_reviews_url     AS items_customer_reviews_url,
-                offers.sales_ranking           AS sales_ranking,
-                items.product_group            AS items_product_group,
-                items.sales_ranking            AS items_sales_ranking,   
-                items.lowest_price             AS items_lowest_price,
-                items.lowest_price_currency    AS items_lowest_price_currency,
-                offers.lowest_price            AS lowest_price,
-                offers.lowest_price_currency   AS lowest_price_currency,
-                items.original_release_date_at AS items_original_release_date_at,
-                items.release_date_at          AS items_release_date_at,
-                items.publication_date_at      AS items_publication_date_at,
-                items.large_image_url          AS items_large_image_url,
-                offers.created                 AS created
-              FROM offers
-              INNER JOIN items 
-              ON items.id = offers.item_id ) AS Offers1 
+                items.id                            AS items_id,
+                items.title                         AS items_title,
+                offers.asin                         AS asin,
+                items.detail_page_url               AS items_detail_page_url,
+                items.total_new                     AS items_total_new,
+                items.total_used                    AS items_total_used,
+                items.customer_reviews_url          AS items_customer_reviews_url,
+                offers.sales_ranking                AS sales_ranking,
+                items.product_group                 AS items_product_group,
+                items.sales_ranking                 AS items_sales_ranking,   
+                items.lowest_price                  AS items_lowest_price,
+                items.lowest_price_currency         AS items_lowest_price_currency,
+                offers.lowest_price                 AS lowest_price,
+                offers.lowest_price_currency        AS lowest_price_currency,
+                items.original_release_date_at      AS items_original_release_date_at,
+                items.release_date_at               AS items_release_date_at,
+                items.publication_date_at           AS items_publication_date_at,
+                items.large_image_url               AS items_large_image_url,
+                offers.created                      AS created
+              FROM offers INNER JOIN items ON items.id = offers.item_id ) AS Offers1 
             ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
           GROUP BY time1, Offers1.asin, Offers1.items_id
           ORDER BY time1 DESC;', ['n' => $avg_hours])
@@ -219,7 +219,7 @@ class BootstrapController extends AppController
       foreach($_offers as $offer) {
         //debug($offer);
         if($offer['asin']) {
-          if($offer['rise_rate'] >= $rise_rate && $offer['profit_range'] >= $profit_range) { 
+          if($offer['rise_rate'] >= $rise_rate || $offer['profit_range'] >= $profit_range) { 
             //debug($offer);
             array_push($offers, $offer);
           }
