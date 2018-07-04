@@ -142,7 +142,13 @@ class AmazonMWSComponent extends Component
     $interpreter = new Interpreter();
 
     $asins = TableRegistry::get('Asins');
-    $interpreter->addObserver(function(array $row) use ($suspended, $asins) {
+    $idx = 0;
+    $error= 0;
+    $interpreter->addObserver(function(array $row) use ($suspended, $asins, &$idx, &$error) {
+      if($idx > 1000) {
+        $error = 1;
+        return;
+      }
       $head = count($row) <= 2
         ? array('asin' => true, 'marketplace' => true
           , 'suspended' => true, 'created' => true, 'modified' => true)
@@ -164,12 +170,13 @@ class AmazonMWSComponent extends Component
       }
       if(!$asins->save($entity)) {
         $this->log_error($entity->errors());
-        return false;
+        $error = 99;
+        return;
       }
+      $idx += 1;
     });
-
     $lexer->parse($filename, $interpreter);
-    return true;
+    return ['error' => $error, 'line' => $idx];
   }
 
   private function setAsin($head, $row, $suspended) 
@@ -216,68 +223,6 @@ class AmazonMWSComponent extends Component
     }
     return $data;
   }
-
-  //public function upsertAsin($filename, $suspended)
-  //{
-  //  $header = array(
-  //    'asin' => true
-  //  , 'marketplace' => true
-  //  , 'created' => true
-  //  , 'modified' => true
-  //  , 'suspended' => true
-  //  );
-  //  $asins = TableRegistry::get('Asins');
-  //  $datas = $this->setAsin($filename, $header, $suspended);
-  //  foreach($datas as $data) {
-  //    $entity = $asins->newEntity($data);
-  //    $asin = $asins->find()
-  //      ->where(['asin' => $entity->asin, 'marketplace' => $entity->marketplace])
-  //      ->first();
-  //    if($asin) {
-  //      unset($data['created']);
-  //      $entity = $asins->patchEntity($asin, $data);
-  //    }
-  //    if(!$asins->save($entity)) {
-  //      $this->log_error($entity->errors());
-  //      return false;
-  //    }
-  //  }
-  //  return true;
-  //}
-
-  //private function setAsin($filename, $header, $suspended)
-  //{
-  //  $datas = array();
-  //  $datetime = date('Y-m-d H:i:s');
-  //  $org_file = @fopen($filename, 'rb') or die("File can not opened.\n");
-  //  flock($org_file, LOCK_SH);
-  //  while($row = fgetcsv($org_file, 1024, "\t")) {
-  //    $idx = 0; $_idx = 0;
-  //    foreach(array_keys($header) as $_header) {
-  //      if(array_values($header)[$_idx]) {
-  //        if($_header === 'created' || $_header === 'modified') {
-  //          $_body = $datetime;
-  //        } else if($_header === 'suspended' && $suspended === FALSE) {
-  //          $_body = 0;
-  //        } else if($_header === 'suspended' && $suspended === TRUE) {
-  //          $_body = 1;
-  //        } else {
-  //          $_body = $this->encode($row[$idx]);
-  //          $idx += 1;
-  //        }
-  //        $_idx += 1;
-  //      } else {
-  //        $_body = 'N/A';
-  //        $_idx += 1;
-  //      }
-  //      $data[$_header] = $_body;
-  //    }
-  //    array_push($datas, $data);
-  //  }
-  //  flock($org_file, LOCK_UN);
-  //  fclose($org_file);
-  //  return $datas;
-  //}
 
   private function encode($str)
   {

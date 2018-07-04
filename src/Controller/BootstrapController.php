@@ -34,16 +34,14 @@ class BootstrapController extends AppController
   }
 
   public function isAuthorized($user) {
-    if(in_array($this->request->getParam('action'), [
-      'token', 'setting', 'calculation'
-    ])) {
+    if(in_array($this->request->getParam('action'), ['token', 'setting', 'calculation'])) {
       $this->Common->log_debug('enter the free_area.');
       return true;
     }
 
-    if(in_array($this->request->getParam('action'), [
-      'index', 'search', 'market', 'registration', 'suspension'
-    ])) {
+    if(
+      in_array($this->request->getParam('action'), ['index', 'search', 'market', 'registration', 'suspension'])
+    ) {
       if($this->Sellers->hasToken($user['email'])) {
         $this->Common->log_debug('enter the user_area.');
         return true;
@@ -290,10 +288,18 @@ class BootstrapController extends AppController
         $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
           , $this->request->data['upload_file']['name'] . '_' . time());
         move_uploaded_file($tmp_file, $new_file);
-        if($this->AmazonMWS->upsertAsin($new_file, FALSE)) {
+        $result = $this->AmazonMWS->upsertAsin($new_file, false);
+        switch($result['error']) {
+        case 0:
           $this->Flash->success(__('The csv file has been uploaded.'));
-        } else {
-          $this->Flash->error(__('The csv file did not complete the upload.'));
+          break;
+        case 1:
+          $this->Flash
+            ->error(__('The csv file did not complete the upload because the cause exceeds 1000 lines.'));
+          break;
+        default:
+          $this->Flash->error(__('The csv file did not complete the upload. line: ' . $result['line']));
+          break;
         }
       }
     }
@@ -315,10 +321,18 @@ class BootstrapController extends AppController
         $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
           , $this->request->data['upload_file']['name'] . '_' . time());
         move_uploaded_file($tmp_file, $new_file);
-        if($this->AmazonMWS->upsertAsin($new_file, TRUE)) {
+        $result = $this->AmazonMWS->upsertAsin($new_file, true);
+        switch($result['error']) {
+        case 0:
           $this->Flash->success(__('The csv file has been uploaded.'));
-        } else {
-          $this->Flash->error(__('The csv file did not complete the upload.'));
+          break;
+        case 1:
+          $this->Flash
+            ->error(__('The csv file did not complete the upload because the cause exceeds 1000 lines.'));
+          break;
+        default:
+          $this->Flash->error(__('The csv file did not complete the upload. line: ' . $result['line']));
+          break;
         }
       }
     }

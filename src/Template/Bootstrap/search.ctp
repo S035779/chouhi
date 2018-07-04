@@ -72,7 +72,7 @@
                     <div class="card-group">
                     <div class="col-sm-5">
                       <div class="card">
-                      <img class="card-img-top" src="//dyn.keepa.com/pricehistory.png?cAmazon=0f5702&cNew=77ce43&cUsed=f26e3c&cFont=31393d&cBackground=ffffff&amazon=1&new=1&used=1&range=90&salesrank=1&domain=co.jp&width=512&height=480&asin=<?= h($offer['asin']) ?>"
+                      <img class="card-img-top" src="//dyn.keepa.com/pricehistory.png?cAmazon=0f5702&cNew=77ce43&cUsed=f26e3c&cFont=31393d&cBackground=ffffff&amazon=1&new=1&used=1&range=90&salesrank=1&domain=co.jp&width=768&height=480&asin=<?= h($offer['asin']) ?>"
                         alt="<?= h($offer['title']) ?>">
                         <div class="card-body p-2">
                           <div class="btn-group d-flex" role="group"
@@ -181,7 +181,8 @@
                     </div>
                     <div class="col-sm-4">
                       <div class="card">
-                      <img class="card-img" src="<?= h($offer['large_image_url']) ?>"
+                      <img class="card-img" 
+                        src="<?= h($offer['large_image_url']) ?>"
                         alt="<?= h($offer['title']) ?>">
                       </div>
                     </div>
