@@ -68,12 +68,13 @@
                 <?php foreach ($offers as $offer): ?>
                 <div class="card mb-3">
                   <div class="card-header"><?= h($offer['title']) ?></div>
-                  <div class="card-body p-2" style="max-height: 18rem;">
+                  <div class="card-body p-2" style="max-height: 19rem;">
                     <div class="card-group">
                     <div class="col-sm-5">
                       <div class="card">
                       <img class="card-img-top" 
                         src="//dyn.keepa.com/pricehistory.png?amazon=1&new=1&used=1&range=121&salesrank=1&domain=co.jp&asin=<?= h($offer['asin']) ?>"
+                        height="100%"
                         alt="<?= h($offer['title']) ?>">
                         <div class="card-body p-2">
                           <div class="btn-group d-flex" role="group"
@@ -183,6 +184,7 @@
                     <div class="col-sm-4">
                       <div class="card">
                       <img class="card-img" 
+                        height="100%"
                         src="<?= h($offer['large_image_url']) ?>" alt="<?= h($offer['title']) ?>">
                       </div>
                     </div>
