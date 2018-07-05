@@ -166,29 +166,54 @@ class BootstrapController extends AppController
             Offers1.items_sales_ranking             AS sales_ranking,
             Offers1.items_lowest_price              AS lowest_price,
             Offers1.items_lowest_price_currency     AS lowest_price_currency,
-            AVG(Offers1.lowest_price)               AS average_lowest_price,
             Offers1.items_lowest_price_currency     AS average_lowest_price_currency,
             Offers1.items_original_release_date_at  AS original_release_date_at,
             Offers1.items_release_date_at           AS release_date_at,
             Offers1.items_publication_date_at       AS publication_date_at,
             Offers1.items_large_image_url           AS large_image_url, 
-            ((SELECT lowest_price FROM offers 
+            (
+                SELECT lowest_price FROM offers 
                 WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
-                  ORDER BY created DESC LIMIT 1) /
-             (SELECT lowest_price FROM offers 
+                ORDER BY created ASC  LIMIT 1
+            )                                       AS first_lowest_price,
+            (
+                SELECT lowest_price FROM offers 
                 WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
-                  ORDER BY created ASC  LIMIT 1) * 100 - 100)
-                                                    AS rise_rate,
-            ((SELECT lowest_price FROM offers 
+                ORDER BY created DESC LIMIT 1
+            )                                       AS last_lowest_price,
+            ( (
+                SELECT lowest_price FROM offers 
                 WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
-                  ORDER BY created DESC LIMIT 1) -
-             (((SELECT lowest_price FROM offers 
+                ORDER BY created ASC  LIMIT 1
+            ) + (
+                SELECT lowest_price FROM offers 
                 WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
-                  ORDER BY created DESC LIMIT 1) +
-               (SELECT lowest_price FROM offers 
+                ORDER BY created DESC LIMIT 1
+            ) / 2 )                                 AS average_lowest_price,
+            ( (
+              SELECT lowest_price FROM offers 
+              WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+              ORDER BY created DESC LIMIT 1
+            ) - ( 
+              (
+                SELECT lowest_price FROM offers 
                 WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
-                  ORDER BY created ASC  LIMIT 1)) / 2))
-                                                    AS profit_range
+                ORDER BY created ASC  LIMIT 1
+              ) + (
+                SELECT lowest_price FROM offers 
+                WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+                ORDER BY created DESC LIMIT 1
+              ) / 2
+            ) )                                     AS profit_range,
+            ( (
+              SELECT lowest_price FROM offers 
+              WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+              ORDER BY created DESC LIMIT 1
+            ) / (
+              SELECT lowest_price FROM offers
+              WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+              ORDER BY created ASC  LIMIT 1
+            ) * 100 - 100 )                         AS rise_rate
           FROM (
             (SELECT 
               timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
@@ -197,8 +222,8 @@ class BootstrapController extends AppController
               FROM (
                 SELECT @num := 0 AS number UNION ALL 
                 SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours . '
-              )                                       AS series_numbers
-            )                                       AS date_map
+              ) AS series_numbers
+            ) AS date_map
             LEFT JOIN 
               (SELECT 
                 items.id                            AS items_id,
@@ -224,14 +249,16 @@ class BootstrapController extends AppController
               INNER JOIN items 
               ON items.id = offers.item_id )        AS Offers1 
             ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
-          GROUP BY time1, Offers1.asin, Offers1.items_id 
-          HAVING rise_rate >= :_rise_rate OR profit_range >= :_profit_range 
+          GROUP BY time1, Offers1.asin, Offers1.items_id
+          HAVING profit_range >= :_profit_range AND rise_rate >= :_rise_rate
           ORDER BY time1 DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
 
       foreach($_offers as $offer) {
-        array_push($offers, $offer);
+        if(isset($offer['asin'])) {
+          array_push($offers, $offer);
+        }
       }
     }
     $this->set(compact('title', 'offers'));

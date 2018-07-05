@@ -154,7 +154,7 @@
                         <li class="list-group-item"><?= 
                           __('平均価格').__(' : ').$this->Number->currency(
                             $offer['average_lowest_price']
-                          , $offer['average_lowest_price_currency']
+                          , $offer['lowest_price_currency']
                           ) 
                         ?></li>
                         <li class="list-group-item"><?= 
@@ -162,6 +162,9 @@
                             $offer['profit_range']
                           , $offer['lowest_price_currency']
                           )
+                          //.__('（').$this->Number->format($offer['rise_rate']).__('％）')
+                          //.__('（').$this->Number->format($offer['first_lowest_price']).__('）')
+                          //.__('（').$this->Number->format($offer['last_lowest_price']).__('）')
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('発売日')
