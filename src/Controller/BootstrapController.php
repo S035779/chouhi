@@ -172,22 +172,21 @@ class BootstrapController extends AppController
             Offers1.items_release_date_at           AS release_date_at,
             Offers1.items_publication_date_at       AS publication_date_at,
             Offers1.items_large_image_url           AS large_image_url, 
-            ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin) /
-             (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin) *
+            ((SELECT lowest_price FROM offers WHERE created = MAX(Offers1.created) AND asin = Offers1.asin) /
+             (SELECT lowest_price FROM offers WHERE created = MIN(Offers1.created) AND asin = Offers1.asin) *
               100 - 100)                            AS rise_rate,
-            ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin) -
-             ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin) +
-              (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin)
-              / 2))                                 AS profit_range
-          FROM 
-            ((SELECT 
+            ((SELECT lowest_price FROM offers WHERE created = MAX(Offers1.created) AND asin = Offers1.asin) -
+              AVG(Offers1.lowest_price))            AS profit_range
+          FROM (
+            (SELECT 
               timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
               timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours)
                 + series_numbers.number % :_avg_hours hour)                               AS time2
-            FROM 
-              (SELECT @num := 0 AS number UNION ALL 
-                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours . ') 
-                  AS series_numbers)                AS date_map
+              FROM (
+                SELECT @num := 0 AS number UNION ALL 
+                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours . '
+              )                                       AS series_numbers
+            )                                       AS date_map
             LEFT JOIN 
               (SELECT 
                 items.id                            AS items_id,
@@ -209,11 +208,13 @@ class BootstrapController extends AppController
                 items.publication_date_at           AS items_publication_date_at,
                 items.large_image_url               AS items_large_image_url,
                 offers.created                      AS created
-              FROM offers INNER JOIN items ON items.id = offers.item_id ) AS Offers1 
+              FROM offers 
+              INNER JOIN items 
+              ON items.id = offers.item_id)         AS Offers1 
             ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
           GROUP BY time1, Offers1.asin, Offers1.items_id
           HAVING rise_rate >= :_rise_rate OR profit_range >= :_profit_range 
-          ORDER BY time1 DESC;'
+          ORDER BY time1 DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
 
