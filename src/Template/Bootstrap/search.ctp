@@ -159,7 +159,7 @@
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('価格差').__(' : ').$this->Number->currency(
-                            $offer['lowest_price'] - $offer['average_lowest_price']
+                            $offer['profit_range']
                           , $offer['lowest_price_currency']
                           )
                         ?></li>
