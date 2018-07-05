@@ -178,13 +178,12 @@ class BootstrapController extends AppController
             ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin) -
              ((SELECT lowest_price FROM offers WHERE created = max(Offers1.created) AND asin = Offers1.asin) +
               (SELECT lowest_price FROM offers WHERE created = min(Offers1.created) AND asin = Offers1.asin)
-              / 2))                                  AS profit_range
+              / 2))                                 AS profit_range
           FROM 
             ((SELECT 
-              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) hour)
-                                                    AS time1,
-              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :n) + series_numbers.number % :n hour)
-                                                    AS time2
+              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
+              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours)
+                + series_numbers.number % :_avg_hours hour)                               AS time2
             FROM 
               (SELECT @num := 0 AS number UNION ALL 
                 SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours . ') 
@@ -213,17 +212,13 @@ class BootstrapController extends AppController
               FROM offers INNER JOIN items ON items.id = offers.item_id ) AS Offers1 
             ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
           GROUP BY time1, Offers1.asin, Offers1.items_id
-          ORDER BY time1 DESC;', ['n' => $avg_hours])
+          HAVING rise_rate >= :_rise_rate OR profit_range >= :_profit_range 
+          ORDER BY time1 DESC;'
+        , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
 
       foreach($_offers as $offer) {
-        //debug($offer);
-        if($offer['asin']) {
-          if($offer['rise_rate'] >= $rise_rate || $offer['profit_range'] >= $profit_range) { 
-            //debug($offer);
-            array_push($offers, $offer);
-          }
-        }
+        array_push($offers, $offer);
       }
     }
     $this->set(compact('title', 'offers'));
