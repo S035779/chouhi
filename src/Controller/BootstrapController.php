@@ -171,16 +171,6 @@ class BootstrapController extends AppController
             Offers1.items_release_date_at           AS release_date_at,
             Offers1.items_publication_date_at       AS publication_date_at,
             Offers1.items_large_image_url           AS large_image_url, 
-            (
-                SELECT lowest_price FROM offers 
-                WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
-                ORDER BY created ASC  LIMIT 1
-            )                                       AS first_lowest_price,
-            (
-                SELECT lowest_price FROM offers 
-                WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
-                ORDER BY created DESC LIMIT 1
-            )                                       AS last_lowest_price,
             ( (
                 SELECT lowest_price FROM offers 
                 WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
