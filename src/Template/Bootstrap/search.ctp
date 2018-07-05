@@ -68,13 +68,12 @@
                 <?php foreach ($offers as $offer): ?>
                 <div class="card mb-3">
                   <div class="card-header"><?= h($offer['title']) ?></div>
-                  <div class="card-body p-2" style="max-height: 19rem;">
+                  <div class="card-body p-2" style="max-height: 18.5rem;">
                     <div class="card-group">
                     <div class="col-sm-5">
                       <div class="card">
                       <img class="card-img-top" 
                         src="//dyn.keepa.com/pricehistory.png?amazon=1&new=1&used=1&range=121&salesrank=1&domain=co.jp&asin=<?= h($offer['asin']) ?>"
-                        height="100%"
                         alt="<?= h($offer['title']) ?>">
                         <div class="card-body p-2">
                           <div class="btn-group d-flex" role="group"
@@ -160,9 +159,9 @@
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('価格差').__(' : ').$this->Number->currency(
-                            $offer['profit_range']
+                            $offer['lowest_price'] - $offer['average_lowest_price']
                           , $offer['lowest_price_currency']
-                          ). __('（').$this->Number->format($offer['rise_rate']).__('％）') 
+                          )
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('発売日')
@@ -184,7 +183,6 @@
                     <div class="col-sm-4">
                       <div class="card">
                       <img class="card-img" 
-                        height="100%"
                         src="<?= h($offer['large_image_url']) ?>" alt="<?= h($offer['title']) ?>">
                       </div>
                     </div>
