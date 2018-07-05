@@ -172,11 +172,23 @@ class BootstrapController extends AppController
             Offers1.items_release_date_at           AS release_date_at,
             Offers1.items_publication_date_at       AS publication_date_at,
             Offers1.items_large_image_url           AS large_image_url, 
-            ((SELECT lowest_price FROM offers WHERE created = MAX(Offers1.created) AND asin = Offers1.asin) /
-             (SELECT lowest_price FROM offers WHERE created = MIN(Offers1.created) AND asin = Offers1.asin) *
-              100 - 100)                            AS rise_rate,
-            ((SELECT lowest_price FROM offers WHERE created = MAX(Offers1.created) AND asin = Offers1.asin) -
-              AVG(Offers1.lowest_price))            AS profit_range
+            ((SELECT lowest_price FROM offers 
+                WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+                  ORDER BY created DESC LIMIT 1) /
+             (SELECT lowest_price FROM offers 
+                WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+                  ORDER BY created ASC  LIMIT 1) * 100 - 100)
+                                                    AS rise_rate,
+            ((SELECT lowest_price FROM offers 
+                WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+                  ORDER BY created DESC LIMIT 1) -
+             (((SELECT lowest_price FROM offers 
+                WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+                  ORDER BY created DESC LIMIT 1) +
+               (SELECT lowest_price FROM offers 
+                WHERE asin = Offers1.asin AND created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
+                  ORDER BY created ASC  LIMIT 1)) / 2))
+                                                    AS profit_range
           FROM (
             (SELECT 
               timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
