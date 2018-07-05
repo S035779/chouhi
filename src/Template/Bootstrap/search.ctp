@@ -73,6 +73,7 @@
                     <div class="col-sm-5">
                       <div class="card">
                       <img class="card-img-top" src="//dyn.keepa.com/pricehistory.png?amazon=1&new=1&used=1&range=121&salesrank=1&domain=co.jp&asin=<?= h($offer['asin']) ?>"
+                        height="190"
                         alt="<?= h($offer['title']) ?>">
                         <div class="card-body p-2">
                           <div class="btn-group d-flex" role="group"
@@ -158,9 +159,9 @@
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('価格差').__(' : ').$this->Number->currency(
-                            $offer['lowest_price'] - $offer['average_lowest_price']
+                            $offer['profit_range']
                           , $offer['lowest_price_currency']
-                          ) 
+                          ). __('（').$this->Number->format($offer['rise_rate']).__('％）') 
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('発売日')
@@ -183,6 +184,7 @@
                       <div class="card">
                       <img class="card-img" 
                         src="<?= h($offer['large_image_url']) ?>"
+                        height="210"
                         alt="<?= h($offer['title']) ?>">
                       </div>
                     </div>
