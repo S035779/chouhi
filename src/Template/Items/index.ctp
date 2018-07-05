@@ -112,17 +112,29 @@
             <td><?= $this->Number->precision($item->package_length, 2) ?> <?= __('mm') ?></td>
             <td><?= $this->Number->precision($item->package_weight, 2) ?> <?= __('kg') ?></td>
             <td><?= $this->Number->precision($item->package_width, 2) ?> <?= __('mm') ?></td>
-            <td><?= $this->Number->currency($item->list_price, $item->list_price_currency, ['zero' => '---']) ?></td>
+            <td><?= $this->Number->currency(
+              $item->list_price, $item->list_price_currency
+              , ['zero' => '---']) ?></td>
             <td><?= h($item->list_price_currency) ?></td>
-            <td><?= $this->Number->currency($item->lowest_price, $item->lowest_price_currency, ['zero' => '---']) ?></td>
+            <td><?= $this->Number->currency(
+              $item->lowest_price, $item->lowest_price_currency
+              , ['zero' => '---']) ?></td>
             <td><?= h($item->lowest_price_currency) ?></td>
-            <td><?= $this->Number->currency($item->lowest_used_price, $item->lowest_used_price_currency, ['zero' => '---']) ?></td>
+            <td><?= $this->Number->currency(
+              $item->lowest_used_price, $item->lowest_used_price_currency
+              , ['zero' => '---']) ?></td>
             <td><?= h($item->lowest_used_price_currency) ?></td>
-            <td><?= $this->Number->currency($item->lowest_collectible_price, $item->lowest_collectible_price_currency, ['zero' => '---']) ?></td>
+            <td><?= $this->Number->currency(
+              $item->lowest_collectible_price, $item->lowest_collectible_price_currency
+              , ['zero' => '---']) ?></td>
             <td><?= h($item->lowest_collectible_price_currency) ?></td>
-            <td><?= $this->Number->currency($item->offer_listing_price, $item->offer_listing_price_currency, ['zero' => '---']) ?></td>
+            <td><?= $this->Number->currency(
+              $item->offer_listing_price, $item->offer_listing_price_currency
+              , ['zero' => '---']) ?></td>
             <td><?= h($item->offer_listing_price_currency) ?></td>
-            <td><?= $this->Number->currency($item->offer_listing_saved_price, $item->offer_listing_saved_price_currency, ['zero' => '---']) ?></td>
+            <td><?= $this->Number->currency(
+              $item->offer_listing_saved_price, $item->offer_listing_saved_price_currency
+              , ['zero' => '---']) ?></td>
             <td><?= h($item->offer_listing_saved_price_currency) ?></td>
             <td><?= $this->Number->format($item->sales_ranking) ?></td>
             <td><?= h($item->ean) ?></td>
@@ -138,21 +150,27 @@
             <td><?= $this->Number->format($item->quantity_allocated) ?></td>
             <td><?= h($item->status) ?></td>
             <td><?= h($item->marketplace) ?></td>
-            <td><?= h($item->detail_page_url) ?></td>
-            <td><?= h($item->small_image_url) ?></td>
-            <td><?= h($item->medium_image_url) ?></td>
-            <td><?= h($item->large_image_url) ?></td>
+            <td><?= $this->html->link(
+              __('link', true),$item->detail_page_url, ['target' => '_blank']) ?></td>
+            <td><?= $this->html->link(
+              __('link', true),$item->small_image_url, ['target' => '_blank']) ?></td>
+            <td><?= $this->html->link(
+              __('link', true),$item->medium_image_url,['target' => '_blank']) ?></td>
+            <td><?= $this->html->link(
+              __('link', true),$item->large_image_url, ['target' => '_blank']) ?></td>
             <td><?= h($item->created) ?></td>
             <td><?= h($item->modified) ?></td>
             <td><?= $this->Number->format($item->total_new) ?></td>
             <td><?= $this->Number->format($item->total_used) ?></td>
             <td><?= $this->Number->format($item->total_collectible) ?></td>
             <td><?= $this->Number->format($item->total_refurbished) ?></td>
-            <td><?= h($item->customer_reviews_url) ?></td>
+            <td><?= $this->html->link(
+              __('link', true),$item->customer_reviews_url, ['target' => '_blank']) ?></td>
             <td class="actions">
-                <?= $this->Html->link(__('View'), ['action' => 'view', $item->id]) ?>
-                <?= $this->Html->link(__('Edit'), ['action' => 'edit', $item->id]) ?>
-                <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $item->id], ['confirm' => __('Are you sure you want to delete # {0}?', $item->id)]) ?>
+              <?= $this->Html->link(__('View'), ['action' => 'view', $item->id]) ?>
+              <?= $this->Html->link(__('Edit'), ['action' => 'edit', $item->id]) ?>
+              <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $item->id]
+              , ['confirm' => __('Are you sure you want to delete # {0}?', $item->id)]) ?>
             </td>
           </tr>
           <?php endforeach; ?>

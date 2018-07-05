@@ -1,7 +1,7 @@
         <!-- Main contens -->
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2"><?= __('トークン設定') ?></h1>
+            <h1 class="h2"><?= __('MWS/PAAPI設定') ?></h1>
           </div>
 
           <div class="container">
@@ -52,13 +52,30 @@
 
                   <div class="mb-3">
                     <label for="seller.marketplace"><?= __('マーケットプレイス') ?></label>
-                    <?= $this->Form->select('seller.marketplace', [
-                      'JP' =>  'Japan', 'AU' =>  'Australia', 'US' => 'United stats'
-                    ], [
+                    <?= $this->Form->select('seller.marketplace'
+                    , [
+                        [ 'text'      => 'Japan'
+                        , 'value'     => 'JP'
+                        , 'selected'  => env('APP_TEMPLATE') === 'B' ? true   : false
+                        , 'disabled'  => env('APP_TEMPLATE') === 'B' ? false  : true
+                        ]
+                      , [ 'text'      => 'Australia'
+                        , 'value'     => 'AU'
+                        , 'selected'  => env('APP_TEMPLATE') === 'A' ? true   : false
+                        , 'disabled'  => env('APP_TEMPLATE') === 'A' ? false  : true
+                        ]
+                      , [ 'text'      => 'United stats'
+                        , 'value'     => 'US'
+                        , 'selected'  => false
+                        , 'disabled'  => true
+                        ]
+                      ]
+                    , [
                       'required'    => true
                     , 'class'       => 'form-control'
-                    , 'empty'       => 'Your Marketplace'
-                    ])?>
+                    , 'empty'       => false
+                      ]
+                    )?>
                     <div class="invalid-feedback">
                       Please enter a valid Marketplace country.
                     </div>
@@ -89,7 +106,7 @@
                   </div>
 
                   <div class="mb-3">
-                    <label for="pa_associate_tag"><?= __('アソシエイトタグ') ?></label>
+                    <label for="pa_associate_tag"><?= __('PAアソシエイトタグ') ?></label>
                     <?= $this->Form->text('pa_associate_tag', [
                       'required'    => false
                     , 'class'       => 'form-control'

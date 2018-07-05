@@ -55,7 +55,7 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file'])
-                  . __(' トークン設定 ')
+                  . __(' MWS/PAAPI設定 ')
                 , ['controller' => 'Bootstrap', 'action' => 'token']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
@@ -71,8 +71,16 @@
               <li class="nav-item">
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'shopping-cart'])
-                  . __(' マーケット出品 ')
+                  . __(' 出品商品一覧 ')
                 , ['controller' => 'Bootstrap', 'action' => 'market']
+                , ['escape' => false, 'class' => 'nav-link']
+                ) ?>
+              </li>
+              <li class="nav-item">
+                <?= $this->Html->link(
+                  $this->Html->tag('span', '', ['data-feather' => 'crosshair'])
+                  . __(' ASINリスト ')
+                , ['controller' => 'Bootstrap', 'action' => 'asins']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
               </li>

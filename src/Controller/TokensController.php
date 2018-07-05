@@ -19,6 +19,7 @@ class TokensController extends AppController
   {
     parent::initialize();
     $this->viewBuilder()->setLayout('dataview');
+    $this->loadModel('Users');
   }
 
   public function beforeFilter(Event $event)

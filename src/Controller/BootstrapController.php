@@ -26,6 +26,7 @@ class BootstrapController extends AppController
     $this->loadModel('Users');
     $this->loadModel('Sellers');
     $this->loadModel('Merchants');
+    $this->loadModel('Asins');
   }
 
   public function beforeFilter(Event $event)
@@ -40,7 +41,8 @@ class BootstrapController extends AppController
     }
 
     if(
-      in_array($this->request->getParam('action'), ['index', 'search', 'market', 'registration', 'suspension'])
+      in_array($this->request->getParam('action')
+      , ['index', 'search', 'market', 'asins', 'registration', 'suspension'])
     ) {
       if($this->Sellers->hasToken($user['email'])) {
         $this->Common->log_debug('enter the user_area.');
@@ -87,7 +89,7 @@ class BootstrapController extends AppController
         }
         if ($tokens->save($entity)) {
           $this->Flash->success(__('The token has been saved.'));
-          return $this->redirect(['action' => 'index']);
+          return $this->redirect(['action' => 'token']);
         }
         $this->Common->log_error($entity->errors());
         $this->Flash->error(__('The token cound not be saved. Please, try again.'));
@@ -250,6 +252,19 @@ class BootstrapController extends AppController
     $result = $this->Merchants->find()->where(['seller_identifier' => $seller['seller']]);
     $merchants = $this->paginate($result);
     $this->set(compact('title', 'merchants'));
+  }
+
+  /**
+   * Asins method
+   *
+   * @return \Cake\Http\Response|void
+   */
+  public function asins()
+  {
+    $title = 'Asin listing';
+    $result = $this->Asins->find();
+    $asins = $this->paginate($result);
+    $this->set(compact('title', 'asins'));
   }
 
   /**

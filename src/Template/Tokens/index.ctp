@@ -26,22 +26,6 @@
         , ['escape' => false, 'class' => 'nav-link']
         ) ?>
       </li>
-      <li class="nav-item">
-        <?= $this->Html->link(
-          $this->Html->tag('span', '', ['data-feather' => 'home'])
-          . __(' セラー一覧 ')
-        , ['controller' => 'Sellers', 'action' => 'index']
-        , ['escape' => false, 'class' => 'nav-link']
-        ) ?>
-      </li>
-      <li class="nav-item">
-        <?= $this->Html->link(
-          $this->Html->tag('span', '', ['data-feather' => 'file'])
-          . __(' セラー追加 ')
-        , ['controller' => 'Sellers', 'action' => 'add']
-        , ['escape' => false, 'class' => 'nav-link']
-        ) ?>
-      </li>
     </ul>
 
   </div>
@@ -60,13 +44,15 @@
         <thead>
           <tr>
             <th scope="col"><?= $this->Paginator->sort('id') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('email') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('marketplace') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('seller_id') ?></th>
             <th scope="col"><?= $this->Paginator->sort('access_key') ?></th>
             <th scope="col"><?= $this->Paginator->sort('secret_key') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('seller_id') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('suspended') ?></th>
             <th scope="col"><?= $this->Paginator->sort('pa_access_key') ?></th>
             <th scope="col"><?= $this->Paginator->sort('pa_secret_key') ?></th>
             <th scope="col"><?= $this->Paginator->sort('pa_associate_tag') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('suspended') ?></th>
             <th scope="col"><?= $this->Paginator->sort('created') ?></th>
             <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
             <th scope="col" class="actions"><?= __('Actions') ?></th>
@@ -76,13 +62,18 @@
           <?php foreach ($tokens as $token): ?>
           <tr>
             <td><?= $this->Number->format($token->id) ?></td>
+            <td><?= $token->has('seller')  ? $this->Html->link($token->seller->email
+              , ['controller' => 'Sellers', 'action' => 'view', $token->seller->id]) : '' ?></td>
+            <td><?= $token->has('seller')  ? $this->Html->link($token->seller->marketplace
+              , ['controller' => 'Sellers', 'action' => 'view', $token->seller->id]) : '' ?></td>
+            <td><?= $token->has('seller')  ? $this->Html->link($token->seller->seller
+              , ['controller' => 'Sellers', 'action' => 'view', $token->seller->id]) : '' ?></td>
             <td><?= h($token->access_key) ?></td>
             <td><?= h($token->secret_key) ?></td>
-            <td><?= $token->has('seller') ? $this->Html->link($token->seller->seller, ['controller' => 'Sellers', 'action' => 'view', $token->seller->id]) : '' ?></td>
-            <td><?= h($token->suspended) ?></td>
             <td><?= h($token->pa_access_key) ?></td>
             <td><?= h($token->pa_secret_key) ?></td>
             <td><?= h($token->pa_associate_tag) ?></td>
+            <td><?= h($token->suspended) ?></td>
             <td><?= h($token->created) ?></td>
             <td><?= h($token->modified) ?></td>
             <td class="actions">

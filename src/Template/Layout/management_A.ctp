@@ -64,7 +64,7 @@
                 <?= $this->Html->link(
                   $this->Html->tag('span', '', ['data-feather' => 'file-text'])
                   . __(' 商品管理 ')
-                , ['controller' => 'Offers', 'action' => 'index']
+                , ['controller' => 'Items', 'action' => 'index']
                 , ['escape' => false, 'class' => 'nav-link']
                 ) ?>
               </li>

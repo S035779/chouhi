@@ -29,22 +29,6 @@
         <li class="nav-item">
           <?= $this->Html->link(
             $this->Html->tag('span', '', ['data-feather' => 'home'])
-            . __(' トークン一覧 ')
-          , ['controller' => 'Tokens', 'action' => 'index']
-          , ['escape' => false, 'class' => 'nav-link']
-          ) ?> 
-        </li>
-        <li class="nav-item">
-          <?= $this->Html->link(
-            $this->Html->tag('span', '', ['data-feather' => 'file'])
-            . __(' トークン追加 ')
-          , ['controller' => 'Tokens', 'action' => 'add']
-          , ['escape' => false, 'class' => 'nav-link']
-          ) ?> 
-        </li>
-        <li class="nav-item">
-          <?= $this->Html->link(
-            $this->Html->tag('span', '', ['data-feather' => 'home'])
             . __(' セラー一覧 ') .
             $this->Html->tag('span', '(current)', ['class' => 'sr-only'])
           , ['controller' => 'Sellers', 'action' => 'index']

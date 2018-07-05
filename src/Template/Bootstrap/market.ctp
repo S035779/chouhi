@@ -31,7 +31,6 @@
                 <th scope="col"><?= $this->Paginator->sort('will_ship_internationally') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('expedited_shipping') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('standard_plus') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('item_note') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('fulfillment_channel') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('product_tax_code') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('leadtime_to_ship') ?></th>
@@ -56,7 +55,6 @@
                 <th>国際発送</th>
                 <th>緊急配送</th>
                 <th>標準配送プラス</th>
-                <th>商品説明</th>
                 <th>FBA利用</th>
                 <th>TAXコード</th>
                 <th>発送リードタイム</th>
@@ -84,7 +82,6 @@
                 <td><?= $this->Number->format($merchant->will_ship_internationally) ?></td>
                 <td><?= h($merchant->expedited_shipping) ?></td>
                 <td><?= h($merchant->standard_plus) ?></td>
-                <td><?= h($merchant->item_note) ?></td>
                 <td><?= h($merchant->fullfillment_channel) ?></td>
                 <td><?= h($merchant->product_tax_code) ?></td>
                 <td><?= $this->Number->format($merchant->leadtime_to_ship) ?></td>

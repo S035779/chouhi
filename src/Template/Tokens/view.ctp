@@ -43,22 +43,6 @@
           , ['escape' => false, 'class' => 'nav-link']
           ) ?> 
         </li>
-        <li class="nav-item">
-          <?= $this->Html->link(
-            $this->Html->tag('span', '', ['data-feather' => 'home'])
-            . __(' セラー一覧 ')
-          , ['controller' => 'Sellers', 'action' => 'index']
-          , ['escape' => false, 'class' => 'nav-link']
-          ) ?> 
-        </li>
-        <li class="nav-item">
-          <?= $this->Html->link(
-            $this->Html->tag('span', '', ['data-feather' => 'file'])
-            . __(' セラー追加 ')
-          , ['controller' => 'Sellers', 'action' => 'add']
-          , ['escape' => false, 'class' => 'nav-link']
-          ) ?> 
-        </li>
     </ul>
 
   </div>

@@ -45,7 +45,17 @@ class CommonComponent extends Component
 
   public function getTimeStamp($str)
   {
-    return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
+    $len = strlen($str);
+    switch($len) {
+    case 4:
+      return \DateTime::createFromFormat('Y', $str)->format('Y/m/d H:i:s');
+    case 7:
+      return \DateTime::createFromFormat('Y-m', $str)->format('Y/m/d H:i:s');
+    case 10:
+      return \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
+    default:
+      return \DateTime::createFromFormat('Y-m-d H:i:s', $str)->format('Y/m/d H:i:s');
+    }
   }
 
   public function getLocalLength($length, $ship) 
