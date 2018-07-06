@@ -54,13 +54,30 @@
         <fieldset>
             <legend><?= __('配送料編集') ?></legend>
             <?php
-                echo $this->Form->control('method', ['options' => $methods]);
-                echo $this->Form->control('area', ['options' => $areas]);
-                echo $this->Form->control('price');
-                echo $this->Form->control('length');
-                echo $this->Form->control('total_length');
-                echo $this->Form->control('weight');
-                echo $this->Form->control('duedate', ['options' => $duedates]);
+              echo $this->Form->control('method', ['options' => [
+                'SAL'       => 'SAL'     
+              , 'E_PACKET'  => 'e-packet'
+              , 'EMS'       => 'EMS'     
+              ]]);
+              echo $this->Form->control('area',   ['options' => [
+                'ASIA'            => 'Asia'          
+              , 'OCEANIA'         => 'Oceania'       
+              , 'NORTH_AMERICA'   => 'North America' 
+              , 'MIDDLE_AMERICA'  => 'Middle America'
+              , 'MIDDLE_EAST'     => 'Middle East'   
+              , 'EUROPE'          => 'Europe'        
+              , 'SOUTH_AMERICA'   => 'South America' 
+              , 'AFRICA'          => 'Africa'        
+              ]]);
+              echo $this->Form->control('price');
+              echo $this->Form->control('length');
+              echo $this->Form->control('total_length');
+              echo $this->Form->control('weight');
+              echo $this->Form->control('duedate', ['options' => [
+                '4'   => '2-4 days'
+              , '6'   => '3-6 days'
+              , '14'  => '2 weeks' 
+              ]]);
             ?>
         </fieldset>
         <?= $this->Form->button(__('Submit')) ?>

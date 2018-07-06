@@ -57,8 +57,6 @@ $cakeDescription = 'AmazonMWS Tools: the database management tools';
 
       </div>
     </div>
-    <footer>
-    </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <?= $this->Html->script([
@@ -66,9 +64,64 @@ $cakeDescription = 'AmazonMWS Tools: the database management tools';
       , '//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'
       , '//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'
       , '//unpkg.com/feather-icons/dist/feather.min.js'
+      , '//cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.js'
       , $this->Elixir->version('js/watchnote.js')
       ]) ?>
     <!-- Icons -->
     <script>feather.replace()</script>
+    <!-- Validation check & Spinner -->
+    <script>
+    (function() {
+      'use strict';
+      var opts = {
+        lines: 13,
+        length: 28,
+        width: 14,
+        radius: 42,
+        scale: 1,
+        corners: 1,
+        color: '#000',
+        opacity: .25,
+        rotate: 0,
+        direction: 1,
+        speed: 1,
+        trail: 60,
+        fps: 20,
+        zIndex: 2e9,
+        className: 'spinner',
+        top: '50%',
+        left: '50%',
+        shadow: false,
+        hwaccel: false,
+        position: 'absolute'
+      };
+      var spinner = new Spinner(opts);
+
+      var spin_submit = document.getElementById('submit');
+      if(spin_submit) {
+        var spin_target = document.getElementById('deliverys');
+        var upload_file = document.getElementById('upload-file');
+        spin_submit.addEventListener('click', function () {
+          if(upload_file.value !== "") spinner.spin(spin_target);
+        }, false);
+      }
+
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms
+          , function(form) {
+          form.addEventListener('submit', function(event) {
+            if(form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+        spinner.stop();
+      }, false);
+
+    })();
+    </script>
   </body>
 </html>

@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use App\Form\UploadFilesForm;
 use Cake\Event\Event;
 
 /**
@@ -19,6 +20,8 @@ class DeliverysController extends AppController
   {
     parent::initialize();
     $this->viewBuilder()->setLayout('dataview');
+    $this->loadComponent('Common');
+    $this->loadComponent('AmazonMWS');
   }
 
   public function beforeFilter(Event $event)
@@ -67,26 +70,6 @@ class DeliverysController extends AppController
   public function add()
   {
     $delivery = $this->Deliverys->newEntity();
-    $methods = array(
-      'SAL'       => 'SAL'     
-    , 'E_PACKET'  => 'e-packet'
-    , 'EMS'       => 'EMS'     
-    );
-    $areas = array(
-      'ASIA'            => 'Asia'          
-    , 'OCEANIA'         => 'Oceania'       
-    , 'NORTH_AMERICA'   => 'North America' 
-    , 'MIDDLE_AMERICA'  => 'Middle America'
-    , 'MIDDLE_EAST'     => 'Middle East'   
-    , 'EUROPE'          => 'Europe'        
-    , 'SOUTH_AMERICA'   => 'South America' 
-    , 'AFRICA'          => 'Africa'        
-    );
-    $duedates = array(
-      '4'   => '2-4 days'
-    , '6'   => '3-6 days'
-    , '14'  => '2 weeks' 
-    );
     if ($this->request->is('post')) {
       $delivery = $this->Deliverys->patchEntity($delivery, $this->request->getData());
       if ($this->Deliverys->save($delivery)) {
@@ -96,7 +79,7 @@ class DeliverysController extends AppController
       }
       $this->Flash->error(__('The delivery could not be saved. Please, try again.'));
     }
-    $this->set(compact('delivery', 'methods', 'areas', 'duedates'));
+    $this->set(compact('delivery'));
   }
 
   /**
@@ -111,26 +94,6 @@ class DeliverysController extends AppController
     $delivery = $this->Deliverys->get($id, [
       'contain' => []
     ]);
-    $methods = array(
-      'SAL'       => 'SAL'     
-    , 'E_PACKET'  => 'e-packet'
-    , 'EMS'       => 'EMS'     
-    );
-    $areas = array(
-      'ASIA'            => 'Asia'          
-    , 'OCEANIA'         => 'Oceania'       
-    , 'NORTH_AMERICA'   => 'North America' 
-    , 'MIDDLE_AMERICA'  => 'Middle America'
-    , 'MIDDLE_EAST'     => 'Middle East'   
-    , 'EUROPE'          => 'Europe'        
-    , 'SOUTH_AMERICA'   => 'South America' 
-    , 'AFRICA'          => 'Africa'        
-    );
-    $duedates = array(
-      '4'   => '2-4 days'
-    , '6'   => '3-6 days'
-    , '14'  => '2 weeks' 
-    );
     if ($this->request->is(['patch', 'post', 'put'])) {
       $delivery = $this->Deliverys->patchEntity($delivery, $this->request->getData());
       if ($this->Deliverys->save($delivery)) {
@@ -140,7 +103,7 @@ class DeliverysController extends AppController
       }
       $this->Flash->error(__('The delivery could not be saved. Please, try again.'));
     }
-    $this->set(compact('delivery', 'methods', 'areas', 'duedates'));
+    $this->set(compact('delivery'));
   }
 
   /**
@@ -161,5 +124,44 @@ class DeliverysController extends AppController
     }
 
     return $this->redirect(['action' => 'index']);
+  }
+
+  public function download()
+  {
+    $this->request->allowMethod(['post']);
+    $this->autoRender = false;
+    $response = $this->response;
+    $filename = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s', 'deliverys'.'_'.time());
+    $this->AmazonMWS->fetchDeliverys($filename);
+    $response = $response->withFile($filename, ['download' => true, 'name' => 'download.csv']);
+    return $response;
+  }
+
+  public function upload()
+  {
+    $title = 'Deliverys file upload';
+    $fileform = new UploadFilesForm();
+    if($this->request->is('post')) {
+      if($fileform->validate($this->request->data)) {
+        $tmp_file = $this->request->data['upload_file']['tmp_name'];
+        $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
+          , $this->request->data['upload_file']['name'].'_'.time());
+        move_uploaded_file($tmp_file, $new_file);
+        $result = $this->AmazonMWS->upsertDeliverys($new_file);
+        switch($result['error']) {
+        case 0:
+          $this->Flash->success(__('The CSV file has been uploaded.'));
+          break;
+        case 1:
+          $this->Flash
+            ->error(__('The CSV file did not complete the upload because the cause exceeds 1000 lines.'));
+          break;
+        default:
+          $this->Flash->error(__('The CSV file did not complete the upload. line: ' . $result['line']));
+          break;
+        }
+      }
+    }
+    $this->set(compact('title', 'fileform'));
   }
 }

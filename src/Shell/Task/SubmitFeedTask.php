@@ -292,9 +292,9 @@ class SubmitFeedTask extends Shell
             $_feeds = array_values($feeds) === $feeds ? $feeds : [$feeds];
             foreach($_feeds as $feed) {
               if($feed) {
-                if($vals[ 8]) $data[$keys[ 8]] = $merchant['add-delete']    ?? 'N/A';
-                if($vals[16]) $data[$keys[16]] = $feed['sku']               ?? 'N/A';
-                if($vals[42]) $data[$keys[42]] = $merchant['update-delete'] ?? 'N/A';
+                if($vals[ 8]) $data[$keys[ 8]] = $merchant['add-delete']    ?? '';
+                if($vals[16]) $data[$keys[16]] = $feed['sku']               ?? '';
+                if($vals[42]) $data[$keys[42]] = $merchant['update-delete'] ?? '';
                 if($vals[60]) $data[$keys[60]] = $response['seller'];
                 if($vals[61]) $data[$keys[61]] = $marketplace;
                 if($vals[62]) $data[$keys[62]] = $datetime;
@@ -442,8 +442,8 @@ class SubmitFeedTask extends Shell
         , 'BaseURL'         => $country
         , 'Data'            => $feeds
         ])
-        ? ['update-delete' => 'OK', 'feeds'       => $feeds] 
-        : ['update-delete' => 'NG', 'feeds'       => $feeds];
+        ? ['add-delete' => 'OK', 'feeds'       => $feeds] 
+        : ['add-delete' => 'NG', 'feeds'       => $feeds];
     
         break;
       case $this->AmazonMWS::MWS_ADDDEL_FEED:
@@ -467,8 +467,8 @@ class SubmitFeedTask extends Shell
         , 'BaseURL'         => $country
         , 'Data'            => $feeds
         ]) 
-        ? ['add-delete' => 'OK', 'feeds'       => $feeds] 
-        : ['add-delete' => 'NG', 'feeds'       => $feeds];
+        ? ['update-delete' => 'OK', 'feeds'       => $feeds] 
+        : ['update-delete' => 'NG', 'feeds'       => $feeds];
         break;
       }
     } catch (\Exception $e) {

@@ -12,6 +12,9 @@ use MarketplaceWebService\Component\SubmitFeedComponent;
 use Goodby\CSV\Import\Standard\LexerConfig;
 use Goodby\CSV\Import\Standard\Interpreter;
 use Goodby\CSV\Import\Standard\Lexer;
+use Goodby\CSV\Export\Standard\Exporter;
+use Goodby\CSV\Export\Standard\ExporterConfig;
+use Goodby\CSV\Export\Standard\Collection\CallbackCollection;
 
 /**
  * AmazonMWS component
@@ -104,46 +107,130 @@ class AmazonMWSComponent extends Component
     return $amazon->update();
   }
 
-  public function insertAsin($filename, $suspended)
+  public function fetchDeliverys($filename) 
   {
-    $header = array(
-      'asin' => true
-    , 'marketplace' => true
-    , 'created' => true
-    , 'modified' => true
-    , 'suspended' => true
-    );
-    $asins = TableRegistry::get('Asins');
-    $datas = $this->setAsin($filename, $header, $suspended);
-    $query = $asins->query();
-    $query->insert(array_keys($header));
-    foreach($datas as $data) {
-      $query->values($data);
-    }
-    if(!$query->execute()) {
-      $this->log_error($query->errors());
-      return false;
-    }
+    $head = array('id', 'method', 'area', 'price', 'length', 'total_length', 'weight', 'duedate');
+    $deliverys = TableRegistry::get('Deliverys');
+    $datas = $deliverys->find()
+      ->select($head)
+      ->hydrate(false)->toArray();
+    $collection = new CallbackCollection($datas, function($row) { return $row; });
+
+    $config = new ExporterConfig();
+    $exporter = new Exporter($config);
+
+    $exporter->export($filename, $collection);
     return true;
   }
 
-  public function upsertAsin($filename, $suspended) 
+  public function upsertDeliverys($filename) 
   {
+    $idx = 0;
+    $error = 0;
+    $deliverys = TableRegistry::get('Deliverys');
     $config = new LexerConfig();
     $config
       ->setDelimiter(',')
       ->setEnclosure('"')
       ->setEscape('\\')
-      ->setIgnoreHeaderLine(true)
-      //->setToCharset('UTF-8')
-      //->setFromCharset('SJIS-win')
-    ;
+      ->setIgnoreHeaderLine(false);
     $lexer = new Lexer($config);
     $interpreter = new Interpreter();
+    $interpreter->addObserver(function(array $row) use ($deliverys, &$idx, &$error) {
+      if($idx > 1000) {
+        $error = 1;
+        return;
+      }
+      $head = array(
+        'id' => true
+      , 'method' => true
+      , 'area' => true
+      , 'price' => true
+      , 'length' => true
+      , 'total_length' => true
+      , 'weight' => true
+      , 'duedate' => true
+      , 'created' => true
+      , 'modified' => true
+      );
+      $data = $this->setDelivery($head, $row);
+      $entity = $deliverys->newEntity($data);
+      $delivery = $deliverys->get($data['id']);
+      if($delivery) {
+        unset($data['created']);
+        $entity = $deliverys->patchEntity($delivery, $data);
+      }
+      if(!$deliverys->save($entity)) {
+        $this->log_debug($entity->errors());
+        $error = 99;
+        return;
+      }
+      $idx += 1;
+    });
+    $lexer->parse($filename, $interpreter);
+    return ['error' => $error, 'line' => $idx];
+  }
 
-    $asins = TableRegistry::get('Asins');
+  private function setDelivery($head, $row) {
+    $keys = array_keys($head);
+    $vals = array_values($head);
+    $idx = 0; $_idx = 0;
+    $data = array();
+    foreach($keys as $_head) {
+      if($vals[$_idx]) {
+        switch($_head) {
+        case 'created':
+        case 'modified':
+          $_body = date('Y-m-d H:i:s');
+          break;
+        default:
+          $_body = $this->encode($row[$idx]);
+          $idx += 1;
+          break;
+        }
+        $data[$_head] = $_body;
+      }
+      $_idx += 1;
+    }
+    return $data;
+  }
+
+  //public function insertAsin($filename, $suspended)
+  //{
+  //  $head = array(
+  //    'asin' => true
+  //  , 'marketplace' => true
+  //  , 'created' => true
+  //  , 'modified' => true
+  //  , 'suspended' => true
+  //  );
+  //  $asins = TableRegistry::get('Asins');
+  //  $datas = $this->setAsin($filename, $head, $suspended);
+  //  $query = $asins->query();
+  //  $query->insert(array_keys($head));
+  //  foreach($datas as $data) {
+  //    $query->values($data);
+  //  }
+  //  if(!$query->execute()) {
+  //    $this->log_debug($query->errors());
+  //    return false;
+  //  }
+  //  return true;
+  //}
+
+  public function upsertAsin($filename, $suspended) 
+  {
     $idx = 0;
     $error= 0;
+    $asins = TableRegistry::get('Asins');
+    $config = new LexerConfig();
+    $config
+      ->setDelimiter(',')
+      ->setEnclosure('"')
+      ->setEscape('\\')
+      ->setIgnoreHeaderLine(true);
+    $lexer = new Lexer($config);
+    $interpreter = new Interpreter();
     $interpreter->addObserver(function(array $row) use ($suspended, $asins, &$idx, &$error) {
       if($idx > 1000) {
         $error = 1;
@@ -169,7 +256,7 @@ class AmazonMWSComponent extends Component
         $entity = $asins->patchEntity($asin, $data);
       }
       if(!$asins->save($entity)) {
-        $this->log_error($entity->errors());
+        $this->log_debug($entity->errors());
         $error = 99;
         return;
       }

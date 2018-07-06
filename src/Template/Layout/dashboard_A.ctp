@@ -54,7 +54,7 @@
               </li>
               <li class="nav-item">
                 <?= $this->Html->link(
-                  $this->Html->tag('span', '', ['data-feather' => 'file'])
+                  $this->Html->tag('span', '', ['data-feather' => 'zap'])
                   . __(' MWS/PAAPI設定 ')
                 , ['controller' => 'Bootstrap', 'action' => 'token']
                 , ['escape' => false, 'class' => 'nav-link']

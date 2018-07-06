@@ -25,6 +25,22 @@
         , ['escape' => false, 'class' => 'nav-link']
         ) ?>
       </li>
+      <li class="nav-item">
+        <?= $this->Html->link(
+          $this->Html->tag('span', '', ['data-feather' => 'upload'])
+          . __(' アップロード ')
+        , ['controller' => 'Deliverys', 'action' => 'upload']
+        , ['escape' => false, 'class' => 'nav-link']
+        ) ?>
+      </li>
+      <li class="nav-item">
+        <?= $this->Form->postLink(
+          $this->Html->tag('span', '', ['data-feather' => 'download'])
+          . __(' ダウンロード ')
+        , ['controller' => 'Deliverys', 'action' => 'download']
+        , ['escape' => false, 'class' => 'nav-link', 'confirm' => __('Are you sure you want to download ?')]
+        ) ?>
+      </li>
     </ul>
   </div>
 </nav>

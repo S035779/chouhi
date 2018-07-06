@@ -312,14 +312,14 @@ class BootstrapController extends AppController
         $result = $this->AmazonMWS->upsertAsin($new_file, false);
         switch($result['error']) {
         case 0:
-          $this->Flash->success(__('The csv file has been uploaded.'));
+          $this->Flash->success(__('The CSV file has been uploaded.'));
           break;
         case 1:
           $this->Flash
-            ->error(__('The csv file did not complete the upload because the cause exceeds 1000 lines.'));
+            ->error(__('The CSV file did not complete the upload because the cause exceeds 1000 lines.'));
           break;
         default:
-          $this->Flash->error(__('The csv file did not complete the upload. line: ' . $result['line']));
+          $this->Flash->error(__('The CSV file did not complete the upload. line: ' . $result['line']));
           break;
         }
       }
@@ -345,14 +345,14 @@ class BootstrapController extends AppController
         $result = $this->AmazonMWS->upsertAsin($new_file, true);
         switch($result['error']) {
         case 0:
-          $this->Flash->success(__('The csv file has been uploaded.'));
+          $this->Flash->success(__('The CSV file has been uploaded.'));
           break;
         case 1:
           $this->Flash
-            ->error(__('The csv file did not complete the upload because the cause exceeds 1000 lines.'));
+            ->error(__('The CSV file did not complete the upload because the cause exceeds 1000 lines.'));
           break;
         default:
-          $this->Flash->error(__('The csv file did not complete the upload. line: ' . $result['line']));
+          $this->Flash->error(__('The CSV file did not complete the upload. line: ' . $result['line']));
           break;
         }
       }

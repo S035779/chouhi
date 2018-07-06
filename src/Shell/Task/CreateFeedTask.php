@@ -186,7 +186,7 @@ class CreateFeedTask extends Shell
           if($vals[ 5]) $data[$keys[ 5]] = $merchant['maximum-seller-allow-price'] ?? 0;
           if($vals[ 6]) $data[$keys[ 6]] = $merchant['item-condition'            ] ?? 0;
           if($vals[ 7]) $data[$keys[ 7]] = $merchant['quantity'                  ] ?? 0;
-          if($vals[ 8]) $data[$keys[ 8]] = $merchant['add-delete'                ] ?? 'N/A';
+          if($vals[ 8]) $data[$keys[ 8]] = $merchant['add-delete'                ] ?? '';
           if($vals[ 9]) $data[$keys[ 9]] = $merchant['will-ship-internationally' ] ?? 'N/A';
           if($vals[10]) $data[$keys[10]] = $merchant['expedited-shipping'        ] ?? 'N/A';
           if($vals[11]) $data[$keys[11]] = $merchant['standard-plus'             ] ?? 'N/A';
@@ -220,7 +220,7 @@ class CreateFeedTask extends Shell
           if($vals[39]) $data[$keys[39]] = $merchant['is-shipping-restricted-4'  ] ?? 0;
           if($vals[40]) $data[$keys[40]] = $merchant['is-shipping-restricted-5'  ] ?? 0;
           if($vals[41]) $data[$keys[41]] = $merchant['is-shipping-restricted-6'  ] ?? 0;
-          if($vals[42]) $data[$keys[42]] = $merchant['update-delete'             ] ?? 'N/A';
+          if($vals[42]) $data[$keys[42]] = $merchant['update-delete'             ] ?? '';
           if($vals[43]) $data[$keys[43]] = $merchant['item-description'          ] ?? 'N/A';
           if($vals[44]) $data[$keys[44]] = $merchant['listing-id'                ] ?? 'N/A';
           if($vals[45]) $data[$keys[45]] = isset($merchant['open-date'])

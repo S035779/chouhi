@@ -19,7 +19,7 @@
                 <th scope="col"><?= $this->Paginator->sort('price') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('minimum_seller_allowed_price') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('maximum_seller_allowed_price') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('currency') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('marketplace') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('shippintg_amount_1') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('shippintg_amount_2') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('shippintg_amount_3') ?></th>
@@ -43,7 +43,7 @@
                 <th>商品価格</th>
                 <th>指定最低価格</th>
                 <th>指定最高価格</th>
-                <th>通貨</th>
+                <th>マーケットプレイス</th>
                 <th>送料1</th>
                 <th>送料2</th>
                 <th>送料3</th>
@@ -67,10 +67,13 @@
                 <td><?= h($merchant->seller_sku) ?></td>
                 <td><?= h($merchant->product_identifier) ?></td>
                 <td><?= $this->Number->format($merchant->product_id_type) ?></td>
-                <td><?= $this->Number->format($merchant->price) ?></td>
+                <td><?= $this->Number->currency($merchant->price
+                  , $merchant->marketplace === 'AU' ? 'AUD' 
+                    : ($merchant->marketplace === 'US' ? 'USD' 
+                      : ($merchant->marketplace === 'JP' ? 'JPY' : 'JPY'))) ?></td>
                 <td><?= $this->Number->format($merchant->minimum_seller_allowed_price) ?></td>
                 <td><?= $this->Number->format($merchant->maximum_seller_allowed_price) ?></td>
-                <td><?= h($merchant->currency) ?></td>
+                <td><?= h($merchant->marketplace) ?></td>
                 <td><?= $this->Number->format($merchant->shipping_amount_1) ?></td>
                 <td><?= $this->Number->format($merchant->shipping_amount_2) ?></td>
                 <td><?= $this->Number->format($merchant->shipping_amount_3) ?></td>
