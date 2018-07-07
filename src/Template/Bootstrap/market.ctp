@@ -1,9 +1,13 @@
-        <!-- Main contens -->
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2"><?= __('マーケット出品') ?></h1>
-          </div>
+    <!-- Main contens -->
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <div class="progress mt-4">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+        style="width: <?= $progress ?>%"><?= $this->Number->toPercentage($progress, 0) ?></div>
+      </div>
 
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"><?= __('マーケット出品') ?></h1>
+      </div>
 
       <div class="container">
         <div class="row">
@@ -13,12 +17,14 @@
             <thead>
               <tr>
                 <th scope="col"><?= $this->Paginator->sort('id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('add_delete') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('seller_sku') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('product_identifier') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('product-id-type') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('item_name') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('price') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('minimum_seller_allowed_price') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('maximum_seller_allowed_price') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('minimum_seller_allow_price') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('maximum_seller_allow_price') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('marketplace') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('shippintg_amount_1') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('shippintg_amount_2') ?></th>
@@ -37,9 +43,11 @@
               </tr>
               <tr>
                 <th>#</th>
+                <th>状態</th>
                 <th>商品管理番号</th>
                 <th>商品番号</th>
                 <th>商品番号タイプ</th>
+                <th>商品名</th>
                 <th>商品価格</th>
                 <th>指定最低価格</th>
                 <th>指定最高価格</th>
@@ -64,30 +72,80 @@
               <?php foreach ($merchants as $merchant): ?>
               <tr>
                 <th><?= $this->Number->format($merchant->id) ?></th>
+                <td><?= h(
+                   $merchant->add_delete === 'a' ? '準備中' 
+                : ($merchant->add_delete === 'd' ? '削除予定'
+                : ($merchant->add_delete === 'p' ? '新規追加'
+                : '出品'))) ?></td>
                 <td><?= h($merchant->seller_sku) ?></td>
                 <td><?= h($merchant->product_identifier) ?></td>
-                <td><?= $this->Number->format($merchant->product_id_type) ?></td>
+                <td><?= h(
+                   $merchant->product_id_type === 1 ? 'ASIN'
+                : ($merchant->product_id_type === 2 ? 'ISBN'
+                : ($merchant->product_id_type === 3 ? 'UPC'
+                : ($merchant->product_id_type === 4 ? 'EAN'
+                : '---')))) ?></td>
+                <td><?= h($merchant->item_name) ?></td>
                 <td><?= $this->Number->currency($merchant->price
-                  , $merchant->marketplace === 'AU' ? 'AUD' 
-                    : ($merchant->marketplace === 'US' ? 'USD' 
-                      : ($merchant->marketplace === 'JP' ? 'JPY' : 'JPY'))) ?></td>
-                <td><?= $this->Number->format($merchant->minimum_seller_allowed_price) ?></td>
-                <td><?= $this->Number->format($merchant->maximum_seller_allowed_price) ?></td>
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
+                <td><?= $this->Number->currency($merchant->minimum_seller_allow_price
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
+                <td><?= $this->Number->currency($merchant->maximum_seller_allow_price
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
                 <td><?= h($merchant->marketplace) ?></td>
-                <td><?= $this->Number->format($merchant->shipping_amount_1) ?></td>
-                <td><?= $this->Number->format($merchant->shipping_amount_2) ?></td>
-                <td><?= $this->Number->format($merchant->shipping_amount_3) ?></td>
-                <td><?= $this->Number->format($merchant->shipping_amount_4) ?></td>
-                <td><?= $this->Number->format($merchant->shipping_amount_5) ?></td>
-                <td><?= $this->Number->format($merchant->shipping_amount_6) ?></td>
-                <td><?= h($merchant->item_condition) ?></td>
-                <td><?= $this->Number->format($merchant->quantity) ?></td>
-                <td><?= $this->Number->format($merchant->will_ship_internationally) ?></td>
-                <td><?= h($merchant->expedited_shipping) ?></td>
-                <td><?= h($merchant->standard_plus) ?></td>
-                <td><?= h($merchant->fullfillment_channel) ?></td>
-                <td><?= h($merchant->product_tax_code) ?></td>
-                <td><?= $this->Number->format($merchant->leadtime_to_ship) ?></td>
+                <td><?= $this->Number->currency($merchant->shipping_amount_1
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
+                <td><?= $this->Number->currency($merchant->shipping_amount_2
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
+                <td><?= $this->Number->currency($merchant->shipping_amount_3
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
+                <td><?= $this->Number->currency($merchant->shipping_amount_4
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
+                <td><?= $this->Number->currency($merchant->shipping_amount_5
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
+                <td><?= $this->Number->currency($merchant->shipping_amount_6
+                ,  $merchant->marketplace === 'AU' ? 'AUD' 
+                : ($merchant->marketplace === 'US' ? 'USD' 
+                : ($merchant->marketplace === 'JP' ? 'JPY' 
+                : 'JPY'))) ?></td>
+                <td><?= h($merchant->item_condition === 11 ? 'New' : 'Used') ?></td>
+                <td><?= $this->Number->format($merchant->quantity, ['after' => '個']) ?></td>
+                <td><?= h(
+                   $merchant->will_ship_internationally === 'n' ? 'No'
+                : ($merchant->will_ship_internationally === 'y' ? 'Yes'
+                : '---')) ?></td>
+                <td><?= h($merchant->expedited_shipping === 'International' ? 'EMS' : '---' ) ?></td>
+                <td><?= h(
+                   $merchant->standard_plus === 'Y' ? '3 ～  5 営業日の配送'
+                : ($merchant->standard_plus === 'N' ? '4 ～ 12 営業日の配送' 
+                : '---')) ?></td>
+                <td><?= h($merchant->fullfillment_channel ? $merchant->fullfillment_channel : '---') ?></td>
+                <td><?= h($merchant->product_tax_code     ? $merchant->product_tax_code     : '---') ?></td>
+                <td><?= $this->Number->formatDelta($merchant->leadtime_to_ship, ['after' => '日間']) ?></td>
               </tr>
               <?php endforeach; ?>
             </tbody>

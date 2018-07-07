@@ -245,13 +245,18 @@ class BootstrapController extends AppController
   public function market()
   {
     $title = 'Amazon market listing';
-    $seller = $this->Sellers->find()
-      ->where(['email' => $this->Auth->user('email')])
-      ->first();
 
-    $result = $this->Merchants->find()->where(['seller_identifier' => $seller['seller']]);
-    $merchants = $this->paginate($result);
-    $this->set(compact('title', 'merchants'));
+    $seller = $this->Sellers->find()->where(['email' => $this->Auth->user('email')])->first();
+
+    $query      = $this->Merchants->find();
+    $datas      = $query->where(['seller_identifier' => $seller['seller']]);
+    $merchants = $this->paginate($datas);
+    $all        = $datas->count('*');
+    $add        = $datas->where(['add_delete' => 'a'])->count('*');
+    $delete     = $datas->where(['add_delete' => 'd'])->count('*');
+    $plus       = $datas->where(['add_delete' => 'p'])->count('*');
+    $progress   = (1 - ($add + $delete + $plus) / $all) * 100;
+    $this->set(compact('title', 'merchants', 'progress'));
   }
 
   /**
