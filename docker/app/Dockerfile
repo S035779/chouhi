@@ -190,6 +190,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends $BUILD_DEPS $LI
   && echo "date.timezone=Asia/Tokyo" >> $PHP_INI_DIR/php.ini \
   && echo "max_execution_time=120" >> $PHP_INI_DIR/php.ini \
   && echo "upload_max_filesize=20M" >> $PHP_INI_DIR/php.ini \
+  && echo "memory_limit=256M" >> $PHP_INI_DIR/php.ini \
   && docker-php-ext-install zip \
   && cd /tmp && curl -Ls http://download.icu-project.org/files/icu4c/$ICU_RELEASE/icu4c-$(echo $ICU_RELEASE | tr '.' '_')-src.tgz > icu4c-src.tgz \
   && cd /tmp && tar xzf icu4c-src.tgz && cd /tmp/icu/source \

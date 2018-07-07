@@ -6,7 +6,7 @@ metadata:
     app: amazon-mws-tools
     tier: worker
 spec:
-  schedule: "*/10 * * * *"
+  schedule: "20 * * * *"
   jobTemplate:
     metadata:
       labels:
