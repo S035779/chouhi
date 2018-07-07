@@ -255,7 +255,8 @@ class BootstrapController extends AppController
     $add        = $datas->where(['add_delete' => 'a'])->count('*');
     $delete     = $datas->where(['add_delete' => 'd'])->count('*');
     $plus       = $datas->where(['add_delete' => 'p'])->count('*');
-    $progress   = (1 - ($add + $delete + $plus) / $all) * 100;
+    $progress   = 0;
+    if($all) $progress   = (1 - ($add + $delete + $plus) / $all) * 100;
     $this->set(compact('title', 'merchants', 'progress'));
   }
 
