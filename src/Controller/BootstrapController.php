@@ -141,7 +141,7 @@ class BootstrapController extends AppController
     $title = 'Search Amazon items';
     $connection = ConnectionManager::get('default');
     $avg_hours = 0;
-    $bck_hours = 6;
+    $bck_hours = 24 * 1;
     $rise_rate = 0;
     $profit_range = 0;
     $offers = array();
