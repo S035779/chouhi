@@ -177,9 +177,7 @@ class BootstrapController extends AppController
             Offers1.items_release_date_at           AS release_date_at,
             Offers1.items_publication_date_at       AS publication_date_at,
             Offers1.items_large_image_url           AS large_image_url, 
-            ((SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created ASC  LIMIT 1) 
-              + (SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created DESC LIMIT 1) / 2 )
-                                                    AS average_lowest_price,
+            AVG(Offers1.lowest_price)               AS average_lowest_price,
             ((SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created DESC LIMIT 1) 
               - ((SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created ASC  LIMIT 1) 
                 + (SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created DESC LIMIT 1) 
