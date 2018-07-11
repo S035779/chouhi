@@ -152,41 +152,29 @@ class BootstrapController extends AppController
       if(!empty($request['profit_range' ]))  $profit_range = intval(   $request['profit_range']);
       $_offers = $connection
         ->execute('
-          WITH RECURSIVE Prices AS (
-            SELECT lowest_price, asin, created FROM offers 
-            WHERE created > TIMESTAMP(NOW() - INTERVAL :_avg_hours hour)
-          )
           SELECT
-            time1                                   AS created,
-            Offers1.asin                            AS asin,
-            COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END) 
-                                                    AS time_event_count,
-            Offers1.items_id                        AS id,
-            Offers1.items_title                     AS title,
-            Offers1.items_detail_page_url           AS detail_page_url,
-            Offers1.items_total_new                 AS total_new,
-            Offers1.items_total_used                AS total_used,
-            Offers1.items_customer_reviews_url      AS customer_reviews_url,
-            AVG(Offers1.sales_ranking)              AS average_sales_ranking,
-            Offers1.items_product_group             AS product_group,
-            Offers1.items_sales_ranking             AS sales_ranking,
-            Offers1.items_lowest_price              AS lowest_price,
-            Offers1.items_lowest_price_currency     AS lowest_price_currency,
-            Offers1.items_lowest_price_currency     AS average_lowest_price_currency,
-            Offers1.items_original_release_date_at  AS original_release_date_at,
-            Offers1.items_release_date_at           AS release_date_at,
-            Offers1.items_publication_date_at       AS publication_date_at,
-            Offers1.items_large_image_url           AS large_image_url, 
-            ((SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created ASC  LIMIT 1) 
-                + (SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created DESC LIMIT 1) 
-                / 2)                                AS average_lowest_price,
-            ((SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created DESC LIMIT 1) 
-              - ((SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created ASC  LIMIT 1) 
-                + (SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created DESC LIMIT 1) 
-                / 2))                               AS profit_range,
-            ((SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created DESC LIMIT 1) 
-              / (SELECT lowest_price FROM Prices WHERE asin = Offers1.asin ORDER BY created ASC  LIMIT 1) 
-              * 100 - 100 )                         AS rise_rate
+            time1                                     AS created,
+            Offers1.asin                              AS asin,
+            Offers1.items_id                          AS id,
+            Offers1.items_title                       AS title,
+            Offers1.items_detail_page_url             AS detail_page_url,
+            Offers1.items_total_new                   AS total_new,
+            Offers1.items_total_used                  AS total_used,
+            Offers1.items_customer_reviews_url        AS customer_reviews_url,
+            Offers1.items_product_group               AS product_group,
+            Offers1.items_sales_ranking               AS sales_ranking,
+            Offers1.items_lowest_price                AS lowest_price,
+            Offers1.items_lowest_price_currency       AS lowest_price_currency,
+            Offers1.items_lowest_price_currency       AS average_lowest_price_currency,
+            Offers1.items_original_release_date_at    AS original_release_date_at,
+            Offers1.items_release_date_at             AS release_date_at,
+            Offers1.items_publication_date_at         AS publication_date_at,
+            Offers1.items_large_image_url             AS large_image_url, 
+            COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END)    AS time_event_count,
+            SUM(Offers1.items_sales_ranking) / :_avg_hours                        AS average_sales_ranking,
+            SUM(Offers1.items_lowest_price) / :_avg_hours                         AS average_lowest_price,
+            Offers1.items_lowest_price - SUM(Offers1.lowest_price) / :_avg_hours  AS profit_range,
+            MAX(Offers1.items_lowest_price) / MIN(Offers1.items_lowest_price) * 100 - 100 AS rise_rate
           FROM (
             (SELECT 
               timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
