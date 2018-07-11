@@ -45,9 +45,9 @@ class CommonComponent extends Component
 
   public function getTimeStamp($str)
   {
-    debug($str);
+    //debug($str);
     $result = \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
-    debug($result);
+    //debug($result);
     return $result;
   }
 
