@@ -216,7 +216,7 @@ class BootstrapController extends AppController
             ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
           GROUP BY time1, Offers1.asin, Offers1.items_id
           HAVING ' . $_rise_rate . ' AND ' . $_profit_range . '
-          ORDER BY profit_range,rise_rate DESC LIMIT 100 OFFSET 0;'
+          ORDER BY profit_range DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
 
