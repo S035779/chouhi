@@ -150,10 +150,10 @@ class BootstrapController extends AppController
       if(!empty($request['period'       ]))  $avg_hours    = intval(   $request['period'      ]) * 24; 
       if(!empty($request['rise_rate'    ]))  $rise_rate    = floatval( $request['rise_rate'   ]);
       if(!empty($request['profit_range' ]))  $profit_range = intval(   $request['profit_range']);
-      if($profit_range  < 0)  'profit_range <= :_profit_range';
-      else                    'profit_range >= :_profit_range'; 
-      if($rise_rate     < 0)  'rise_rate <= :_rise_rate';
-      else                    'rise_rate >= :_rise_rate';
+      if($profit_range  < 0)  $_profit_range = 'profit_range <= :_profit_range';
+      else                    $_profit_range = 'profit_range >= :_profit_range'; 
+      if($rise_rate     < 0)  $_rise_rate = 'rise_rate <= :_rise_rate';
+      else                    $_rise_rate = 'rise_rate >= :_rise_rate';
       $_offers = $connection
         ->execute('
           SELECT
