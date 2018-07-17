@@ -60,22 +60,21 @@ class FetchItemsTask extends Shell
    */
   public function main()
   {
-    debug("first:" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    debug("first: ".memory_get_usage(true)       / (1024 * 1024)." MB");
     $result = $this->execItemLookup();
-    debug("peak :" . memory_get_peak_usage(true)  / (1024 * 1024) . " MB");
-    debug("last :" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    debug("peak : ".memory_get_peak_usage(true)  / (1024 * 1024)." MB");
+    debug("last : ".memory_get_usage(true)       / (1024 * 1024)." MB");
     return $result;
   }
-
 
   private function execItemLookup() {
     $asins = TableRegistry::get('Asins');
     $datas = $asins
       ->find()
-      ->where(['suspended' => false])
-      ->where(function($exp) { return $exp->isNotNull('ean'); })
-      ->order(['modified' => 'ASC'])
-      ->limit(1000)
+      ->where(['suspended'  => false  ])
+      ->where(['ean IS NOT' => null   ])
+      ->order(['modified'   => 'ASC'  ])
+      ->limit(10000)
     ;
     $request = array();
     foreach($datas as $data) {

@@ -59,10 +59,10 @@ class AsinImportTask extends Shell
    */
   public function main()
   {
-    debug("first:" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    debug("first: ".memory_get_usage(true)       / (1024 * 1024)." MB");
     $result = $this->execAsinImport();
-    debug("peak :" . memory_get_peak_usage(true)  / (1024 * 1024) . " MB");
-    debug("last :" . memory_get_usage(true)       / (1024 * 1024) . " MB");
+    debug("peak : ".memory_get_peak_usage(true)  / (1024 * 1024)." MB");
+    debug("last : ".memory_get_usage(true)       / (1024 * 1024)." MB");
     return $result;
   }
 
@@ -71,9 +71,10 @@ class AsinImportTask extends Shell
     $asins = TableRegistry::get('Asins');
     $datas = $asins
       ->find()
-      ->where(['suspended' => false, 'modified >=' => new \DateTime('-5 days')])
-      ->order(['modified' => 'ASC'])
-      ->limit(100)
+      ->where(['suspended'  => false])
+      ->where(['OR'         => [['modified >=' => new \DateTime('-1 days')], ['ean IS NOT' => null]]])
+      ->order(['modified'   => 'ASC'])
+      ->limit(10000)
     ;
     $request = array();
     foreach($datas as $data) {
@@ -209,7 +210,7 @@ class AsinImportTask extends Shell
     $asins_us = array();
     $eol = count($request);
     $idx = 0;
-    $max_count = 1;
+    $max_count = 10;
     //debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {
