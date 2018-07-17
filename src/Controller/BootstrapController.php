@@ -150,6 +150,10 @@ class BootstrapController extends AppController
       if(!empty($request['period'       ]))  $avg_hours    = intval(   $request['period'      ]) * 24; 
       if(!empty($request['rise_rate'    ]))  $rise_rate    = floatval( $request['rise_rate'   ]);
       if(!empty($request['profit_range' ]))  $profit_range = intval(   $request['profit_range']);
+      if($profit_range  < 0)  'profit_range <= :_profit_range';
+      else                    'profit_range >= :_profit_range'; 
+      if($rise_rate     < 0)  'rise_rate <= :_rise_rate';
+      else                    'rise_rate >= :_rise_rate';
       $_offers = $connection
         ->execute('
           SELECT
@@ -211,8 +215,8 @@ class BootstrapController extends AppController
               ON items.id = offers.item_id )        AS Offers1 
             ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
           GROUP BY time1, Offers1.asin, Offers1.items_id
-          HAVING profit_range >= :_profit_range AND rise_rate >= :_rise_rate
-          ORDER BY time1 DESC LIMIT 100 OFFSET 0;'
+          HAVING ' . $_rise_rate . ' AND ' . $_profit_range . '
+          ORDER BY profit_range,rise_rate LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
 
