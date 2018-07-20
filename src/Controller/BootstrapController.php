@@ -178,8 +178,7 @@ class BootstrapController extends AppController
             AVG(Offers1.items_sales_ranking)          AS average_sales_ranking,
             AVG(Offers1.items_lowest_price)           AS average_lowest_price,
             Offers1.items_lowest_price - AVG(Offers1.lowest_price) AS profit_range,
-            (MAX(Offers1.items_lowest_price) - MIN(Offers1.items_lowest_price)) / 
-              MIN(Offers1.items_lowest_price)) * 100  AS rise_rate
+            (((MAX(Offers1.items_lowest_price) - MIN(Offers1.items_lowest_price)) / MIN(Offers1.items_lowest_price)) * 100) AS rise_rate
           FROM (
             (SELECT 
               timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
