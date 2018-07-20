@@ -45,10 +45,16 @@ class CommonComponent extends Component
 
   public function getTimeStamp($str)
   {
-    //debug($str);
-    $result = \DateTime::createFromFormat('Y-m-d', $str)->format('Y/m/d H:i:s');
-    //debug($result);
-    return $result;
+    debug($str);
+    if(preg_match('/^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})$/', $str, $matches)) {
+      $str = matches[1]."-".matches[2]."-".matches[3]." 00:00:00";
+    } else if(preg_match('/^([0-9]{4})-([0-9]{1,2})$/', $str, $matches)) {
+      $str = matches[1]."-".matches[2]."-01 00:00:00";
+    } else if(preg_match('/^([0-9]{4})$/', $str, $matches)) {
+      $str = matches[1]."-01-01 00:00:00";
+    }
+    $date = \DateTime::createFromFormat('Y-m-d H:i:s', $str);
+    return $date->format('Y/m/d H:i:s');
   }
 
   public function getLocalLength($length, $ship) 

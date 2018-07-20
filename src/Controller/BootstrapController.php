@@ -169,14 +169,15 @@ class BootstrapController extends AppController
             Offers1.items_sales_ranking               AS sales_ranking,
             Offers1.items_lowest_price                AS lowest_price,
             Offers1.items_lowest_price_currency       AS lowest_price_currency,
-            Offers1.items_lowest_price_currency       AS average_lowest_price_currency,
             Offers1.items_original_release_date_at    AS original_release_date_at,
             Offers1.items_release_date_at             AS release_date_at,
             Offers1.items_publication_date_at         AS publication_date_at,
             Offers1.items_large_image_url             AS large_image_url, 
-            COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END)    AS time_event_count,
+            COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END)    
+                                                      AS time_event_count,
             AVG(Offers1.items_sales_ranking)          AS average_sales_ranking,
             AVG(Offers1.items_lowest_price)           AS average_lowest_price,
+            Offers1.items_lowest_price_currency       AS average_lowest_price_currency,
             Offers1.items_lowest_price - AVG(Offers1.items_lowest_price) 
                                                       AS profit_range,
             (( 
@@ -189,36 +190,36 @@ class BootstrapController extends AppController
                 + series_numbers.number % :_avg_hours hour)                               AS time2
               FROM (
                 SELECT @num := 0 AS number UNION ALL 
-                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours . '
+                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours * $avg_hours . '
               ) AS series_numbers
             ) AS date_map
             LEFT JOIN 
               (SELECT 
-                items.id                            AS items_id,
-                items.title                         AS items_title,
-                offers.asin                         AS asin,
-                items.detail_page_url               AS items_detail_page_url,
-                items.total_new                     AS items_total_new,
-                items.total_used                    AS items_total_used,
-                items.customer_reviews_url          AS items_customer_reviews_url,
-                offers.sales_ranking                AS sales_ranking,
-                items.product_group                 AS items_product_group,
-                items.sales_ranking                 AS items_sales_ranking,   
-                items.lowest_price                  AS items_lowest_price,
-                items.lowest_price_currency         AS items_lowest_price_currency,
-                offers.lowest_price                 AS lowest_price,
-                offers.lowest_price_currency        AS lowest_price_currency,
-                items.original_release_date_at      AS items_original_release_date_at,
-                items.release_date_at               AS items_release_date_at,
-                items.publication_date_at           AS items_publication_date_at,
-                items.large_image_url               AS items_large_image_url,
-                offers.created                      AS created
+                items.id                              AS items_id,
+                items.title                           AS items_title,
+                offers.asin                           AS asin,
+                items.detail_page_url                 AS items_detail_page_url,
+                items.total_new                       AS items_total_new,
+                items.total_used                      AS items_total_used,
+                items.customer_reviews_url            AS items_customer_reviews_url,
+                offers.sales_ranking                  AS sales_ranking,
+                items.product_group                   AS items_product_group,
+                items.sales_ranking                   AS items_sales_ranking,   
+                items.lowest_price                    AS items_lowest_price,
+                items.lowest_price_currency           AS items_lowest_price_currency,
+                offers.lowest_price                   AS lowest_price,
+                offers.lowest_price_currency          AS lowest_price_currency,
+                items.original_release_date_at        AS items_original_release_date_at,
+                items.release_date_at                 AS items_release_date_at,
+                items.publication_date_at             AS items_publication_date_at,
+                items.large_image_url                 AS items_large_image_url,
+                offers.created                        AS created
               FROM offers 
               INNER JOIN items 
-              ON items.id = offers.item_id )        AS Offers1 
+              ON items.id = offers.item_id ) AS Offers1 
             ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
           GROUP BY time1, Offers1.asin, Offers1.items_id
-          HAVING ' . $_rise_rate . ' OR ' . $_profit_range . '
+          HAVING ' . $_rise_rate . ' AND ' . $_profit_range . '
           ORDER BY profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
