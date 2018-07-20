@@ -177,8 +177,10 @@ class BootstrapController extends AppController
             COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END)    AS time_event_count,
             AVG(Offers1.items_sales_ranking)          AS average_sales_ranking,
             AVG(Offers1.items_lowest_price)           AS average_lowest_price,
-            Offers1.items_lowest_price - AVG(Offers1.lowest_price) AS profit_range,
-            (((MAX(Offers1.items_lowest_price) - MIN(Offers1.items_lowest_price)) / MIN(Offers1.items_lowest_price)) * 100) AS rise_rate
+            Offers1.items_lowest_price - AVG(Offers1.items_lowest_price) 
+                                                      AS profit_range,
+            ((Offers1.items_lowest_price - AVG(Offers1.items_lowest_price)) 
+              / AVG(Offers1.items_lowest_price))*100) AS rise_rate
           FROM (
             (SELECT 
               timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
