@@ -175,9 +175,9 @@ class BootstrapController extends AppController
             Offers1.items_publication_date_at         AS publication_date_at,
             Offers1.items_large_image_url             AS large_image_url, 
             COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END)    AS time_event_count,
-            SUM(Offers1.items_sales_ranking) / :_avg_hours                        AS average_sales_ranking,
-            SUM(Offers1.items_lowest_price) / :_avg_hours                         AS average_lowest_price,
-            Offers1.items_lowest_price - SUM(Offers1.lowest_price) / :_avg_hours  AS profit_range,
+            AVG(Offers1.items_sales_ranking)          AS average_sales_ranking,
+            AVG(Offers1.items_lowest_price)           AS average_lowest_price,
+            Offers1.items_lowest_price - AVG(Offers1.lowest_price) AS profit_range,
             MAX(Offers1.items_lowest_price) / MIN(Offers1.items_lowest_price) * 100 - 100 AS rise_rate
           FROM (
             (SELECT 
@@ -215,7 +215,7 @@ class BootstrapController extends AppController
               ON items.id = offers.item_id )        AS Offers1 
             ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
           GROUP BY time1, Offers1.asin, Offers1.items_id
-          HAVING ' . $_rise_rate . ' AND ' . $_profit_range . '
+          HAVING ' . $_rise_rate . ' OR ' . $_profit_range . '
           ORDER BY profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');

@@ -138,33 +138,24 @@
                       <div class="card">
                       <ul class="list-group list-group-flush">
                         <li class="list-group-item"><?= 
-                          __('ランキング').__(' : ')
-                            .$this->Number->format($offer['sales_ranking'])
+                          __('ランキング').__(' : ').$this->Number->format($offer['sales_ranking'])
                         ?></li>
                         <li class="list-group-item"><?= 
-                          __('ASIN')
-                            .__(' : ').h($offer['asin']) 
+                          __('ASIN').__(' : ').h($offer['asin']) 
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('価格').__(' : ').$this->Number->currency(
-                            $offer['lowest_price']
-                          , $offer['lowest_price_currency']
-                          )
+                            $offer['lowest_price'], $offer['lowest_price_currency'])
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('平均価格').__(' : ').$this->Number->currency(
-                            $offer['average_lowest_price']
-                          , $offer['lowest_price_currency']
-                          ) 
+                            $offer['average_lowest_price'], $offer['lowest_price_currency']) 
+                          .__('（').$this->Number->format($offer['rise_rate']).__('％）')
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('価格差').__(' : ').$this->Number->currency(
-                            $offer['profit_range']
-                          , $offer['lowest_price_currency']
-                          )
-                          //.__('（').$this->Number->format($offer['rise_rate']).__('％）')
-                          //.__('（').$this->Number->format($offer['first_lowest_price']).__('）')
-                          //.__('（').$this->Number->format($offer['last_lowest_price']).__('）')
+                            $offer['profit_range'], $offer['lowest_price_currency'])
+                          .__('（').$this->Number->format($offer['profit_range']).__('円）')
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('発売日')
