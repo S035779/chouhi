@@ -155,7 +155,6 @@
                         <li class="list-group-item"><?= 
                           __('価格差').__(' : ').$this->Number->currency(
                             $offer['profit_range'], $offer['lowest_price_currency'])
-                          .__('（').$this->Number->format($offer['profit_range']).__('円）')
                         ?></li>
                         <li class="list-group-item"><?= 
                           __('発売日')
