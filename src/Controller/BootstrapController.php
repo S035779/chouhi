@@ -179,8 +179,9 @@ class BootstrapController extends AppController
             AVG(Offers1.items_lowest_price)           AS average_lowest_price,
             Offers1.items_lowest_price - AVG(Offers1.items_lowest_price) 
                                                       AS profit_range,
-            ((Offers1.items_lowest_price - AVG(Offers1.items_lowest_price)) 
-              / AVG(Offers1.items_lowest_price))*100) AS rise_rate
+            ( ( 
+              ( Offers1.items_lowest_price - AVG(Offers1.items_lowest_price) ) / AVG(Offers1.items_lowest_price
+            ) * 100 )                                 AS rise_rate
           FROM (
             (SELECT 
               timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
