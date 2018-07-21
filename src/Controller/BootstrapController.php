@@ -156,45 +156,9 @@ class BootstrapController extends AppController
       else                    $_rise_rate = 'rise_rate >= :_rise_rate';
       $_offers = $connection
         ->execute('
-          SELECT
-            time1                                     AS created,
-            Offers1.asin                              AS asin,
-            Offers1.items_id                          AS id,
-            Offers1.items_title                       AS title,
-            Offers1.items_detail_page_url             AS detail_page_url,
-            Offers1.items_total_new                   AS total_new,
-            Offers1.items_total_used                  AS total_used,
-            Offers1.items_customer_reviews_url        AS customer_reviews_url,
-            Offers1.items_product_group               AS product_group,
-            Offers1.items_sales_ranking               AS sales_ranking,
-            Offers1.items_lowest_price                AS lowest_price,
-            Offers1.items_lowest_price_currency       AS lowest_price_currency,
-            Offers1.items_original_release_date_at    AS original_release_date_at,
-            Offers1.items_release_date_at             AS release_date_at,
-            Offers1.items_publication_date_at         AS publication_date_at,
-            Offers1.items_large_image_url             AS large_image_url, 
-            COUNT(CASE WHEN time1 = time2 THEN Offers1.items_id ELSE NULL END)    
-                                                      AS time_event_count,
-            AVG(Offers1.items_sales_ranking)          AS average_sales_ranking,
-            AVG(Offers1.items_lowest_price)           AS average_lowest_price,
-            Offers1.items_lowest_price_currency       AS average_lowest_price_currency,
-            Offers1.items_lowest_price - AVG(Offers1.items_lowest_price) 
-                                                      AS profit_range,
-            (( 
-              (Offers1.items_lowest_price - AVG(Offers1.items_lowest_price)) / AVG(Offers1.items_lowest_price)
-            ) * 100)                                  AS rise_rate
-          FROM (
-            (SELECT 
-              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
-              timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours)
-                + series_numbers.number % :_avg_hours hour)                               AS time2
-              FROM (
-                SELECT @num := 0 AS number UNION ALL 
-                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours * $avg_hours . '
-              ) AS series_numbers
-            ) AS date_map
-            LEFT JOIN 
-              (SELECT 
+          WITH 
+            Offers AS (
+              SELECT 
                 items.id                              AS items_id,
                 items.title                           AS items_title,
                 offers.asin                           AS asin,
@@ -214,13 +178,50 @@ class BootstrapController extends AppController
                 items.publication_date_at             AS items_publication_date_at,
                 items.large_image_url                 AS items_large_image_url,
                 offers.created                        AS created
-              FROM offers 
-              INNER JOIN items 
-              ON items.id = offers.item_id ) AS Offers1 
-            ON Offers1.created BETWEEN date_map.time2 AND date_map.time2 + interval 1 hour )
-          GROUP BY time1, Offers1.asin, Offers1.items_id
-          HAVING ' . $_rise_rate . ' AND ' . $_profit_range . '
-          ORDER BY profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
+              FROM offers INNER JOIN items ON items.id = offers.item_id 
+            ) 
+          , Maps AS (
+              SELECT 
+                timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
+                timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours)
+                  + series_numbers.number % :_avg_hours hour)                               AS time2
+              FROM (
+                SELECT @num := 0 AS number UNION ALL 
+                SELECT @num := @num + 1 FROM information_schema.COLUMNS LIMIT ' . $bck_hours * $avg_hours . '
+              ) AS series_numbers
+            )
+          SELECT
+            Offers.asin                               AS asin,
+            Offers.items_id                           AS id,
+            Offers.items_title                        AS title,
+            Offers.items_detail_page_url              AS detail_page_url,
+            Offers.items_total_new                    AS total_new,
+            Offers.items_total_used                   AS total_used,
+            Offers.items_customer_reviews_url         AS customer_reviews_url,
+            Offers.items_product_group                AS product_group,
+            Offers.items_sales_ranking                AS sales_ranking,
+            AVG(Offers.items_sales_ranking)           AS average_sales_ranking,
+            (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1) 
+                                                      AS lowest_price,
+            AVG(Offers.items_lowest_price)            AS average_lowest_price,
+            (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1) 
+              - AVG(Offers.items_lowest_price)        AS profit_range,
+            (((
+            (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1) 
+              - AVG(Offers.items_lowest_price)) / AVG(Offers.items_lowest_price)
+                ) * 100)                              AS rise_rate,
+            Offers.items_lowest_price_currency        AS lowest_price_currency,
+            Offers.items_original_release_date_at     AS original_release_date_at,
+            Offers.items_release_date_at              AS release_date_at,
+            Offers.items_publication_date_at          AS publication_date_at,
+            Offers.items_large_image_url              AS large_image_url 
+          FROM Maps LEFT JOIN  Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
+          GROUP BY  Offers.asin, Offers.items_id
+          HAVING    ' . $_rise_rate . ' AND ' . $_profit_range . '
+          ORDER BY  profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
 
