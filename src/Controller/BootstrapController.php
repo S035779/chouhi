@@ -202,17 +202,16 @@ class BootstrapController extends AppController
             Offers.items_sales_ranking                AS sales_ranking,
             AVG(Offers.items_sales_ranking)           AS average_sales_ranking,
             (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1) 
-                                                      AS lowest_price,
+              order by sub.created desc limit 1)      AS lowest_price,
             AVG(Offers.items_lowest_price)            AS average_lowest_price,
             (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1) 
-              - AVG(Offers.items_lowest_price)        AS profit_range,
+              order by sub.created desc limit 1) - AVG(Offers.items_lowest_price)
+                                                      AS profit_range,
             (((
             (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1) 
-              - AVG(Offers.items_lowest_price)) / AVG(Offers.items_lowest_price)
-                ) * 100)                              AS rise_rate,
+              order by sub.created desc limit 1) - AVG(Offers.items_lowest_price)) 
+                / AVG(Offers.items_lowest_price)) * 100) 
+                                                      AS rise_rate,
             Offers.items_lowest_price_currency        AS lowest_price_currency,
             Offers.items_original_release_date_at     AS original_release_date_at,
             Offers.items_release_date_at              AS release_date_at,
@@ -221,7 +220,7 @@ class BootstrapController extends AppController
           FROM Maps LEFT JOIN  Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
           GROUP BY  Offers.asin, Offers.items_id
           HAVING    ' . $_rise_rate . ' AND ' . $_profit_range . '
-          ORDER BY  profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
+          ORDER BY  profit_range DESC, rise_rate DESC LIMIT 50 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
 
