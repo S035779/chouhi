@@ -37,18 +37,16 @@ class MysqldumpTask extends Shell
         , ROOT . DIRECTORY_SEPARATOR . env('STORAGE')
         , $date
       );
-      print_r($command);
       exec($command, $output, $result);
       $this->out($this->nl(2));
       $this->hr();
       $this->out('MySQL backup shell ');
       $this->hr();
       $data = [
-        ['location',      'database',       'data' ]
-      , ['127.0.0.1',     env('DB_SCHEMA'), $data ]
+        ['Location', 'Command', 'Date' ]
+      , ['127.0.0.1', $command, $date ]
       ];
       $this->helper('Table')->output($data);
       $this->out($this->nl(2));
-      //return $result;
     }
 }
