@@ -30,8 +30,9 @@ class MysqldumpTask extends Shell
     public function main()
     {
       $date = date('Ymd-His');
+      $hostname = 'localhost';
       $command = sprintf('mysqldump -u %s -p %s %s > %s/%sbackup.sql'
-        , env('DB_USERNAME')
+        , env('DB_USERNAME').'@'.$hostname
         , env('DB_PASSWORD')
         , env('DB_SCHEMA')
         , ROOT . DIRECTORY_SEPARATOR . env('STORAGE')
@@ -43,8 +44,8 @@ class MysqldumpTask extends Shell
       $this->out('MySQL backup shell ');
       $this->hr();
       $data = [
-        ['Location', 'Command', 'Date' ]
-      , ['127.0.0.1', $command, $date ]
+        ['Location',  'Command',  'Date' ]
+      , [$hostname,   $command,   $date ]
       ];
       $this->helper('Table')->output($data);
       $this->out($this->nl(2));
