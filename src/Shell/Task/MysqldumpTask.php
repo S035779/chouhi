@@ -31,7 +31,7 @@ class MysqldumpTask extends Shell
     {
       $date = date('Ymd-His');
       $hostname = 'localhost';
-      $command = sprintf('mysqldump -u %s -p %s %s > %s/%sbackup.sql'
+      $command = sprintf('mysqldump --user=%s --password=%s %s > %s/%sbackup.sql'
         , env('DB_USERNAME')
         , env('DB_PASSWORD')
         , env('DB_SCHEMA')
