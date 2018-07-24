@@ -220,7 +220,7 @@ class BootstrapController extends AppController
           FROM Maps LEFT JOIN  Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
           GROUP BY  Offers.asin, Offers.items_id
           HAVING    ' . $_rise_rate . ' AND ' . $_profit_range . '
-          ORDER BY  profit_range DESC, rise_rate DESC LIMIT 50 OFFSET 0;'
+          ORDER BY  profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
         ->fetchAll('assoc');
 

@@ -30,24 +30,22 @@ class MysqldumpTask extends Shell
     public function main()
     {
       $date = date('Ymd-His');
-      $storage = '/c/Users/mamoru_hashimoto/work/chouhi/storage';
       $command = sprintf('mysqldump -u %s -p %s %s > %s/%sbackup.sql'
         , env('DB_USERNAME')
         , env('DB_PASSWORD')
         , env('DB_SCHEMA')
-        , $storage
+        , ROOT . DIRECTORYSEPARATOR . env('STORAGE')
         , $date
       );
-      //print_r($command);
-      //exec($command, $output, $result);
+      print_r($command);
+      exec($command, $output, $result);
       $this->out($this->nl(2));
       $this->hr();
-      $this->out('I am CakePHP shell !!');
+      $this->out('MySQL backup shell ');
       $this->hr();
       $data = [
-        ['Header 1', 'Header', 'Long Header']
-      , ['Short', 'Longish thing', 'Short']
-      , ['Longer thing', 'short', 'Longest Value']
+        ['location',      'database',       'data' ]
+      , ['127.0.0.1',     env('DB_SCHEMA'), $data ]
       ];
       $this->helper('Table')->output($data);
       $this->out($this->nl(2));
