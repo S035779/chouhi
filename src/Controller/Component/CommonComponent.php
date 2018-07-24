@@ -45,7 +45,7 @@ class CommonComponent extends Component
 
   public function getTimeStamp($str)
   {
-    debug($str);
+    //debug($str);
     if(preg_match('/^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})$/', $str, $matches)) {
       $str = $matches[1]."-".$matches[2]."-".$matches[3]." 00:00:00";
     } else if(preg_match('/^([0-9]{4})-([0-9]{1,2})$/', $str, $matches)) {
