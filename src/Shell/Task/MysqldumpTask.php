@@ -44,8 +44,8 @@ class MysqldumpTask extends Shell
       $this->out('MySQL backup shell ');
       $this->hr();
       $data = [
-        ['Location',  'Command',  'Date' ]
-      , [$hostname,   $command,   $date ]
+        ['Location',  'SCHEMA',           'Date'  ]
+      , [$hostname,   env('DB_SCHEMA'),   $date   ]
       ];
       $this->helper('Table')->output($data);
       $this->out($this->nl(2));
