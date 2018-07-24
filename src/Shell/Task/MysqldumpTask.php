@@ -34,7 +34,7 @@ class MysqldumpTask extends Shell
         , env('DB_USERNAME')
         , env('DB_PASSWORD')
         , env('DB_SCHEMA')
-        , ROOT . DIRECTORYSEPARATOR . env('STORAGE')
+        , ROOT . DIRECTORY_SEPARATOR . env('STORAGE')
         , $date
       );
       print_r($command);
