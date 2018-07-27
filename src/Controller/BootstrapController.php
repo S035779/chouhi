@@ -197,7 +197,7 @@ class BootstrapController extends AppController
             Offers.items_detail_page_url              AS detail_page_url,
             Offers.items_total_new                    AS total_new,
             Offers.items_total_used                   AS total_used,
-            Offers.items_customer_reviews_url         AS customer_reviews_url
+            Offers.items_customer_reviews_url         AS customer_reviews_url,
             Offers.items_product_group                AS product_group,
             Offers.items_sales_ranking                AS sales_ranking,
             AVG(Offers.items_sales_ranking)           AS average_sales_ranking,
