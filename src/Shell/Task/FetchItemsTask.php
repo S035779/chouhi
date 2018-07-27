@@ -74,7 +74,7 @@ class FetchItemsTask extends Shell
       ->where(['suspended'  => false  ])
       ->where(['ean IS NOT' => null   ])
       ->order(['modified'   => 'ASC'  ])
-      ->limit(1000)
+      ->limit(10000)
     ;
     $request = array();
     foreach($datas as $data) {

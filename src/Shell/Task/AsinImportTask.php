@@ -74,7 +74,7 @@ class AsinImportTask extends Shell
       ->where(['suspended'  => false])
       //->where(['OR'         => [['modified >=' => new \DateTime('-1 days')], ['ean IS NOT' => null]]])
       ->order(['modified'   => 'ASC'])
-      ->limit(1000)
+      ->limit(10000)
     ;
     $request = array();
     foreach($datas as $data) {
