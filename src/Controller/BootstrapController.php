@@ -216,7 +216,8 @@ class BootstrapController extends AppController
             Offers.items_original_release_date_at     AS original_release_date_at,
             Offers.items_release_date_at              AS release_date_at,
             Offers.items_publication_date_at          AS publication_date_at,
-            Offers.items_large_image_url              AS large_image_url 
+            Offers.items_large_image_url              AS large_image_url,
+            MAX(Offers.created)                       AS created,
           FROM Maps LEFT JOIN  Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
           GROUP BY  Offers.asin, Offers.items_id
           HAVING    ' . $_rise_rate . ' AND ' . $_profit_range . '
