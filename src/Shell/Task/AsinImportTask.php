@@ -59,10 +59,10 @@ class AsinImportTask extends Shell
    */
   public function main()
   {
-    debug("first: ".memory_get_usage(true)       / (1024 * 1024)." MB");
+    debug("[".date(DATE_ATOM)."] "."first: ".memory_get_usage(true)       / (1024 * 1024)." MB");
     $result = $this->execAsinImport();
-    debug("peak : ".memory_get_peak_usage(true)  / (1024 * 1024)." MB");
-    debug("last : ".memory_get_usage(true)       / (1024 * 1024)." MB");
+    debug("[".date(DATE_ATOM)."] "."peak : ".memory_get_peak_usage(true)  / (1024 * 1024)." MB");
+    debug("[".date(DATE_ATOM)."] "."last : ".memory_get_usage(true)       / (1024 * 1024)." MB");
     return $result;
   }
 
@@ -74,7 +74,7 @@ class AsinImportTask extends Shell
       ->where(['suspended'  => false])
       //->where(['OR'         => [['modified >=' => new \DateTime('-1 days')], ['ean IS NOT' => null]]])
       ->order(['modified'   => 'ASC'])
-      ->limit(10000)
+      ->limit(2500)
     ;
     $request = array();
     foreach($datas as $data) {
