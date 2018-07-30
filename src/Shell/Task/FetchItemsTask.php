@@ -113,15 +113,11 @@ class FetchItemsTask extends Shell
       , 'offer_listing_price_currency'        => true
       , 'offer_listing_saved_price'           => true
       , 'offer_listing_saved_price_currency'  => true
-      , 'sales_ranking'                       => true
       , 'ean'                                 => true
       , 'release_date_at'                     => true
       , 'publication_date_at'                 => true
       , 'original_release_date_at'            => true
       , 'condition_status'                    => true
-      , 'total_reviews'                       => false
-      , 'average_rating'                      => false
-      , 'total_votes'                         => false
       , 'product_group'                       => true
       , 'quantity'                            => false
       , 'quantity_allocated'                  => false
@@ -134,7 +130,6 @@ class FetchItemsTask extends Shell
       , 'total_used'                          => true
       , 'total_collectible'                   => true
       , 'total_refurbished'                   => true
-      , 'customer_reviews_url'                => true
       , 'marketplace'                         => true
       , 'created'                             => true
       , 'modified'                            => true
@@ -159,55 +154,50 @@ class FetchItemsTask extends Shell
   private function upsertItem($request)
   {
     $header = array(
-        'asin'                                => true
-      , 'title'                               => true
-      , 'is_eligible_prime'                   => true
-      , 'is_eligible_for_supersaver_shipping' => true
-      , 'item_height'                         => true
-      , 'item_length'                         => true
-      , 'item_weight'                         => true
-      , 'item_width'                          => true
-      , 'package_height'                      => true
-      , 'package_length'                      => true
-      , 'package_weight'                      => true
-      , 'package_width'                       => true
-      , 'list_price'                          => true
-      , 'list_price_currency'                 => true
-      , 'lowest_price'                        => true
-      , 'lowest_price_currency'               => true
-      , 'lowest_used_price'                   => true
-      , 'lowest_used_price_currency'          => true
-      , 'lowest_collectible_price'            => true
-      , 'lowest_collectible_price_currency'   => true
-      , 'offer_listing_price'                 => true
-      , 'offer_listing_price_currency'        => true
-      , 'offer_listing_saved_price'           => true
-      , 'offer_listing_saved_price_currency'  => true
-      , 'sales_ranking'                       => true
-      , 'ean'                                 => true
-      , 'release_date_at'                     => true
-      , 'publication_date_at'                 => true
-      , 'original_release_date_at'            => true
-      , 'condition_status'                    => true
-      , 'total_reviews'                       => false
-      , 'average_rating'                      => false
-      , 'total_votes'                         => false
-      , 'product_group'                       => true
-      , 'quantity'                            => false
-      , 'quantity_allocated'                  => false
-      , 'status'                              => false
-      , 'detail_page_url'                     => true
-      , 'small_image_url'                     => true
-      , 'medium_image_url'                    => true
-      , 'large_image_url'                     => true
-      , 'total_new'                           => true
-      , 'total_used'                          => true
-      , 'total_collectible'                   => true
-      , 'total_refurbished'                   => true
-      , 'customer_reviews_url'                => true
-      , 'marketplace'                         => true
-      , 'created'                             => true
-      , 'modified'                            => true
+      'asin'                                => true
+    , 'title'                               => true
+    , 'is_eligible_prime'                   => true
+    , 'is_eligible_for_supersaver_shipping' => true
+    , 'item_height'                         => true
+    , 'item_length'                         => true
+    , 'item_weight'                         => true
+    , 'item_width'                          => true
+    , 'package_height'                      => true
+    , 'package_length'                      => true
+    , 'package_weight'                      => true
+    , 'package_width'                       => true
+    , 'list_price'                          => true
+    , 'list_price_currency'                 => true
+    , 'lowest_price'                        => true
+    , 'lowest_price_currency'               => true
+    , 'lowest_used_price'                   => true
+    , 'lowest_used_price_currency'          => true
+    , 'lowest_collectible_price'            => true
+    , 'lowest_collectible_price_currency'   => true
+    , 'offer_listing_price'                 => true
+    , 'offer_listing_price_currency'        => true
+    , 'offer_listing_saved_price'           => true
+    , 'offer_listing_saved_price_currency'  => true
+    , 'ean'                                 => true
+    , 'release_date_at'                     => true
+    , 'publication_date_at'                 => true
+    , 'original_release_date_at'            => true
+    , 'condition_status'                    => true
+    , 'product_group'                       => true
+    , 'quantity'                            => false
+    , 'quantity_allocated'                  => false
+    , 'status'                              => false
+    , 'detail_page_url'                     => true
+    , 'small_image_url'                     => true
+    , 'medium_image_url'                    => true
+    , 'large_image_url'                     => true
+    , 'total_new'                           => true
+    , 'total_used'                          => true
+    , 'total_collectible'                   => true
+    , 'total_refurbished'                   => true
+    , 'marketplace'                         => true
+    , 'created'                             => true
+    , 'modified'                            => true
     );
     $items = TableRegistry::get('Items');
 
@@ -365,38 +355,33 @@ class FetchItemsTask extends Shell
                 : 0;
             if($vals[23]) $data[$keys[23]] = 
               $item['Offers']['Offer']['OfferListing']['AmountSaved']['CurrencyCode'] ?? 'N/A';
-            if($vals[24]) $data[$keys[24]] = $item['SalesRank']                       ?? 0;
-            if($vals[25]) $data[$keys[25]] = $item['ItemAttributes']['EAN']           ?? 'N/A';
-            if($vals[26]) $data[$keys[26]]
+            if($vals[24]) $data[$keys[24]] = $item['ItemAttributes']['EAN']           ?? 'N/A';
+            if($vals[25]) $data[$keys[25]]
               = isset($item['ItemAttributes']['ReleaseDate'])
                 ? $this->Common->getTimeStamp($item['ItemAttributes']['ReleaseDate']) : $deftime;
-            if($vals[27]) $data[$keys[27]]
+            if($vals[26]) $data[$keys[26]]
               = isset($item['ItemAttributes']['PublicationDate'])
                 ? $this->Common->getTimeStamp($item['ItemAttributes']['PublicationDate']) : $deftime;
-            if($vals[28]) $data[$keys[28]]
+            if($vals[27]) $data[$keys[27]]
               = isset($item['ItemAttributes']['OriginalReleaseDate']) ?
                 $this->Common->getTimeStamp($item['ItemAttributes']['OriginalReleaseDate']) : $deftime;
-            if($vals[29]) $data[$keys[29]]
+            if($vals[28]) $data[$keys[28]]
               = $item['Offers']['Offer']['OfferAttributes']['Condition']              ?? 'N/A';
-            if($vals[30]) $data[$keys[30]] = $item['CustomerReviews']['TotalReviews'] ?? 0;
-            if($vals[31]) $data[$keys[31]] = $item['CustomerReviews']['AverageRating'] ?? 0;
-            if($vals[32]) $data[$keys[32]] = $item['CustomerReviews']['TotalVotes']   ?? 0;
-            if($vals[33]) $data[$keys[33]] = $item['ItemAttributes']['ProductGroup']  ?? 'N/A';
-            if($vals[34]) $data[$keys[34]] = $item['Cart']['Quantity']                ?? 0;
-            if($vals[35]) $data[$keys[35]] = $item['Status']                          ?? 0;
-            if($vals[36]) $data[$keys[36]] = $item['QuantityAllocated']               ?? 0;
-            if($vals[37]) $data[$keys[37]] = $item['DetailPageURL']                   ?? 'N/A';
-            if($vals[38]) $data[$keys[38]] = $item['SmallImage']['URL']               ?? 'N/A';
-            if($vals[39]) $data[$keys[39]] = $item['MediumImage']['URL']              ?? 'N/A';
-            if($vals[40]) $data[$keys[40]] = $item['LargeImage']['URL']               ?? 'N/A';
-            if($vals[41]) $data[$keys[41]] = $item['OfferSummary']['TotalNew']        ?? 0;
-            if($vals[42]) $data[$keys[42]] = $item['OfferSummary']['TotalUsed']       ?? 0;
-            if($vals[43]) $data[$keys[43]] = $item['OfferSummary']['TotalCollectible'] ?? 0;
-            if($vals[44]) $data[$keys[44]] = $item['OfferSummary']['TotalRefurbished'] ?? 0;
-            if($vals[45]) $data[$keys[45]] = $item['CustomerReviews']['IFrameURL']    ?? 'N/A';
-            if($vals[46]) $data[$keys[46]] = $marketplace;
-            if($vals[47]) $data[$keys[47]] = $datetime;
-            if($vals[48]) $data[$keys[48]] = $datetime;    
+            if($vals[29]) $data[$keys[29]] = $item['ItemAttributes']['ProductGroup']  ?? 'N/A';
+            if($vals[30]) $data[$keys[30]] = $item['Cart']['Quantity']                ?? 0;
+            if($vals[31]) $data[$keys[31]] = $item['Status']                          ?? 0;
+            if($vals[32]) $data[$keys[32]] = $item['QuantityAllocated']               ?? 0;
+            if($vals[33]) $data[$keys[33]] = $item['DetailPageURL']                   ?? 'N/A';
+            if($vals[34]) $data[$keys[34]] = $item['SmallImage']['URL']               ?? 'N/A';
+            if($vals[35]) $data[$keys[35]] = $item['MediumImage']['URL']              ?? 'N/A';
+            if($vals[36]) $data[$keys[36]] = $item['LargeImage']['URL']               ?? 'N/A';
+            if($vals[37]) $data[$keys[37]] = $item['OfferSummary']['TotalNew']        ?? 0;
+            if($vals[38]) $data[$keys[38]] = $item['OfferSummary']['TotalUsed']       ?? 0;
+            if($vals[39]) $data[$keys[39]] = $item['OfferSummary']['TotalCollectible'] ?? 0;
+            if($vals[40]) $data[$keys[40]] = $item['OfferSummary']['TotalRefurbished'] ?? 0;
+            if($vals[41]) $data[$keys[41]] = $marketplace;
+            if($vals[42]) $data[$keys[42]] = $datetime;
+            if($vals[43]) $data[$keys[43]] = $datetime;    
             array_push($datas, $data);
           }
           $idx++;
@@ -539,7 +524,7 @@ class FetchItemsTask extends Shell
       $lookup->setCondition('All');
       $lookup->setMerchantId('All');
       $lookup->setResponseGroup(array(
-        'Images', 'ItemAttributes', 'OfferListings', 'OfferSummary', 'SalesRank', 'Reviews'
+        'Images', 'ItemAttributes', 'OfferListings', 'OfferSummary'
       ));
       $response = $apaiIO->runOperation($lookup);
     } catch (\Exception $e) {

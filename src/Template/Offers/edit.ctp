@@ -68,6 +68,10 @@
                 echo $this->Form->control('state');
                 echo $this->Form->control('sub_condition_status');
                 echo $this->Form->control('total_feedback');
+                echo $this->Form->control('total_reviews');
+                echo $this->Form->control('average_rating');
+                echo $this->Form->control('total_votes');
+                echo $this->Form->control('customer_reviews_url');
             ?>
         </fieldset>
         <?= $this->Form->button(__('Submit')) ?>

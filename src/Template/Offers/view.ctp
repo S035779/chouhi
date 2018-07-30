@@ -84,6 +84,10 @@
             <td><?= h($offer->exchange_identifier) ?></td>
           </tr>
           <tr>
+            <th scope="row"><?= __('Is Eligible For Supersaver Shipping') ?></th>
+            <td><?= $offer->is_eligible_for_supersaver_shipping ? __('Yes') : __('No'); ?></td>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Offer Listing Identifier') ?></th>
             <td><?= h($offer->offer_listing_identifier) ?></td>
           </tr>
@@ -116,16 +120,28 @@
             <td><?= $this->Number->format($offer->total_feedback) ?></td>
           </tr>
           <tr>
+            <th scope="row"><?= __('Total Reviews') ?></th>
+            <td><?= $this->Number->format($item->total_reviews) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Average Rating') ?></th>
+            <td><?= $this->Number->format($item->average_rating) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Total Votes') ?></th>
+            <td><?= $this->Number->format($item->total_votes) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Customer Reviews Url') ?></th>
+            <td><?= h($item->customer_reviews_url) ?></td>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Created') ?></th>
             <td><?= h($offer->created) ?></td>
           </tr>
           <tr>
             <th scope="row"><?= __('Modified') ?></th>
             <td><?= h($offer->modified) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Is Eligible For Supersaver Shipping') ?></th>
-            <td><?= $offer->is_eligible_for_supersaver_shipping ? __('Yes') : __('No'); ?></td>
           </tr>
         </table>
 

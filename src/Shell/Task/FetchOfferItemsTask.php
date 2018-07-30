@@ -109,6 +109,10 @@ class FetchOfferItemsTask extends Shell
     , 'lowest_price_currency'               => true // varchar(255)
     , 'created'                             => true // date
     , 'modified'                            => true // date
+    , 'total_reviews'                       => true
+    , 'average_rating'                      => true
+    , 'total_votes'                         => true
+    , 'customer_reviews_url'                => true
     );
 
     $offers = TableRegistry::get('Offers');
@@ -163,6 +167,10 @@ class FetchOfferItemsTask extends Shell
     , 'lowest_price_currency'               => true // varchar(255)
     , 'created'                             => true // date
     , 'modified'                            => true // date
+    , 'total_reviews'                       => true
+    , 'average_rating'                      => true
+    , 'total_votes'                         => true
+    , 'customer_reviews_url'                => true
     );
 
     $offers = TableRegistry::get('Offers');
@@ -236,6 +244,10 @@ class FetchOfferItemsTask extends Shell
             $lowestPrice
               = isset($_lowestPrice) ? $this->Common->getLocalPrice($_lowestPrice, $lowestPriceCurrency) : 0;
             $total        = $item['Offers']['TotalOffers'] ?? 0;
+            $totalreviews  = $item['CustomerReviews']['TotalReviews'  ] ?? 0;
+            $averagerating = $item['CustomerReviews']['AverageRating' ] ?? 0;
+            $totalvotes    = $item['CustomerReviews']['TotalVotes'    ] ?? 0;
+            $iframeurl     = $item['CustomerReviews']['IFrameURL'     ] ?? '';
             //debug($offers);
             foreach($offers as $offer) {
               if($offer) {
@@ -278,6 +290,10 @@ class FetchOfferItemsTask extends Shell
                 if($vals[17]) $data[$keys[17]] = $lowestPriceCurrency;
                 if($vals[18]) $data[$keys[18]] = $datetime;
                 if($vals[19]) $data[$keys[19]] = $datetime;
+                if($vals[20]) $data[$keys[20]] = $totalreviews;
+                if($vals[21]) $data[$keys[21]] = $averagerating;
+                if($vals[22]) $data[$keys[22]] = $totalvotes;
+                if($vals[23]) $data[$keys[23]] = $iframeurl;
                 array_push($datas, array('Headers' => $metadata, 'Results' => $data));
               }
             }
@@ -427,7 +443,7 @@ class FetchOfferItemsTask extends Shell
       $lookup->setItemId($asin);
       $lookup->setCondition('New');
       $lookup->setMerchantId('All');
-      $lookup->setResponseGroup(array('OfferFull', 'SalesRank'));
+      $lookup->setResponseGroup(array('OfferFull', 'SalesRank', 'Reviews'));
       $response = $apaiIO->runOperation($lookup);
     } catch (\Exception $e) {
       return $callback($e->getMessage(), null);

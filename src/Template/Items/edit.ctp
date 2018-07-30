@@ -78,15 +78,11 @@
             echo $this->Form->control('offer_listing_price_currency');
             echo $this->Form->control('offer_listing_saved_price');
             echo $this->Form->control('offer_listing_saved_price_currency');
-            echo $this->Form->control('sales_ranking');
             echo $this->Form->control('ean');
             echo $this->Form->control('release_date_at');
             echo $this->Form->control('publication_date_at');
             echo $this->Form->control('original_release_date_at');
             echo $this->Form->control('condition_status');
-            echo $this->Form->control('total_reviews');
-            echo $this->Form->control('average_rating');
-            echo $this->Form->control('total_votes');
             echo $this->Form->control('product_group');
             echo $this->Form->control('quantity');
             echo $this->Form->control('quantity_allocated');
@@ -100,7 +96,6 @@
             echo $this->Form->control('total_used');
             echo $this->Form->control('total_collectible');
             echo $this->Form->control('total_refurbished');
-            echo $this->Form->control('customer_reviews_url');
           ?>
         </fieldset>
         <?= $this->Form->button(__('Submit')) ?>

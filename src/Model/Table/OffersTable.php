@@ -156,6 +156,23 @@ class OffersTable extends Table
             ->requirePresence('lowest_price_currency', 'create')
             ->notEmpty('lowest_price_currency');
 
+        $validator
+            ->integer('total_reviews')
+            ->allowEmpty('total_reviews');
+
+        $validator
+            ->integer('average_rating')
+            ->allowEmpty('average_rating');
+
+        $validator
+            ->integer('total_votes')
+            ->allowEmpty('total_votes');
+
+        $validator
+            ->scalar('customer_reviews_url')
+            ->maxLength('customer_reviews_url', 4095)
+            ->allowEmpty('customer_reviews_url');
+
         return $validator;
     }
 

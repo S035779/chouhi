@@ -62,6 +62,10 @@
             <th scope="col"><?= $this->Paginator->sort('total_feedback') ?></th>
             <th scope="col"><?= $this->Paginator->sort('seller_identifier') ?></th>
             <th scope="col"><?= $this->Paginator->sort('item_id') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('total_reviews') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('average_rating') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('total_votes') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('customer_reviews_url') ?></th>
             <th scope="col"><?= $this->Paginator->sort('created') ?></th>
             <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
             <th scope="col" class="actions"><?= __('Actions') ?></th>
@@ -89,6 +93,11 @@
             <td><?= $this->Number->format($offer->total_feedback) ?></td>
             <td><?= h($offer->seller_identifier) ?></td>
             <td><?= $this->Number->format($offer->item_id) ?></td>
+            <td><?= $this->Number->format($offer->total_reviews) ?></td>
+            <td><?= $this->Number->format($offer->average_rating) ?></td>
+            <td><?= $this->Number->format($offer->total_votes) ?></td>
+            <td><?= $this->html->link(
+              __('link', true), $offer->customer_reviews_url, ['target' => '_blank']) ?></td>
             <td><?= h($offer->created) ?></td>
             <td><?= h($offer->modified) ?></td>
             <td class="actions">

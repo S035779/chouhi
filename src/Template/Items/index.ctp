@@ -68,15 +68,11 @@
             <th scope="col"><?= $this->Paginator->sort('offer_listing_price_currency') ?></th>
             <th scope="col"><?= $this->Paginator->sort('offer_listing_saved_price') ?></th>
             <th scope="col"><?= $this->Paginator->sort('offer_listing_saved_price_currency') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('sales_ranking') ?></th>
             <th scope="col"><?= $this->Paginator->sort('ean') ?></th>
             <th scope="col"><?= $this->Paginator->sort('release_date_at') ?></th>
             <th scope="col"><?= $this->Paginator->sort('publication_date_at') ?></th>
             <th scope="col"><?= $this->Paginator->sort('original_release_date_at') ?></th>
             <th scope="col"><?= $this->Paginator->sort('condition_status') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('total_reviews') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('average_rating') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('total_votes') ?></th>
             <th scope="col"><?= $this->Paginator->sort('product_group') ?></th>
             <th scope="col"><?= $this->Paginator->sort('quantity') ?></th>
             <th scope="col"><?= $this->Paginator->sort('quantity_allocated') ?></th>
@@ -86,13 +82,12 @@
             <th scope="col"><?= $this->Paginator->sort('small_image_url') ?></th>
             <th scope="col"><?= $this->Paginator->sort('medium_image_url') ?></th>
             <th scope="col"><?= $this->Paginator->sort('large_image_url') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('created') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
             <th scope="col"><?= $this->Paginator->sort('total_new') ?></th>
             <th scope="col"><?= $this->Paginator->sort('total_used') ?></th>
             <th scope="col"><?= $this->Paginator->sort('total_collectible') ?></th>
             <th scope="col"><?= $this->Paginator->sort('total_refurbished') ?></th>
-            <th scope="col"><?= $this->Paginator->sort('customer_reviews_url') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('created') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('modified') ?></th>
             <th scope="col" class="actions"><?= __('Actions') ?></th>
           </tr>
         </thead>
@@ -136,15 +131,11 @@
               $item->offer_listing_saved_price, $item->offer_listing_saved_price_currency
               , ['zero' => '---']) ?></td>
             <td><?= h($item->offer_listing_saved_price_currency) ?></td>
-            <td><?= $this->Number->format($item->sales_ranking) ?></td>
             <td><?= h($item->ean) ?></td>
             <td><?= h($item->release_date_at) ?></td>
             <td><?= h($item->publication_date_at) ?></td>
             <td><?= h($item->original_release_date_at) ?></td>
             <td><?= h($item->condition_status) ?></td>
-            <td><?= $this->Number->format($item->total_reviews) ?></td>
-            <td><?= $this->Number->format($item->average_rating) ?></td>
-            <td><?= $this->Number->format($item->total_votes) ?></td>
             <td><?= h($item->product_group) ?></td>
             <td><?= $this->Number->format($item->quantity) ?></td>
             <td><?= $this->Number->format($item->quantity_allocated) ?></td>
@@ -158,14 +149,12 @@
               __('link', true),$item->medium_image_url,['target' => '_blank']) ?></td>
             <td><?= $this->html->link(
               __('link', true),$item->large_image_url, ['target' => '_blank']) ?></td>
-            <td><?= h($item->created) ?></td>
-            <td><?= h($item->modified) ?></td>
             <td><?= $this->Number->format($item->total_new) ?></td>
             <td><?= $this->Number->format($item->total_used) ?></td>
             <td><?= $this->Number->format($item->total_collectible) ?></td>
             <td><?= $this->Number->format($item->total_refurbished) ?></td>
-            <td><?= $this->html->link(
-              __('link', true),$item->customer_reviews_url, ['target' => '_blank']) ?></td>
+            <td><?= h($item->created) ?></td>
+            <td><?= h($item->modified) ?></td>
             <td class="actions">
               <?= $this->Html->link(__('View'), ['action' => 'view', $item->id]) ?>
               <?= $this->Html->link(__('Edit'), ['action' => 'edit', $item->id]) ?>

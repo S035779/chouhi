@@ -159,25 +159,22 @@ class BootstrapController extends AppController
           WITH 
             Offers AS (
               SELECT 
-                items.id                              AS items_id,
-                items.title                           AS items_title,
                 offers.asin                           AS asin,
-                items.detail_page_url                 AS items_detail_page_url,
-                items.total_new                       AS items_total_new,
-                items.total_used                      AS items_total_used,
-                items.customer_reviews_url            AS items_customer_reviews_url,
+                offers.customer_reviews_url           AS customer_reviews_url,
                 offers.sales_ranking                  AS sales_ranking,
-                items.product_group                   AS items_product_group,
-                items.sales_ranking                   AS items_sales_ranking,   
-                items.lowest_price                    AS items_lowest_price,
-                items.lowest_price_currency           AS items_lowest_price_currency,
                 offers.lowest_price                   AS lowest_price,
                 offers.lowest_price_currency          AS lowest_price_currency,
+                offers.created                        AS created,
+                items.id                              AS items_id,
+                items.title                           AS items_title,
+                items.detail_page_url                 AS items_detail_page_url,
+                items.large_image_url                 AS items_large_image_url,
+                items.total_new                       AS items_total_new,
+                items.total_used                      AS items_total_used,
+                items.product_group                   AS items_product_group,
                 items.original_release_date_at        AS items_original_release_date_at,
                 items.release_date_at                 AS items_release_date_at,
-                items.publication_date_at             AS items_publication_date_at,
-                items.large_image_url                 AS items_large_image_url,
-                offers.created                        AS created
+                items.publication_date_at             AS items_publication_date_at
               FROM offers INNER JOIN items ON items.id = offers.item_id 
             ) 
           , Maps AS (
@@ -192,32 +189,33 @@ class BootstrapController extends AppController
             )
           SELECT
             Offers.asin                               AS asin,
+            (select sub.customer_reviews_url  from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1)      AS customer_reviews_url,
+            (select sub.sales_ranking         from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1)      AS sales_ranking,
+            (select sub.lowest_price_currency from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1)      AS lowest_price_currency,
+            AVG(Offers.sales_ranking)                 AS average_sales_ranking,
+            (select sub.lowest_price          from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1)      AS lowest_price,
+            AVG(Offers.lowest_price)                  AS average_lowest_price,
+            (select sub.lowest_price          from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1) - AVG(Offers.lowest_price)
+                                                      AS profit_range,
+            ((((select sub.lowest_price       from offers as sub where Offers.asin = sub.asin 
+              order by sub.created desc limit 1) - AVG(Offers.lowest_price)) 
+                / AVG(Offers.lowest_price)) * 100)    AS rise_rate,
+            MAX(Offers.created)                       AS created,
             Offers.items_id                           AS id,
             Offers.items_title                        AS title,
             Offers.items_detail_page_url              AS detail_page_url,
+            Offers.items_large_image_url              AS large_image_url,
             Offers.items_total_new                    AS total_new,
             Offers.items_total_used                   AS total_used,
-            Offers.items_customer_reviews_url         AS customer_reviews_url,
             Offers.items_product_group                AS product_group,
-            Offers.items_sales_ranking                AS sales_ranking,
-            AVG(Offers.items_sales_ranking)           AS average_sales_ranking,
-            (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1)      AS lowest_price,
-            AVG(Offers.items_lowest_price)            AS average_lowest_price,
-            (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1) - AVG(Offers.items_lowest_price)
-                                                      AS profit_range,
-            (((
-            (select sub.lowest_price from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1) - AVG(Offers.items_lowest_price)) 
-                / AVG(Offers.items_lowest_price)) * 100) 
-                                                      AS rise_rate,
-            Offers.items_lowest_price_currency        AS lowest_price_currency,
             Offers.items_original_release_date_at     AS original_release_date_at,
             Offers.items_release_date_at              AS release_date_at,
-            Offers.items_publication_date_at          AS publication_date_at,
-            Offers.items_large_image_url              AS large_image_url,
-            MAX(Offers.created)                       AS created
+            Offers.items_publication_date_at          AS publication_date_at
           FROM Maps LEFT JOIN  Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
           GROUP BY  Offers.asin, Offers.items_id
           HAVING    ' . $_rise_rate . ' AND ' . $_profit_range . '

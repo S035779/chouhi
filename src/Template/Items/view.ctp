@@ -68,6 +68,14 @@
             <td><?= h($item->title) ?></td>
           </tr>
           <tr>
+            <th scope="row"><?= __('Is Eligible Prime') ?></th>
+            <td><?= $item->is_eligible_prime ? __('Yes') : __('No'); ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Is Eligible For Supersaver Shipping') ?></th>
+            <td><?= $item->is_eligible_for_supersaver_shipping ? __('Yes') : __('No'); ?></td>
+          </tr>
+          <tr>
             <th scope="row"><?= __('Ean') ?></th>
             <td><?= h($item->ean) ?></td>
           </tr>
@@ -98,10 +106,6 @@
           <tr>
             <th scope="row"><?= __('Large Image Url') ?></th>
             <td><?= h($item->large_image_url) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Customer Reviews Url') ?></th>
-            <td><?= h($item->customer_reviews_url) ?></td>
           </tr>
           <tr>
             <th scope="row"><?= __('Id') ?></th>
@@ -188,28 +192,16 @@
             <td><?= h($item->offer_listing_saved_price_currency) ?></td>
           </tr>
           <tr>
-            <th scope="row"><?= __('Sales Ranking') ?></th>
-            <td><?= $this->Number->format($item->sales_ranking) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Total Reviews') ?></th>
-            <td><?= $this->Number->format($item->total_reviews) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Average Rating') ?></th>
-            <td><?= $this->Number->format($item->average_rating) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Total Votes') ?></th>
-            <td><?= $this->Number->format($item->total_votes) ?></td>
-          </tr>
-          <tr>
             <th scope="row"><?= __('Quantity') ?></th>
             <td><?= $this->Number->format($item->quantity) ?></td>
           </tr>
           <tr>
             <th scope="row"><?= __('Quantity Allocated') ?></th>
             <td><?= $this->Number->format($item->quantity_allocated) ?></td>
+          </tr>
+          <tr>
+            <th scope="row"><?= __('Status') ?></th>
+            <td><?= $item->status ? __('Yes') : __('No'); ?></td>
           </tr>
           <tr>
             <th scope="row"><?= __('Total New') ?></th>
@@ -246,18 +238,6 @@
           <tr>
             <th scope="row"><?= __('Modified') ?></th>
             <td><?= h($item->modified) ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Is Eligible Prime') ?></th>
-            <td><?= $item->is_eligible_prime ? __('Yes') : __('No'); ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Is Eligible For Supersaver Shipping') ?></th>
-            <td><?= $item->is_eligible_for_supersaver_shipping ? __('Yes') : __('No'); ?></td>
-          </tr>
-          <tr>
-            <th scope="row"><?= __('Status') ?></th>
-            <td><?= $item->status ? __('Yes') : __('No'); ?></td>
           </tr>
         </table>  
       </div>

@@ -156,10 +156,6 @@ class ItemsTable extends Table
             ->allowEmpty('offer_listing_saved_price_currency');
 
         $validator
-            ->integer('sales_ranking')
-            ->allowEmpty('sales_ranking');
-
-        $validator
             ->scalar('ean')
             ->maxLength('ean', 255)
             ->allowEmpty('ean');
@@ -180,18 +176,6 @@ class ItemsTable extends Table
             ->scalar('condition_status')
             ->maxLength('condition_status', 255)
             ->allowEmpty('condition_status');
-
-        $validator
-            ->integer('total_reviews')
-            ->allowEmpty('total_reviews');
-
-        $validator
-            ->integer('average_rating')
-            ->allowEmpty('average_rating');
-
-        $validator
-            ->integer('total_votes')
-            ->allowEmpty('total_votes');
 
         $validator
             ->scalar('product_group')
@@ -256,11 +240,6 @@ class ItemsTable extends Table
         $validator
             ->integer('total_refurbished')
             ->allowEmpty('total_refurbished');
-
-        $validator
-            ->scalar('customer_reviews_url')
-            ->maxLength('customer_reviews_url', 4095)
-            ->allowEmpty('customer_reviews_url');
 
         return $validator;
     }

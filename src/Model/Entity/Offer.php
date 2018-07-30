@@ -23,6 +23,10 @@ use Cake\ORM\Entity;
  * @property int $total_feedback
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
+ * @property int $total_reviews
+ * @property int $average_rating
+ * @property int $total_votes
+ * @property string $customer_reviews_url
  */
 class Offer extends Entity
 {
@@ -57,6 +61,10 @@ class Offer extends Entity
         'lowest_price' => true,
         'lowest_price_currency' => true,
         'created' => true,
-        'modified' => true
+        'modified' => true,
+        'total_reviews' => true,
+        'average_rating' => true,
+        'total_votes' => true,
+        'customer_reviews_url' => true
     ];
 }

@@ -31,15 +31,11 @@ use Cake\ORM\Entity;
  * @property string $offer_listing_price_currency
  * @property int $offer_listing_saved_price
  * @property string $offer_listing_saved_price_currency
- * @property int $sales_ranking
  * @property string $ean
  * @property \Cake\I18n\FrozenTime $release_date_at
  * @property \Cake\I18n\FrozenTime $publication_date_at
  * @property \Cake\I18n\FrozenTime $original_release_date_at
  * @property string $condition_status
- * @property int $total_reviews
- * @property int $average_rating
- * @property int $total_votes
  * @property string $product_group
  * @property int $quantity
  * @property int $quantity_allocated
@@ -55,7 +51,6 @@ use Cake\ORM\Entity;
  * @property int $total_used
  * @property int $total_collectible
  * @property int $total_refurbished
- * @property string $customer_reviews_url
  */
 class Item extends Entity
 {
@@ -100,9 +95,6 @@ class Item extends Entity
         'publication_date_at' => true,
         'original_release_date_at' => true,
         'condition_status' => true,
-        'total_reviews' => true,
-        'average_rating' => true,
-        'total_votes' => true,
         'product_group' => true,
         'quantity' => true,
         'quantity_allocated' => true,
@@ -117,7 +109,6 @@ class Item extends Entity
         'total_new' => true,
         'total_used' => true,
         'total_collectible' => true,
-        'total_refurbished' => true,
-        'customer_reviews_url' => true
+        'total_refurbished' => true
     ];
 }
