@@ -74,7 +74,7 @@ class FetchOfferItemsTask extends Shell
       ->where(['suspended'  => false  ])
       ->where(['ean IS NOT' => null   ])
       ->order(['modified'   => 'ASC'  ])
-      ->limit(100)
+      ->limit(1000)
     ;
     $request = array();
     foreach($datas as $data) {
@@ -328,7 +328,7 @@ class FetchOfferItemsTask extends Shell
     $asins_us = array();
     $eol = count($request);
     $idx = 0;
-    $max_count = 1;
+    $max_count = 10;
     //debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {
@@ -428,7 +428,6 @@ class FetchOfferItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
-    sleep(2);
     try {
       $conf
         ->setCountry($country)
