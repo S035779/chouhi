@@ -446,8 +446,8 @@ class FetchOfferItemsTask extends Shell
       $lookup->setResponseGroup(array('OfferFull', 'SalesRank', 'Reviews'));
       $response = $apaiIO->runOperation($lookup);
     } catch (\Exception $e) {
-      debug($e->getResponse()->getBody()->getContents());
-      return $callback($e->getMessage(), null);
+      //debug($e->getMessage());
+      return $callback($e->getResponse()->getBody()->getContents(), null);
     }
     //debug($response);
     $callback(null, [

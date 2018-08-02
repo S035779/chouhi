@@ -327,8 +327,8 @@ class AsinImportTask extends Shell
       $lookup->setResponseGroup(array('ItemAttributes'));
       $response = $apaiIO->runOperation($lookup);
     } catch (\Exception $e) {
-      debug($e->getResponse()->getBody()->getContents());
-      return $callback($e->getMessage(), null);
+      //debug($e->getMessage());
+      return $callback($e->getResponse()->getBody()->getContents(), null);
     }
 
     $callback(null, [
