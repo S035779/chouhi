@@ -184,6 +184,7 @@ class BootstrapController extends AppController
               , sales_ranking                         AS sales_ranking
               , lowest_price                          AS lowest_price
               , lowest_price_currency                 AS lowest_price_currency
+              , created                               AS created
               FROM offers AS OffersA 
                 INNER JOIN (
                   SELECT asin AS latest_asin, MAX(created) AS latest_created FROM offers GROUP BY asin
