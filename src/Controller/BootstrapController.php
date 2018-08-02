@@ -185,7 +185,7 @@ class BootstrapController extends AppController
               , lowest_price                          AS lowest_price
               , lowest_price_currency                 AS lowest_price_currency
               FROM offers AS OffersA 
-                INNER JOIN (SELECT MAX(created) AS latest_created FROM offers GROUP BY asin) AS OffersB 
+                INNER JOIN (SELECT asin, MAX(created) AS latest_created FROM offers GROUP BY asin) AS OffersB 
                 ON OffersA.asin = OffersB.asin AND OffersA.created = OffersB.latest_created
             )
           , Maps AS (
