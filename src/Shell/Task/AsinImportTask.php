@@ -72,7 +72,6 @@ class AsinImportTask extends Shell
     $datas = $asins
       ->find()
       ->where(['suspended'  => false])
-      //->where(['OR'         => [['modified >=' => new \DateTime('-1 days')], ['ean IS NOT' => null]]])
       ->order(['modified'   => 'ASC'])
       ->limit(100)
     ;
@@ -211,7 +210,7 @@ class AsinImportTask extends Shell
     $eol = count($request);
     $idx = 0;
     $max_count = 1;
-    debug($request);
+    //debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {
       case 'JP':
