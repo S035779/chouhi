@@ -184,7 +184,6 @@ class BootstrapController extends AppController
               , sales_ranking                         AS sales_ranking
               , lowest_price                          AS lowest_price
               , lowest_price_currency                 AS lowest_price_currency
-              , created                               AS created
               FROM offers AS OffersA 
                 INNER JOIN (
                   SELECT asin AS latest_asin, MAX(created) AS latest_created FROM offers GROUP BY asin
@@ -226,8 +225,10 @@ class BootstrapController extends AppController
                                                       AS rise_rate
           FROM Maps 
             LEFT JOIN Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
-            LEFT JOIN Latest ON Offers.asin = Latest.asin AND Offers.created = Latest.created
-          GROUP BY Offers.asin, Offers.items_id
+            LEFT JOIN Latest ON Offers.asin = Latest.asin
+          GROUP BY 
+            Offers.asin, Offers.items_id, Latest.sales_ranking, Latest.lowest_price, Latest.lowest_currency
+          , Latest.customer_reviews_url
           HAVING    ' . $_rise_rate . ' AND ' . $_profit_range . '
           ORDER BY  profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])
