@@ -508,7 +508,7 @@ class FetchItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
-    sleep(27);
+    sleep(2);
     try {
       $conf
         ->setCountry($country)
