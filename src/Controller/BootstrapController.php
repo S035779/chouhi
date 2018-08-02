@@ -177,6 +177,17 @@ class BootstrapController extends AppController
                 items.publication_date_at             AS items_publication_date_at
               FROM offers INNER JOIN items ON items.id = offers.item_id 
             ) 
+          , Latest AS (
+              SELECT 
+                asin                                  AS asin
+              , customer_reviews_url                  AS customer_reviews_url
+              , sales_ranking                         AS sales_ranking
+              , lowest_price                          AS lowest_price
+              , lowest_price_currency                 AS lowest_price_currency
+              FROM offers AS OffersA 
+                INNER JOIN (SELECT MAX(created) AS latest_created FROM offers GROUP BY asin) AS OffersB 
+                ON OffersA.asin = OffersB.asin AND OffersA.created = OffersB.latest_created
+            )
           , Maps AS (
               SELECT 
                 timestamp(now() - INTERVAL FLOOR(series_numbers.number / :_avg_hours) hour) AS time1,
@@ -189,23 +200,6 @@ class BootstrapController extends AppController
             )
           SELECT
             Offers.asin                               AS asin,
-            (select sub.customer_reviews_url  from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1)      AS customer_reviews_url,
-            (select sub.sales_ranking         from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1)      AS sales_ranking,
-            (select sub.lowest_price_currency from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1)      AS lowest_price_currency,
-            AVG(Offers.sales_ranking)                 AS average_sales_ranking,
-            (select sub.lowest_price          from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1)      AS lowest_price,
-            AVG(Offers.lowest_price)                  AS average_lowest_price,
-            (select sub.lowest_price          from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1) - AVG(Offers.lowest_price)
-                                                      AS profit_range,
-            ((((select sub.lowest_price       from offers as sub where Offers.asin = sub.asin 
-              order by sub.created desc limit 1) - AVG(Offers.lowest_price)) 
-                / AVG(Offers.lowest_price)) * 100)    AS rise_rate,
-            MAX(Offers.created)                       AS created,
             Offers.items_id                           AS id,
             Offers.items_title                        AS title,
             Offers.items_detail_page_url              AS detail_page_url,
@@ -215,9 +209,22 @@ class BootstrapController extends AppController
             Offers.items_product_group                AS product_group,
             Offers.items_original_release_date_at     AS original_release_date_at,
             Offers.items_release_date_at              AS release_date_at,
-            Offers.items_publication_date_at          AS publication_date_at
-          FROM Maps LEFT JOIN  Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
-          GROUP BY  Offers.asin, Offers.items_id
+            Offers.items_publication_date_at          AS publication_date_at,
+            AVG(Offers.sales_ranking)                 AS average_sales_ranking,
+            AVG(Offers.lowest_price)                  AS average_lowest_price,
+            MAX(Offers.created)                       AS created,
+            Latest.sales_ranking                      AS sales_ranking,
+            Latest.lowest_price                       AS lowest_price,
+            Latest.lowest_price_currency              AS lowest_price_currency,
+            Latest.customer_reviews_url               AS customer_reviews_url,
+            Latest.lowest_price - AVG(Offers.lowest_price)
+                                                      AS profit_range,
+            (((Latest.lowest_price - AVG(Offers.lowest_price)) / AVG(Offers.lowest_price)) * 100)    
+                                                      AS rise_rate
+          FROM Maps 
+            LEFT JOIN Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
+            LEFT JOIN Latest ON Offers.asin = Latest.asin
+          GROUP BY Offers.asin, Offers.items_id
           HAVING    ' . $_rise_rate . ' AND ' . $_profit_range . '
           ORDER BY  profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
         , ['_avg_hours' => $avg_hours, '_rise_rate' => $rise_rate, '_profit_range' => $profit_range])

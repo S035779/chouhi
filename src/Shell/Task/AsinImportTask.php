@@ -74,7 +74,7 @@ class AsinImportTask extends Shell
       ->where(['suspended'  => false])
       //->where(['OR'         => [['modified >=' => new \DateTime('-1 days')], ['ean IS NOT' => null]]])
       ->order(['modified'   => 'ASC'])
-      ->limit(1000)
+      ->limit(100)
     ;
     $request = array();
     foreach($datas as $data) {
@@ -210,8 +210,8 @@ class AsinImportTask extends Shell
     $asins_us = array();
     $eol = count($request);
     $idx = 0;
-    $max_count = 10;
-    //debug($request);
+    $max_count = 1;
+    debug($request);
     foreach($request as $_request) {
       switch($_request['marketplace']) {
       case 'JP':
@@ -310,7 +310,7 @@ class AsinImportTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
-    sleep(2);
+    sleep(9);
     try {
       $conf
         ->setCountry($country)
@@ -327,6 +327,7 @@ class AsinImportTask extends Shell
       $lookup->setResponseGroup(array('ItemAttributes'));
       $response = $apaiIO->runOperation($lookup);
     } catch (\Exception $e) {
+      debug($e->getResponse()->getBody()->getContents());
       return $callback($e->getMessage(), null);
     }
 

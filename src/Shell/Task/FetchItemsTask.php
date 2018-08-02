@@ -74,7 +74,7 @@ class FetchItemsTask extends Shell
       ->where(['suspended'  => false  ])
       ->where(['ean IS NOT' => null   ])
       ->order(['modified'   => 'ASC'  ])
-      ->limit(1000)
+      ->limit(100)
     ;
     $request = array();
     foreach($datas as $data) {
@@ -412,7 +412,7 @@ class FetchItemsTask extends Shell
     $asins_au = array();
     $asins_us = array();
     $eol = count($request);
-    $max_count = 10;
+    $max_count = 1;
     $idx = 0;
     foreach($request as $_request) {
       //switch($_request['marketplace']) {
@@ -508,7 +508,7 @@ class FetchItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
-    sleep(2);
+    sleep(27);
     try {
       $conf
         ->setCountry($country)
@@ -528,6 +528,7 @@ class FetchItemsTask extends Shell
       ));
       $response = $apaiIO->runOperation($lookup);
     } catch (\Exception $e) {
+      debug($e->getResponse()->getBody()->getContents());
       return $callback($e->getMessage(), null);
     }
 
