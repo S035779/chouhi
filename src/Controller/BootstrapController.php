@@ -225,7 +225,7 @@ class BootstrapController extends AppController
                                                       AS rise_rate
           FROM Maps 
             LEFT JOIN Offers ON Offers.created BETWEEN Maps.time2 AND Maps.time2 + interval 1 hour
-            LEFT JOIN Latest ON Offers.asin = Latest.asin
+            LEFT JOIN Latest ON Offers.asin = Latest.asin AND Offers.created = Latest.created
           GROUP BY Offers.asin, Offers.items_id
           HAVING    ' . $_rise_rate . ' AND ' . $_profit_range . '
           ORDER BY  profit_range DESC, rise_rate DESC LIMIT 100 OFFSET 0;'
