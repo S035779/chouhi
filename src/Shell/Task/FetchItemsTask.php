@@ -508,6 +508,7 @@ class FetchItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
+    sleep(2);
     try {
       $conf
         ->setCountry($country)
@@ -530,7 +531,6 @@ class FetchItemsTask extends Shell
       //debug($e->getMessage());
       return $callback($e->getResponse()->getBody()->getContents(), null);
     }
-
     $callback(null, [
       'fetchItem'   => $response 
     , 'marketplace' => $marketplace

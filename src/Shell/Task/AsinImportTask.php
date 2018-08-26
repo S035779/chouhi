@@ -309,6 +309,7 @@ class AsinImportTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
+    sleep(2);
     try {
       $conf
         ->setCountry($country)
@@ -328,7 +329,6 @@ class AsinImportTask extends Shell
       //debug($e->getMessage());
       return $callback($e->getResponse()->getBody()->getContents(), null);
     }
-
     $callback(null, [
       'fetchAsin'   => $response
     , 'marketplace' => $marketplace
