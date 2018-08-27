@@ -80,9 +80,9 @@ class FetchItemsTask extends Shell
     if(count($input)) {
       $rand_keys = array_rand($input, 1);
       $this->access_keys_jp = array(
-        'access_key' => $input[$rand_keys[0]]->access_key
-      , 'secret_key' => $input[$rand_keys[0]]->secret_key
-      , 'associ_tag' => $input[$rand_keys[0]]->associ_tag
+        'access_key' => $input[$rand_keys]['access_key']
+      , 'secret_key' => $input[$rand_keys]['secret_key']
+      , 'associ_tag' => $input[$rand_keys]['associ_tag']
       );
       return true;
     }
