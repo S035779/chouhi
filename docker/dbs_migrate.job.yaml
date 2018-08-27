@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+  labels:
+    app: amazon-mws_tools
+    tier: console
+spec:
+  template:
+    metadata:
+      labels:
+        app: amazon-mws-tools
+        tier: console
+    spec:
+      containers:
+      - name: db-migrate
+        image: asia.gci.io/amazon-mws-tools/amazon-mws-tools/apps:latest
+        command: ['/app/chouhi/bin/cake']
+        args: ['migrasions', 'migrate']
+        restartPolicy: Never
