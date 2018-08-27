@@ -23,11 +23,6 @@ class FetchItemsTask extends Shell
 
   public function initialize()
   {
-    $this->access_keys_jp = array(
-      'access_key' => env('AMZ_PA_ACCESSKEY_JP', '')
-    , 'secret_key' => env('AMZ_PA_SECRETKEY_JP', '')
-    , 'associ_tag' => env('AMZ_PA_ASSOCITAG_JP', '')
-    );
     $this->access_keys_au = array(
       'access_key' => env('AMZ_PA_ACCESSKEY_AU', '')
     , 'secret_key' => env('AMZ_PA_SECRETKEY_AU', '')
@@ -60,11 +55,38 @@ class FetchItemsTask extends Shell
    */
   public function main()
   {
-    debug("[".date(DATE_ATOM)."] "."first: ".memory_get_usage(true)       / (1024 * 1024)." MB");
-    $result = $this->execItemLookup();
-    debug("[".date(DATE_ATOM)."] "."peak : ".memory_get_peak_usage(true)  / (1024 * 1024)." MB");
-    debug("[".date(DATE_ATOM)."] "."last : ".memory_get_usage(true)       / (1024 * 1024)." MB");
-    return $result;
+    if($this->fetchUserToken()) {
+      debug("[".date(DATE_ATOM)."] "."first: ".memory_get_usage(true)       / (1024 * 1024)." MB");
+      $result = $this->execItemLookup();
+      debug("[".date(DATE_ATOM)."] "."peak : ".memory_get_peak_usage(true)  / (1024 * 1024)." MB");
+      debug("[".date(DATE_ATOM)."] "."last : ".memory_get_usage(true)       / (1024 * 1024)." MB");
+      return $result;
+    }
+    return false;
+  }
+
+  private function fetchUserToken()
+  {
+    $tokens = TableRegistry::get('Tokens');
+    $datas  = $tokens->find()->contain(['Sellers'])->where(['suspended' => false])->all();
+    $input = array();
+    foreach($datas as $data) {
+      array_push($input, [
+        'access_key'  => $data->pa_access_key
+      , 'secret_key'  => $data->pa_secret_key
+      , 'associ_tag'  => $data->pa_associate_tag
+      ]);
+    }
+    if(count($input)) {
+      $rand_keys = array_rand($input, 1);
+      $this->access_keys_jp = array(
+        'access_key' => $input[$rand_keys[0]]->access_key
+      , 'secret_key' => $input[$rand_keys[0]]->secret_key
+      , 'associ_tag' => $input[$rand_keys[0]]->associ_tag
+      );
+      return true;
+    }
+    return false;
   }
 
   private function execItemLookup() {
