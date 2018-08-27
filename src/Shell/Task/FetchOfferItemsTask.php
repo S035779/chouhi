@@ -428,6 +428,7 @@ class FetchOfferItemsTask extends Shell
       $associ_tag = $this->access_keys_jp['associ_tag'];
       break;
     }
+    sleep(2);
     try {
       $conf
         ->setCountry($country)
@@ -445,10 +446,8 @@ class FetchOfferItemsTask extends Shell
       $lookup->setResponseGroup(array('OfferFull', 'SalesRank', 'Reviews'));
       $response = $apaiIO->runOperation($lookup);
     } catch (\Exception $e) {
-      //debug($e->getMessage());
       return $callback($e->getResponse()->getBody()->getContents(), null);
     }
-    //debug($response);
     $callback(null, [
       'fetchOffer'  => $response
     , 'marketplace' => $marketplace

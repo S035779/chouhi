@@ -316,23 +316,38 @@ class BootstrapController extends AppController
     $title = 'ASIN registration';
     $fileform = new UploadFilesForm();
     if($this->request->is('post')) {
-      if($fileform->validate($this->request->data)) {
-        $tmp_file = $this->request->data['upload_file']['tmp_name'];
-        $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
-          , $this->request->data['upload_file']['name'] . '_' . time());
-        move_uploaded_file($tmp_file, $new_file);
-        $result = $this->AmazonMWS->upsertAsin($new_file, false);
+      if (isset($this->request->data['registration'])) {
+        if($fileform->validate($this->request->data)) {
+          $tmp_file = $this->request->data['upload_file']['tmp_name'];
+          $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
+            , $this->request->data['upload_file']['name'] . '_' . time());
+          move_uploaded_file($tmp_file, $new_file);
+          $result = $this->AmazonMWS->upsertAsin($new_file, false);
+          switch($result['error']) {
+            case 0:
+              $this->Flash->success(__('The CSV file has been uploaded.'));
+              break;
+            case 1:
+              $this->Flash
+                ->error(__('The CSV file did not complete the upload because the cause exceeds 1000 lines.'));
+              break;
+            default:
+              $this->Flash->error(__('The CSV file did not complete the upload. line: ' . $result['line']));
+              break;
+          }
+        }
+      } else if (isset($this->request->data['template'])) {
+        $this->autoRender = false;
+        $this->response->type('csv');
+        $this->response->download('templace.csv');
+        $result = $this->AmazonMWS->fetchAsin();
         switch($result['error']) {
-        case 0:
-          $this->Flash->success(__('The CSV file has been uploaded.'));
-          break;
-        case 1:
-          $this->Flash
-            ->error(__('The CSV file did not complete the upload because the cause exceeds 1000 lines.'));
-          break;
-        default:
-          $this->Flash->error(__('The CSV file did not complete the upload. line: ' . $result['line']));
-          break;
+          case 0:
+            $this->Flash->success(__('The CSV file has been downloaded.'));
+            break;
+          default:
+            $this->Flash->error(__('The CSV file did not complete the download. line: ' . $result['line']));
+            break;
         }
       }
     }
@@ -349,23 +364,38 @@ class BootstrapController extends AppController
     $title = 'Suspened ASIN registration';
     $fileform = new UploadFilesForm();
     if($this->request->is('post')) {
-      if($fileform->validate($this->request->data)) {
-        $tmp_file = $this->request->data['upload_file']['tmp_name'];
-        $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
-          , $this->request->data['upload_file']['name'] . '_' . time());
-        move_uploaded_file($tmp_file, $new_file);
-        $result = $this->AmazonMWS->upsertAsin($new_file, true);
+      if (isset($this->request->data['suspension'])) {
+        if($fileform->validate($this->request->data)) {
+          $tmp_file = $this->request->data['upload_file']['tmp_name'];
+          $new_file = sprintf(ROOT.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'%s'
+            , $this->request->data['upload_file']['name'] . '_' . time());
+          move_uploaded_file($tmp_file, $new_file);
+          $result = $this->AmazonMWS->upsertAsin($new_file, true);
+          switch($result['error']) {
+          case 0:
+            $this->Flash->success(__('The CSV file has been uploaded.'));
+            break;
+          case 1:
+            $this->Flash
+              ->error(__('The CSV file did not complete the upload because the cause exceeds 1000 lines.'));
+            break;
+          default:
+            $this->Flash->error(__('The CSV file did not complete the upload. line: ' . $result['line']));
+            break;
+          }
+        }
+      } else if (isset($this->request->data['template'])) {
+        $this->autoRender = false;
+        $this->response->type('csv');
+        $this->response->download('templace.csv');
+        $result = $this->AmazonMWS->fetchAsin();
         switch($result['error']) {
-        case 0:
-          $this->Flash->success(__('The CSV file has been uploaded.'));
-          break;
-        case 1:
-          $this->Flash
-            ->error(__('The CSV file did not complete the upload because the cause exceeds 1000 lines.'));
-          break;
-        default:
-          $this->Flash->error(__('The CSV file did not complete the upload. line: ' . $result['line']));
-          break;
+          case 0:
+            $this->Flash->success(__('The CSV file has been downloaded.'));
+            break;
+          default:
+            $this->Flash->error(__('The CSV file did not complete the download. line: ' . $result['line']));
+            break;
         }
       }
     }

@@ -195,28 +195,20 @@ class AmazonMWSComponent extends Component
     return $data;
   }
 
-  //public function insertAsin($filename, $suspended)
-  //{
-  //  $head = array(
-  //    'asin' => true
-  //  , 'marketplace' => true
-  //  , 'created' => true
-  //  , 'modified' => true
-  //  , 'suspended' => true
-  //  );
-  //  $asins = TableRegistry::get('Asins');
-  //  $datas = $this->setAsin($filename, $head, $suspended);
-  //  $query = $asins->query();
-  //  $query->insert(array_keys($head));
-  //  foreach($datas as $data) {
-  //    $query->values($data);
-  //  }
-  //  if(!$query->execute()) {
-  //    $this->log_debug($query->errors());
-  //    return false;
-  //  }
-  //  return true;
-  //}
+  public function fetchAsin()
+  {
+    $fp = fopen('php://output', 'w');
+    stream_filter_append($fp, 'convert.iconv.UTF-8/CP932', STREAM_FILTER_WRITE);
+    $asin_list=[[
+      'ASIN','Brand','Title','Category','Description','WordCount','Rating','ListPrice','Price','Discount'
+      , 'Shipping','TotalPrice','ParentASIN','ChildASIN','Available','Fulfilled','Thumbnail','URL'
+      , 'AffiateLink','Images','EAN','UPC','SalesRank','Prime','ReviewCount'
+    ]];
+    foreach($asin_list as $asin) {
+      fputcsv($fp, $asin);
+    }
+    fclose($fp);
+  }
 
   public function upsertAsin($filename, $suspended) 
   {

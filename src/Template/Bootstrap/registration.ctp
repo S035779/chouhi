@@ -29,10 +29,17 @@
                     </div>
                   </div>
 
+                  <div class="mb-3">
+                  <?= $this->Form->button('テンプレートを入手', [
+                    'class' => 'btn btn-outline-dark btn-block'
+                  , 'name' => 'template'
+                  ]) ?>
+                  </div>
+
                   <hr class="mb-4">
                   <?= $this->Form->button('登録する', [
                     'class' => 'btn btn-primary btn-lg btn-block'
-                  , 'id' => 'submit'
+                  , 'name' => 'registration'
                   ]) ?>
                 <?= $this->Form->end() ?>
               </div>
