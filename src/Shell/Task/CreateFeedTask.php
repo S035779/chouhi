@@ -504,14 +504,14 @@ class CreateFeedTask extends Shell
       , $delivery_price
       , $ship
       );
-      $data['minimum-seller-allow-price'] = $this->Common->getSalesPrice(
+      $data['minimum-seller-allow-price'] = $this->Common->getPurchasePrice(
         $data['minimum-seller-allow-price']
       , $data['currency']
       , $request['marketplace']
       , $delivery_price
       , $ship
       );
-      $data['maximum-seller-allow-price'] = $this->Common->getSalesPrice(
+      $data['maximum-seller-allow-price'] = $this->Common->getMaxSalesPrice(
         $data['maximum-seller-allow-price']
       , $data['currency']
       , $request['marketplace']

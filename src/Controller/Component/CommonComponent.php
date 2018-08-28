@@ -172,7 +172,29 @@ class CommonComponent extends Component
     return 'WN001JP-' .  $asin . '-0' . $marketplace . '01';
   }
 
-  public function getSalesPrice($price, $currency, $marketplace, $shipping, $ship)
+  public function getPurchasePrice($price, $currency, $marketplace, $shipping, $ship)
+  {
+
+    $sales_price = $this->toJPY($price, $currency, $ship);
+
+    $total_price = $sales_price + $shipping;
+
+    $rate = 0;
+    switch($marketplace) {
+    case 'JP':
+      $rate = $ship->jpy_price;
+      break;
+    case 'US':
+      $rate = $ship->usd_price;
+      break;
+    case 'AU':
+      $rate = $ship->aud_price;
+      break;
+    }
+    return (float)($total_price / $rate);
+  }
+
+  public function getMaxSalesPrice($price, $currency, $marketplace, $shipping, $ship)
   {
     $price_jpy = $this->toJPY($price, $currency, $ship);
 
@@ -191,6 +213,44 @@ class CommonComponent extends Component
       $sales_price = $price_jpy * (int)$ship->sales_rate_4 / 100 + $ship->sales_price_4;
     } else {
       $sales_price = $price_jpy * (int)$ship->sales_rate_5 / 100 + $ship->sales_price_5;
+    }
+ 
+    $total_price = $sales_price + $shipping;
+
+    $rate = 0;
+    switch($marketplace) {
+    case 'JP':
+      $rate = $ship->jpy_price;
+      break;
+    case 'US':
+      $rate = $ship->usd_price;
+      break;
+    case 'AU':
+      $rate = $ship->aud_price;
+      break;
+    }
+    return (float)($total_price / $rate);
+  }
+
+  public function getSalesPrice($price, $currency, $marketplace, $shipping, $ship)
+  {
+    $price_jpy = $this->toJPY($price, $currency, $ship);
+
+    $isPt1 = $price_jpy < $ship->price_criteria_1;
+    $isPt2 = $price_jpy < $ship->price_criteria_2 && $ship->price_criteria_1 < $price_jpy;
+    $isPt3 = $price_jpy < $ship->price_criteria_3 && $ship->price_criteria_2 < $price_jpy;
+    $isPt4 = $price_jpy < $ship->price_criteria_4 && $ship->price_criteria_3 < $price_jpy;
+
+    if($isPt1) {
+      $sales_price = $price_jpy * (int)$ship->sales_rate_1 / 100 + $ship->sales_price_1 * 2;
+    } else if($isPt2) {
+      $sales_price = $price_jpy * (int)$ship->sales_rate_2 / 100 + $ship->sales_price_2 * 2;
+    } else if($isPt3) {
+      $sales_price = $price_jpy * (int)$ship->sales_rate_3 / 100 + $ship->sales_price_3 * 2;
+    } else if($isPt4) {
+      $sales_price = $price_jpy * (int)$ship->sales_rate_4 / 100 + $ship->sales_price_4 * 2;
+    } else {
+      $sales_price = $price_jpy * (int)$ship->sales_rate_5 / 100 + $ship->sales_price_5 * 2;
     }
  
     $total_price = $sales_price + $shipping;
